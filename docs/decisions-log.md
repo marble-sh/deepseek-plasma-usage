@@ -156,6 +156,50 @@ encoding would imply a difference that does not exist.
 blocks remain byte-identical to the English file's, and every referenced image
 path resolves.
 
+---
+
+Round 8 — 2026-09-26 (accuracy audit against a real account)
+
+| # | Decision | Detail | Reasoning | Lifespan |
+|---|----------|--------|-----------|----------|
+| D32 | The usage window is **periodDays days, not periodDays+1** | `Api.usageWindow(now, days)` = `{ start: daysAgo(now, days - 1), end: startOfToday(now) + 86400 }`; `ApiClient` only consumes it. | `end` is tomorrow's local midnight, so starting at `daysAgo(now, days)` asked for 31 days while the widget said "Last 30 days": spend on the oldest day was folded into every period figure. The recorded live probe (`start=1787886000` = 2026-08-28, `end=1790478000`) is a 30-day window and matches the platform page, so the probe is the reference the code now obeys. | permanent |
+| D33 | The **popup shows exact counts**; the panel chip stays compact | `Fmt.grouped()` for the token and request figures in `FullRepresentation`; `Fmt.tokens()`/`compactNumber()` remain for the panel metric. Also routes the Requests rows through `shown()`, which they had bypassed. | `297,270,684` rendered as `297.3M` cannot be checked against the platform's page, which is the whole point of the detailed view. The chip has to fit a number into a panel and is not where anyone compares figures. The bypass was a privacy-mode leak: "Hide all amounts" hid every other figure but left request counts readable. | permanent |
+| D34 | The dev mock is a **snapshot of a real account**, and checks itself | `tests/mock-platform-server.mjs` pins the totals in its header, derives per-key/per-day figures with a largest-remainder split, and `--check` recomputes them; `api.test.mjs` pushes the payloads through `parseEnvelope`/`parseSummary`/`aggregateUsage` and asserts the platform's own figures. | Invented mock numbers are why the screenshots could not be validated against anything. Real ones make every screenshot and every regression test checkable by hand, and `--check` keeps the snapshot consistent instead of trusting a comment that says it is. | permanent |
+| D35 | The sparkline places bars **by date**, not by array index | The Canvas computes `(bucket.time - windowStart) / 86400` against the requested window, which `ApiClient` exposes as `windowStart`/`windowEnd`. | Spacing by index is invisible while every day has spend and wrong when few do: four recent days were drawn across a whole month, which reads as steady month-long usage. The platform's own chart leaves the empty days empty. | permanent |
+
+### Findings recorded, not changed
+
+- **`money()` shows 3 decimals below $1**, where the platform shows 2. Kept: for
+  this account it only affects values the platform does not display (per-key
+  costs), and it avoids `$0.00` for genuinely tiny amounts. Worth revisiting if a
+  *card* value ever falls below a dollar.
+- **The platform's own page is inconsistent by 2 cents**: its four day bars
+  (0.29 + 1.14 + 0.75 + 1.05) sum to $3.23 while its card says $3.25, because the
+  tooltips round each day to cents. The mock keeps full precision so its parts sum
+  to its whole, which is the property the widget's totals rely on.
+- **The `tz` sign rests on the recorded probe.** `tzOffsetSeconds()` sends the UTC
+  offset in seconds (-10800 for GMT-3), the probe's buckets come back at local
+  midnights, and its `start`/`end` match `usageWindow()`. That is self-consistent,
+  but the raw probe command was not kept, so a live re-run with a working session
+  token is still the only way to be certain.
+
+### Verified during round 8 (level 1)
+
+- `node tests/mock-platform-server.mjs --check` → cost 3.2500, requests 1325,
+  tokens 297270684, "consistent".
+- The pipeline test asserts those same three figures **after** `parseEnvelope` →
+  `parseSummary` → `aggregateUsage`, plus today's bucket at $1.0602 and that every
+  bucket is day-aligned to the window.
+- The popup was read back: `$6.74`, no bonus line, `$1.06` today, `$3.25` period
+  and lifetime, `Highest $1.14`, and `295,784,330` in + `1,486,354` out = the
+  platform's `297,270,684`, with `1,325` requests.
+- The sparkline was read back: four bars, all within the last five of thirty slots.
+- Full gauntlet green: `qmllint` 0, `node --test` 47/47, `--check` 0,
+  `./install.sh` 0.
+- **Not verified:** a live platform response — the session token in KWallet is
+  empty, so the reconciliation runs against a fixture built from the account's own
+  usage page rather than a fresh fetch.
+
 ### Verified during round 2 (live, level 1)
 
 - The in-package catalogue path works: a 3-string probe `.mo` at
