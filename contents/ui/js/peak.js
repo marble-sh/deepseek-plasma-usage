@@ -153,7 +153,15 @@ function nextChange(ms, holidays, maxDays) {
     var step = 60000;
     var cursor = Math.floor(ms / step) * step + step;
     while (cursor < end) {
-        if (state(cursor, holidays) !== current) {
+        var here = state(cursor, holidays);
+        // Running into an uncovered instant mid-scan means the table has a gap
+        // (or the horizon reaches past the announced years). The distance to a
+        // real change cannot be established, so say so rather than reporting the
+        // first uncovered instant as if it were the change.
+        if (here === UNKNOWN) {
+            return null;
+        }
+        if (here !== current) {
             return cursor;
         }
         cursor += step;

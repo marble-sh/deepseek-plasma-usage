@@ -74,6 +74,7 @@ Round 4 — 2026-09-26 (UI fixes)
 | D21 | The scan horizon is **14 days**, not 8 | `SCAN_HORIZON_DAYS`; a test pins the Spring Festival case. | A holiday block can hold the schedule steady for over ten days (13 Feb 10:00 UTC → 24 Feb 01:00 UTC in 2026), so a 7- or 8-day horizon would have silently dropped the countdown every Spring Festival. | permanent |
 | D22 | Two bugs found by rendering the new states, both fixed | (a) `readonly property real peakRemainingMs` coerces a JS `null` to `0`, so the unknown state rendered "Changes in 0 seconds" — the value is now kept in a JS block and the intermediate property is gone. (b) The 8-day horizon above. | Neither was reachable before the tri-state and the holiday data existed, which is exactly why they were rendered rather than assumed. | permanent |
 | D23 | A test is used as the **maintenance alarm** for the holiday data | `the holiday table covers the current year` and `every covered year looks complete rather than half-filled` in `tests/peak.test.mjs`. | Accuracy has to be enforced by something that runs, not by a README line. The suite goes red as soon as the year rolls over, which is when the dates need adding anyway. | permanent |
+| D24 | `nextChange` refuses to report a change it cannot substantiate | If the scan crosses an instant the holiday table does not cover, it returns `null` instead of reporting that instant as the change. Test: `nextChange refuses to scan across a gap in the holiday table`. | The end-of-window pre-check alone is not enough: a table with a missing year, or a horizon reaching past the announced years, can pass it and then report a boundary artefact as a rate change. Verified load-bearing — without the guard it returned `2026-12-31T16:00Z` (the China-day boundary), not a real change. | permanent |
 
 ### Verified during round 4 (level 1)
 
@@ -99,7 +100,7 @@ Round 4 — 2026-09-26 (UI fixes)
 
 ### Verified during round 5 (level 1)
 
-- `node --test` → **41/41** (26 api/format/wallet + 15 peak); `qmllint` → 0;
+- `node --test` → **42/42** (26 api/format/wallet + 16 peak); `qmllint` → 0;
   `./translate/build.sh --check` → 0 (17 catalogues × 74 strings);
   `./install.sh` → 0. Re-run after the final documentation edit.
 - The three states were **rendered on-device** rather than assumed: peak (red dot,

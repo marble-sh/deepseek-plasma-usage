@@ -126,6 +126,19 @@ test("nextChange refuses to answer when the window is not covered", () => {
     assert.equal(peak.nextChange(Date.UTC(2030, 5, 10, 2, 0)), null);
 });
 
+test("nextChange refuses to scan across a gap in the holiday table", () => {
+    // A table covering 2026-12-31 and 2028, with 2027 missing. 2026-12-31 is a
+    // holiday, so the state stays off-peak right up to the China-time day
+    // boundary at 16:00 UTC: there is no real change to find before the gap, so
+    // only the in-scan guard stops 2027's first instant from being reported as
+    // the change — an answer inside data the module does not actually know. Both
+    // ends of the scan are covered, so the pre-check alone would pass it.
+    const gapped = { "2026-12-31": true, "2028-01-01": true };
+    const from = Date.UTC(2026, 11, 31); // Thursday, China-date 2026-12-31
+    const days = Math.ceil((Date.UTC(2028, 0, 15) - from) / 86400000);
+    assert.equal(peak.nextChange(from, gapped, days), null);
+});
+
 test("nextChange returns null when nothing flips inside the horizon", () => {
     assert.equal(peak.nextChange(at(MON, 2, 30), undefined, 0), null);
     assert.equal(peak.msUntilChange(at(MON, 2, 30), undefined, 0), null);
