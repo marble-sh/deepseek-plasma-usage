@@ -6,7 +6,6 @@
 - 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
 - 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
 - 🇷🇺 [![Русский](https://img.shields.io/badge/Language-Русский-0039A6)](README.ru-RU.md)
-- 🇪🇸 [![Español](https://img.shields.io/badge/Language-Español-F1BF00)](README.es-ES.md)
 
 > [!NOTE]
 > Este archivo es una traducción automática del README en inglés. No ha sido
@@ -28,7 +27,7 @@ uso de tu API de DeepSeek en el panel, con una ventana emergente detallada.
   es `XMLHttpRequest` de QML, el análisis sintáctico es JavaScript puro y se
   accede a KWallet mediante `kwallet-query`.
 
-![Modo completo](docs/images/rich-mode.png)
+![Modo completo](docs/images/rich-mode.es-ES.png)
 
 Como chip del panel: el icono, el número que elijas y el punto de hora
 pico/fuera de hora pico:

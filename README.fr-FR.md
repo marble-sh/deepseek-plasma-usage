@@ -4,7 +4,6 @@
 - 🇨🇳 [![简体中文](https://img.shields.io/badge/Language-简体中文-EE1C25)](README.zh-CN.md)
 - 🇮🇳 [![हिन्दी](https://img.shields.io/badge/Language-हिन्दी-FF9933)](README.hi-IN.md)
 - 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
-- 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
 - 🇷🇺 [![Русский](https://img.shields.io/badge/Language-Русский-0039A6)](README.ru-RU.md)
 - 🇪🇸 [![Español](https://img.shields.io/badge/Language-Español-F1BF00)](README.es-ES.md)
 
@@ -29,7 +28,7 @@ détaillée.
   réseau se fait via `XMLHttpRequest` en QML, l'analyse en JavaScript pur, et
   KWallet est interrogé via `kwallet-query`.
 
-![Mode riche](docs/images/rich-mode.png)
+![Mode riche](docs/images/rich-mode.fr-FR.png)
 
 Comme pastille de panneau — l'icône, le nombre de votre choix et le point
 heures pleines/heures creuses :

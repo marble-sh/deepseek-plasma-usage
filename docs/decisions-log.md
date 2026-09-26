@@ -131,6 +131,31 @@ as documented.
 aligned `Today`/`Last 30 days` columns, `Highest $1.29`, the `Off-peak` row with
 a green dot and its countdown, and no masked key id (D19).
 
+---
+
+Round 7 — 2026-09-26 (README polish)
+
+| # | Decision | Detail | Reasoning | Lifespan |
+|---|----------|--------|-----------|----------|
+| D29 | Each README omits **its own language** from the language-navigation row | The badge row lists the other six files, never the one being read. | A link to the page you are already on is a no-op that reads like a mistake, and its absence doubles as a "you are here". | permanent |
+| D30 | Every translated README carries a popup **rendered in its own language**; the panel chip is shared | `docs/images/rich-mode[.<tag>].png`, `<tag>` the BCP-47 spelling of the locale (`zh_CN` → `zh-CN`), English unsuffixed; `docs/images/panel-mode.png` is used by all seven. | A translated page that illustrates itself with an English UI is a poor example, and it hides real layout differences: Hindi and Russian strings run much longer than the English ones. The chip is *not* duplicated because in the data state it renders only the formatted number — the seven per-locale chips came out **pixel-identical** (`compare -metric AE` = 0), and seven copies would imply a difference that does not exist. A chip in the unconfigured or error state does carry text and would have to become per-locale. | permanent |
+| D31 | Screenshot capture is a **committed, self-restoring script** | `tests/capture-screenshots.sh`: starts the mock, redirects `PLATFORM_BASE`, backs up and fakes the KWallet token, runs the compact pass, then forces `preferredRepresentation` and runs the popup pass, re-installing between them. A `trap` restores both source files, the wallet and the install on any exit. | One installed copy can prefer only one representation, so two passes are unavoidable; and 14 images will go stale again, so the recipe belongs in the repository rather than in a chat log. | permanent |
+
+### Verified during round 7 (level 1)
+
+- All eight images exist, and every popup was read back rather than assumed: the
+UI, the peak/off-peak row and the token table are translated in each language,
+and the two longest (Hindi, Russian) still fit without the table being pushed off
+the bottom.
+- The per-locale chips were generated and then dropped: they were
+**pixel-identical** to the English one (`compare -metric AE` = 0), because only
+the locale-independent number is rendered. A differing `md5sum` had suggested
+otherwise; it was PNG encoding, not pixels. Seven files that differ only in
+encoding would imply a difference that does not exist.
+- Each badge row holds six entries and never the file's own name; the fenced code
+blocks remain byte-identical to the English file's, and every referenced image
+path resolves.
+
 ### Verified during round 2 (live, level 1)
 
 - The in-package catalogue path works: a 3-string probe `.mo` at

@@ -5,7 +5,6 @@
 - 🇮🇳 [![हिन्दी](https://img.shields.io/badge/Language-हिन्दी-FF9933)](README.hi-IN.md)
 - 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
 - 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
-- 🇷🇺 [![Русский](https://img.shields.io/badge/Language-Русский-0039A6)](README.ru-RU.md)
 - 🇪🇸 [![Español](https://img.shields.io/badge/Language-Español-F1BF00)](README.es-ES.md)
 
 > [!NOTE]
@@ -24,7 +23,7 @@
   это QML `XMLHttpRequest`, разбор — на чистом JavaScript, а KWallet доступен
   через `kwallet-query`.
 
-![Расширенный режим](docs/images/rich-mode.png)
+![Расширенный режим](docs/images/rich-mode.ru-RU.png)
 
 В виде чипа на панели — значок, выбранное вами число и точка
 пикового/непикового тарифа:

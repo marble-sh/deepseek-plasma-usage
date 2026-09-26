@@ -2,7 +2,6 @@
 
 - 🇬🇧/🇺🇸 [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
 - 🇨🇳 [![简体中文](https://img.shields.io/badge/Language-简体中文-EE1C25)](README.zh-CN.md)
-- 🇮🇳 [![हिन्दी](https://img.shields.io/badge/Language-हिन्दी-FF9933)](README.hi-IN.md)
 - 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
 - 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
 - 🇷🇺 [![Русский](https://img.shields.io/badge/Language-Русский-0039A6)](README.ru-RU.md)
@@ -24,7 +23,7 @@
   `XMLHttpRequest` है, पार्सिंग सादा JavaScript है, और KWallet तक
   `kwallet-query` के ज़रिये पहुँचा जाता है।
 
-![रिच मोड](docs/images/rich-mode.png)
+![रिच मोड](docs/images/rich-mode.hi-IN.png)
 
 पैनल चिप के रूप में — आइकन, आपके चुने हुए आंकड़े, और पीक/ऑफ-पीक बिंदु:
 

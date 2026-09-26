@@ -1,7 +1,6 @@
 # DeepSeek 用量 — 一个 Plasma 6 小部件
 
 - 🇬🇧/🇺🇸 [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
-- 🇨🇳 [![简体中文](https://img.shields.io/badge/Language-简体中文-EE1C25)](README.zh-CN.md)
 - 🇮🇳 [![हिन्दी](https://img.shields.io/badge/Language-हिन्दी-FF9933)](README.hi-IN.md)
 - 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
 - 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
@@ -24,7 +23,7 @@
   `XMLHttpRequest`，解析使用纯 JavaScript，KWallet 通过
   `kwallet-query` 访问。
 
-![丰富模式](docs/images/rich-mode.png)
+![丰富模式](docs/images/rich-mode.zh-CN.png)
 
 作为面板徽标——图标、你选择的数字，以及高峰/非高峰圆点：
 

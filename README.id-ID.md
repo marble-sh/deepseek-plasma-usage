@@ -3,7 +3,6 @@
 - 🇬🇧/🇺🇸 [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
 - 🇨🇳 [![简体中文](https://img.shields.io/badge/Language-简体中文-EE1C25)](README.zh-CN.md)
 - 🇮🇳 [![हिन्दी](https://img.shields.io/badge/Language-हिन्दी-FF9933)](README.hi-IN.md)
-- 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
 - 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
 - 🇷🇺 [![Русский](https://img.shields.io/badge/Language-Русский-0039A6)](README.ru-RU.md)
 - 🇪🇸 [![Español](https://img.shields.io/badge/Language-Español-F1BF00)](README.es-ES.md)
@@ -26,7 +25,7 @@ penggunaan API DeepSeek Anda di panel, dengan popup yang terperinci.
   `XMLHttpRequest` QML, penguraian memakai JavaScript biasa, dan KWallet
   dijangkau melalui `kwallet-query`.
 
-![Mode lengkap](docs/images/rich-mode.png)
+![Mode lengkap](docs/images/rich-mode.id-ID.png)
 
 Sebagai chip panel — ikon, angka yang Anda pilih, dan titik jam sibuk/luar jam
 sibuk:
