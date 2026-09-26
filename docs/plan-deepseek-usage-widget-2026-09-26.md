@@ -29,13 +29,13 @@ plasmoids (`org.kde.plasma.systemmonitor`, `org.kde.plasma.minimizeall`).
 
 - **Environment:** `plasmashell 6.7.5`, Qt `6.11.2`, `kpackagetool6 2.0`,
   `plasmawindowed`, `qmllint`, `qmlformat`, `qml`/`qml6`/`qmlscene`, `node
-  v24.20.0`. No build step required for a pure-QML plasmoid.
+v24.20.0`. No build step required for a pure-QML plasmoid.
 - **DeepSeek documented API surface** (from `api-docs.deepseek.com/sitemap.xml`):
   chat completions, completions, responses, files (create/list/retrieve/delete),
   `list-models`, and `GET /user/balance`. **There is no usage/token endpoint.**
 - `GET https://api.deepseek.com/user/balance` → **401** without a key ⇒ exists,
   API-key authenticated; returns `{is_available, balance_infos:[{currency,
-  total_balance, granted_balance, topped_up_balance}]}`.
+total_balance, granted_balance, topped_up_balance}]}`.
 - `https://platform.deepseek.com/usage` → **403 CloudFront** to non-browser
   clients (bot-blocked).
 - `https://platform.deepseek.com/api/v0/*` → a FastAPI-style backend **does**
@@ -43,8 +43,8 @@ plasmoids (`org.kde.plasma.systemmonitor`, `org.kde.plasma.minimizeall`).
   undocumented and no `/openapi.json` is exposed; the usage page is
   session-authenticated (browser login), not API-key authenticated.
 - **Ruled out (dead ends, do not retry):**
-  - Route guessing on `/api/v0/...` — 5 candidate paths all returned 404.
-  - Scraping the SPA `index.html` / JS bundle — CloudFront 403 / 202 empty.
+    - Route guessing on `/api/v0/...` — 5 candidate paths all returned 404.
+    - Scraping the SPA `index.html` / JS bundle — CloudFront 403 / 202 empty.
 
 ## 3. Decisions (LOCKED — full detail in `docs/decisions-log.md`)
 

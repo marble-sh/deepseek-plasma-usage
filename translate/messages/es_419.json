@@ -18,7 +18,10 @@
     "Balance": "Saldo",
     "Today's spend": "Gasto de hoy",
     "Today's tokens": "Tokens de hoy",
-    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": ["Gasto de %1 día", "Gasto de %1 días"],
+    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": [
+      "Gasto de %1 día",
+      "Gasto de %1 días"
+    ],
     "Lifetime spend": "Gasto total",
     "Could not write to KWallet.": "No se pudo escribir en KWallet.",
     "Saved to KWallet.": "Guardado en KWallet.",

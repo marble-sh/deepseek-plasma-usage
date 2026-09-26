@@ -35,18 +35,18 @@ As a panel chip — the icon, the number you choose, and the peak/off-peak dot:
 ```
 
 Then add **DeepSeek Usage** to a panel or the desktop. Right-click the widget →
-*Configure…* to add your credentials.
+_Configure…_ to add your credentials.
 
 ## Credentials
 
 Two different credentials exist, and they are not interchangeable.
 
-| | API key | Session token |
-|---|---|---|
-| Where to get it | <https://platform.deepseek.com/api_keys> | the value the platform site keeps after you log in |
-| Scope | your account's API access | **full account access**, including creating and deleting API keys |
-| Gives you | balance only | balance, lifetime spend and usage history |
-| Stored as | `deepseek-api-key` in KWallet | `deepseek-session-token` in KWallet |
+|                 | API key                                  | Session token                                                     |
+| --------------- | ---------------------------------------- | ----------------------------------------------------------------- |
+| Where to get it | <https://platform.deepseek.com/api_keys> | the value the platform site keeps after you log in                |
+| Scope           | your account's API access                | **full account access**, including creating and deleting API keys |
+| Gives you       | balance only                             | balance, lifetime spend and usage history                         |
+| Stored as       | `deepseek-api-key` in KWallet            | `deepseek-session-token` in KWallet                               |
 
 Both are written to KWallet (wallet `kdewallet`, folder `Plasma`) and read back
 with `kwallet-query`. The API key alone is enough for the balance; adding the
@@ -86,7 +86,7 @@ Two quirks worth knowing:
   real status in the JSON body (`{"code":40003,...}`). The widget therefore
   classifies results from the payload, never from the HTTP status.
 - Cost and token payloads nest their series differently (`data.biz_data.data[]
-  .series[]` for cost, `data.biz_data.series[]` for tokens).
+.series[]` for cost, `data.biz_data.series[]` for tokens).
 
 Because there is no documented "usage" endpoint, the spend figures and the
 "estimated days left" value are **derived** from this API and are labelled as
@@ -94,12 +94,12 @@ such in the popup.
 
 ## Configuration
 
-| Setting | Default | Meaning |
-|---|---|---|
-| Refresh interval | 300 s | how often to poll (minimum 30 s) |
-| Panel shows | Balance | which number appears in the panel |
-| Cost period | 30 days | window for the period totals and the sparkline |
-| Hide all amounts | off | replace every amount on screen with bullets |
+| Setting          | Default | Meaning                                        |
+| ---------------- | ------- | ---------------------------------------------- |
+| Refresh interval | 300 s   | how often to poll (minimum 30 s)               |
+| Panel shows      | Balance | which number appears in the panel              |
+| Cost period      | 30 days | window for the period totals and the sparkline |
+| Hide all amounts | off     | replace every amount on screen with bullets    |
 
 The per-key breakdown lists API key **names** only. The masked key id that the
 platform reports is deliberately never rendered anywhere.
@@ -115,8 +115,8 @@ left in it in the popup and tooltip.
 - **neutral** — unknown: see below
 
 The schedule is [documented](https://api-docs.deepseek.com/quick_start/pricing)
-as *01:00–04:00 and 06:00–10:00 UTC, Monday to Friday, excluding Chinese public
-holidays*; all other hours are off-peak, including weekends and holidays in full.
+as _01:00–04:00 and 06:00–10:00 UTC, Monday to Friday, excluding Chinese public
+holidays_; all other hours are off-peak, including weekends and holidays in full.
 
 ### Why it can say "Unknown"
 
@@ -221,7 +221,7 @@ README rather than repeating it.
 > translation is least acceptable. Everything else is a bonus.
 
 The chosen route for fixing that is **KDE's own translation teams** (decision
-D13): it is the only one that yields *reviewed* translations by people who
+D13): it is the only one that yields _reviewed_ translations by people who
 actually speak the language. `Messages.sh` in the repository root is already the
 entry point KDE's tooling expects, and `translate/README.md` lists the concrete
 steps — the main precondition being that the widget has to live in a KDE

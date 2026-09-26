@@ -18,7 +18,10 @@
     "Balance": "Solde",
     "Today's spend": "Dépenses du jour",
     "Today's tokens": "Jetons du jour",
-    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": ["Dépenses sur %1 jour", "Dépenses sur %1 jours"],
+    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": [
+      "Dépenses sur %1 jour",
+      "Dépenses sur %1 jours"
+    ],
     "Lifetime spend": "Dépenses totales",
     "Could not write to KWallet.": "Impossible d'écrire dans KWallet.",
     "Saved to KWallet.": "Enregistré dans KWallet.",

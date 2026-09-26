@@ -56,7 +56,7 @@ const LOCALES = {
     ru: { base: "ru_RU" },
     fr: { base: "fr_FR" },
     id: { base: "id_ID" },
-    hi: { base: "hi_IN" },
+    hi: { base: "hi_IN" }
 };
 
 function RU_PLURAL() {
@@ -146,13 +146,13 @@ function parsePot(text) {
     }
 
     const messages = entries
-        .filter((e) => e.msgid !== "" || e.msgctxt !== "")
-        .map((e) => ({
+        .filter(e => e.msgid !== "" || e.msgctxt !== "")
+        .map(e => ({
             refs: e.refs,
             msgctxt: e.msgctxt,
             msgid: e.msgid,
             msgid_plural: e.msgid_plural,
-            key: (e.msgctxt ? `${e.msgctxt}\u0004` : "") + e.msgid + (e.msgid_plural ? `\u0000${e.msgid_plural}` : ""),
+            key: (e.msgctxt ? `${e.msgctxt}\u0004` : "") + e.msgid + (e.msgid_plural ? `\u0000${e.msgid_plural}` : "")
         }));
 
     // Read the extraction date from the raw text: by this point the quotes have
@@ -187,7 +187,7 @@ function resolve(locale, seen = []) {
         const own = existsSync(join(MESSAGES, `${locale}.json`)) ? readTable(locale) : {};
         return {
             spec: { ...parent.spec, ...spec },
-            strings: { ...parent.strings, ...(own.strings || {}), ...(own.overrides || {}) },
+            strings: { ...parent.strings, ...(own.strings || {}), ...(own.overrides || {}) }
         };
     }
     const table = readTable(locale);
@@ -242,7 +242,7 @@ function buildPo(locale, { messages, creationDate }) {
         `Content-Type: text/plain; charset=UTF-8${NL}`,
         `Content-Transfer-Encoding: 8bit${NL}`,
         `Plural-Forms: nplurals=${spec.nplurals}; plural=${spec.plural};${NL}`,
-        `X-Generator: translate/generate.mjs${NL}`,
+        `X-Generator: translate/generate.mjs${NL}`
     ];
     for (const line of header) {
         lines.push(`"${line}"`);
@@ -267,9 +267,7 @@ function buildPo(locale, { messages, creationDate }) {
 
         if (isPlural) {
             lines.push(`msgid_plural ${[...quoted(message.msgid_plural)].join("\n")}`);
-            const variants = spec.identity
-                ? [message.msgid, message.msgid_plural]
-                : value;
+            const variants = spec.identity ? [message.msgid, message.msgid_plural] : value;
             if (!Array.isArray(variants) || variants.length !== spec.nplurals) {
                 throw new Error(
                     `${locale}: ${JSON.stringify(message.key)} needs ${spec.nplurals} plural variants, got ${
@@ -317,9 +315,9 @@ if (!existsSync(potPath)) {
 const pot = parsePot(readFileSync(potPath, "utf8"));
 
 const declared = readdirSync(MESSAGES)
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => f.replace(/\.json$/, ""));
-const unknown = declared.filter((l) => !LOCALES[l]);
+    .filter(f => f.endsWith(".json"))
+    .map(f => f.replace(/\.json$/, ""));
+const unknown = declared.filter(l => !LOCALES[l]);
 if (unknown.length > 0) {
     console.error(`translate/generate.mjs: tables with no LOCALES entry: ${unknown.join(", ")}`);
     process.exit(1);

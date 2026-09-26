@@ -1,0 +1,23 @@
+{
+    "printWidth": 120,
+    "tabWidth": 4,
+    "singleQuote": false,
+    "trailingComma": "none",
+    "arrowParens": "avoid",
+    "proseWrap": "preserve",
+    "endOfLine": "lf",
+    "overrides": [
+        {
+            "files": "**/*.yml",
+            "options": { "tabWidth": 2 }
+        },
+        {
+            "files": "**/*.yaml",
+            "options": { "tabWidth": 2 }
+        },
+        {
+            "files": "translate/messages/*.json",
+            "options": { "tabWidth": 2 }
+        }
+    ]
+}

@@ -42,23 +42,33 @@ function base64Encode(str) {
 }
 
 function readCommand(entry, wallet, folder) {
-    return "kwallet-query -r " + shellQuote(entry)
-        + " -f " + shellQuote(folder || DEFAULT_FOLDER)
-        + " " + shellQuote(wallet || DEFAULT_WALLET);
+    return (
+        "kwallet-query -r " +
+        shellQuote(entry) +
+        " -f " +
+        shellQuote(folder || DEFAULT_FOLDER) +
+        " " +
+        shellQuote(wallet || DEFAULT_WALLET)
+    );
 }
 
 // Secrets are piped through stdin as base64 so the raw value never appears
 // literally on the command line.
 function writeCommand(entry, secret, wallet, folder) {
-    return "printf %s " + shellQuote(base64Encode(secret))
-        + " | base64 -d | kwallet-query -w " + shellQuote(entry)
-        + " -f " + shellQuote(folder || DEFAULT_FOLDER)
-        + " " + shellQuote(wallet || DEFAULT_WALLET);
+    return (
+        "printf %s " +
+        shellQuote(base64Encode(secret)) +
+        " | base64 -d | kwallet-query -w " +
+        shellQuote(entry) +
+        " -f " +
+        shellQuote(folder || DEFAULT_FOLDER) +
+        " " +
+        shellQuote(wallet || DEFAULT_WALLET)
+    );
 }
 
 function listCommand(wallet, folder) {
-    return "kwallet-query -l -f " + shellQuote(folder || DEFAULT_FOLDER)
-        + " " + shellQuote(wallet || DEFAULT_WALLET);
+    return "kwallet-query -l -f " + shellQuote(folder || DEFAULT_FOLDER) + " " + shellQuote(wallet || DEFAULT_WALLET);
 }
 
 // `exitCode` is data["exit code"] from the executable engine; it can arrive as

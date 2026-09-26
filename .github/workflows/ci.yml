@@ -3,10 +3,10 @@
 #
 # Continuous integration for the DeepSeek Usage plasmoid.
 #
-# These gates mirror the local development gauntlet in README.md. None of them
-# needs Plasma: the applet's logic lives in plain JavaScript modules that node
-# runs directly, the catalogue check is gettext + node, and qmllint on Qt 6
-# resolves no imports, so a stock Ubuntu runner can gate the QML syntax too.
+# These gates mirror the local gauntlet in CONTRIBUTING.md. None of them needs
+# Plasma: the applet's logic lives in plain JavaScript modules that node runs
+# directly, the catalogue check is gettext + node, and qmllint on Qt 6 resolves no
+# imports, so a stock Ubuntu runner can gate the QML syntax too.
 name: CI
 
 on:
@@ -32,12 +32,23 @@ jobs:
         with:
           node-version: "24"
       - name: Test the pure JS modules
-        run: >-
-          node --test
-          tests/api.test.mjs
-          tests/format.test.mjs
-          tests/wallet.test.mjs
-          tests/peak.test.mjs
+        run: node --test tests/*.test.mjs
+
+  format:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      # `npm ci` installs the pinned Prettier, so `npm run format` locally and
+      # this job cannot disagree about the result.
+      - name: Install dev dependencies
+        run: npm ci
+      - name: Check formatting
+        run: npm run format:check
 
   catalogues:
     name: Translations up to date

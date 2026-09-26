@@ -1,0 +1,21 @@
+{
+    "name": "deepseek-plasma-usage",
+    "version": "0.1.0",
+    "private": true,
+    "description": "A dependency-free KDE Plasma 6 widget showing DeepSeek API balance and usage across all your API keys",
+    "license": "GPL-2.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/marble-sh/deepseek-plasma-usage.git"
+    },
+    "scripts": {
+        "test": "node --test tests/*.test.mjs",
+        "lint:qml": "qmllint contents/ui/*.qml contents/config/config.qml",
+        "check:po": "./translate/build.sh --check",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "devDependencies": {
+        "prettier": "3.9.9"
+    }
+}

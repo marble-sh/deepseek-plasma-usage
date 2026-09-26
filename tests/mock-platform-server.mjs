@@ -55,12 +55,24 @@ const ACTIVE_DAYS = [
 // 30-day totals, split across the keys the account has. The shares are applied
 // with distribute() below, so the per-key figures always sum to these exactly.
 const KEYS = [
-    { tracking_id: "4ec071d2-bed7-404d-86b0-0c88900afd17", name: "home",
-      sensitive_id: "sk-436d4***********************b3be", flashShare: 0.35 },
-    { tracking_id: "0f649568-18d5-4470-ac2c-fdec74be771f", name: "zed-vapor",
-      sensitive_id: "sk-68cc7***********************fa4f", flashShare: 0.5 },
-    { tracking_id: "a6ee9503-ac2c-49b2-8fee-b0b41b298e63", name: "zed-air",
-      sensitive_id: "sk-f18a0***********************e6e7", flashShare: 0.15 }
+    {
+        tracking_id: "4ec071d2-bed7-404d-86b0-0c88900afd17",
+        name: "home",
+        sensitive_id: "sk-436d4***********************b3be",
+        flashShare: 0.35
+    },
+    {
+        tracking_id: "0f649568-18d5-4470-ac2c-fdec74be771f",
+        name: "zed-vapor",
+        sensitive_id: "sk-68cc7***********************fa4f",
+        flashShare: 0.5
+    },
+    {
+        tracking_id: "a6ee9503-ac2c-49b2-8fee-b0b41b298e63",
+        name: "zed-air",
+        sensitive_id: "sk-f18a0***********************e6e7",
+        flashShare: 0.15
+    }
 ];
 
 const MODELS = {
@@ -86,9 +98,7 @@ function distribute(total, weights) {
     const exact = weights.map(w => (total * w) / sum);
     const out = exact.map(Math.floor);
     const residual = total - out.reduce((a, b) => a + b, 0);
-    const order = exact
-        .map((v, i) => ({ i, frac: v - Math.floor(v) }))
-        .sort((a, b) => b.frac - a.frac);
+    const order = exact.map((v, i) => ({ i, frac: v - Math.floor(v) })).sort((a, b) => b.frac - a.frac);
     for (let k = 0; k < residual; k++) {
         out[order[k % order.length].i] += 1;
     }
@@ -111,10 +121,16 @@ function seriesFor(key, model) {
     const isFlash = model === "deepseek-flash";
 
     const keyTokens = isFlash
-        ? distribute(total.tokens, KEYS.map(k => k.flashShare))[KEYS.indexOf(key)]
+        ? distribute(
+              total.tokens,
+              KEYS.map(k => k.flashShare)
+          )[KEYS.indexOf(key)]
         : total.tokens; // v4-pro belongs to a single key
     const keyRequests = isFlash
-        ? distribute(total.requests, KEYS.map(k => k.flashShare))[KEYS.indexOf(key)]
+        ? distribute(
+              total.requests,
+              KEYS.map(k => k.flashShare)
+          )[KEYS.indexOf(key)]
         : total.requests;
 
     // The model is only used on the days this key spent money on it.
@@ -153,7 +169,7 @@ function costBucketsFor(key, model) {
     for (let back = DAYS - 1; back >= 0; back--) {
         const day = ACTIVE_DAYS.find(d => d.back === back);
         const dayCost = day ? (isFlash ? day.flash : day.pro) : 0;
-        const share = isFlash ? key.flashShare : (key.name === "zed-vapor" ? 1 : 0);
+        const share = isFlash ? key.flashShare : key.name === "zed-vapor" ? 1 : 0;
         buckets.push({ time: localMidnight(back), cost: (dayCost * share).toFixed(16) });
     }
     return buckets;
@@ -186,13 +202,17 @@ function costPayload() {
     return {
         code: 0,
         msg: "",
-        data: { biz_code: 0, biz_msg: "", biz_data: {
-            start: localMidnight(DAYS - 1),
-            end: localMidnight(-1),
-            bucket: 86400,
-            models: Object.keys(MODELS),
-            data
-        } }
+        data: {
+            biz_code: 0,
+            biz_msg: "",
+            biz_data: {
+                start: localMidnight(DAYS - 1),
+                end: localMidnight(-1),
+                bucket: 86400,
+                models: Object.keys(MODELS),
+                data
+            }
+        }
     };
 }
 
@@ -213,13 +233,17 @@ function amountPayload() {
     return {
         code: 0,
         msg: "",
-        data: { biz_code: 0, biz_msg: "", biz_data: {
-            start: localMidnight(DAYS - 1),
-            end: localMidnight(-1),
-            bucket: 86400,
-            models: Object.keys(MODELS),
-            series
-        } }
+        data: {
+            biz_code: 0,
+            biz_msg: "",
+            biz_data: {
+                start: localMidnight(DAYS - 1),
+                end: localMidnight(-1),
+                bucket: 86400,
+                models: Object.keys(MODELS),
+                series
+            }
+        }
     };
 }
 
@@ -227,11 +251,15 @@ function summaryPayload() {
     return {
         code: 0,
         msg: "",
-        data: { biz_code: 0, biz_msg: "", biz_data: {
-            normal_wallets: [{ currency: "USD", balance: BALANCE, token_estimation: "0" }],
-            bonus_wallets: [{ currency: "USD", balance: BONUS, token_estimation: "0" }],
-            total_costs: [{ currency: "USD", amount: LIFETIME_COST }]
-        } }
+        data: {
+            biz_code: 0,
+            biz_msg: "",
+            biz_data: {
+                normal_wallets: [{ currency: "USD", balance: BALANCE, token_estimation: "0" }],
+                bonus_wallets: [{ currency: "USD", balance: BONUS, token_estimation: "0" }],
+                total_costs: [{ currency: "USD", amount: LIFETIME_COST }]
+            }
+        }
     };
 }
 
@@ -248,9 +276,7 @@ function reconcile() {
             const s = seriesFor(key, model);
             for (const b of s.buckets) {
                 requests += b.usage.REQUEST;
-                tokens += b.usage.RESPONSE_TOKEN
-                    + b.usage.PROMPT_CACHE_HIT_TOKEN
-                    + b.usage.PROMPT_CACHE_MISS_TOKEN;
+                tokens += b.usage.RESPONSE_TOKEN + b.usage.PROMPT_CACHE_HIT_TOKEN + b.usage.PROMPT_CACHE_MISS_TOKEN;
             }
         }
     }
@@ -291,13 +317,4 @@ if (isMain()) {
     });
 }
 
-export {
-    costPayload,
-    amountPayload,
-    summaryPayload,
-    reconcile,
-    MODELS,
-    BALANCE,
-    BONUS,
-    LIFETIME_COST
-};
+export { costPayload, amountPayload, summaryPayload, reconcile, MODELS, BALANCE, BONUS, LIFETIME_COST };

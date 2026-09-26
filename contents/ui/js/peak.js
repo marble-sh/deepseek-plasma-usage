@@ -28,7 +28,10 @@ var OFF_PEAK = "offPeak";
 var UNKNOWN = "unknown";
 
 // Peak windows in UTC hours: start inclusive, end exclusive.
-var PEAK_WINDOWS_UTC = [[1, 4], [6, 10]];
+var PEAK_WINDOWS_UTC = [
+    [1, 4],
+    [6, 10]
+];
 
 // China Standard Time is UTC+8 and has had no DST since 1991.
 var CHINA_UTC_OFFSET_MS = 8 * 3600000;

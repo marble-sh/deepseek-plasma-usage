@@ -1,0 +1,26 @@
+# Prettier has no parser for these languages, so listing them here is documentation
+# rather than a filter: QML, shell and gettext are not formattable by core Prettier.
+contents/**/*.qml
+**/*.sh
+Messages.sh
+install.sh
+translate/*.po
+translate/*.pot
+
+# Generated and byte-managed elsewhere. Rewriting them would make
+# `translate/build.sh --check` fail or desynchronise the compiled catalogues.
+translate/LINGUAS
+translate/template.pot
+contents/locale/
+
+# Lockfiles belong to npm, and binaries to nobody.
+package-lock.json
+docs/images/
+*.plasmoid
+
+# Untracked local material
+NoriWeather-main/
+deepseek-is-peak.py
+docs/state/
+build/
+node_modules/

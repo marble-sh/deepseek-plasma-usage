@@ -18,7 +18,11 @@
     "Balance": "Баланс",
     "Today's spend": "Расход за сегодня",
     "Today's tokens": "Токены за сегодня",
-    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": ["Расход за %1 день", "Расход за %1 дня", "Расход за %1 дней"],
+    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": [
+      "Расход за %1 день",
+      "Расход за %1 дня",
+      "Расход за %1 дней"
+    ],
     "Lifetime spend": "Всего израсходовано",
     "Could not write to KWallet.": "Не удалось записать в KWallet.",
     "Saved to KWallet.": "Сохранено в KWallet.",

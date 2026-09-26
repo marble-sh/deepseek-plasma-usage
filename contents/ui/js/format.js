@@ -16,7 +16,6 @@
     so they can be re-derived after a CLDR update rather than guessed at. The
     cases that matter are in tests/format.test.mjs, one per locale family.
 */
-/* eslint-disable no-unused-vars */
 
 /* --------------------------------------------------------- currency symbols */
 
@@ -27,12 +26,36 @@
 // these (RUB and CHF render as "RUB"/"CHF" in en-US, but the symbols are what a
 // reader expects elsewhere).
 var CURRENCY_SYMBOLS = {
-    USD: "$", CNY: "\u00A5", EUR: "\u20AC", GBP: "\u00A3", JPY: "\u00A5",
-    HKD: "HK$", SGD: "S$", KRW: "\u20A9", INR: "\u20B9", RUB: "\u20BD",
-    TWD: "NT$", BRL: "R$", MXN: "MX$", AUD: "A$", CAD: "CA$", CHF: "CHF",
-    SEK: "kr", NOK: "kr", DKK: "kr", PLN: "z\u0142", TRY: "\u20BA",
-    ZAR: "R", AED: "AED", SAR: "SAR", THB: "\u0E3F", VND: "\u20AB",
-    PHP: "\u20B1", MYR: "RM", IDR: "Rp", NZD: "NZ$"
+    USD: "$",
+    CNY: "\u00A5",
+    EUR: "\u20AC",
+    GBP: "\u00A3",
+    JPY: "\u00A5",
+    HKD: "HK$",
+    SGD: "S$",
+    KRW: "\u20A9",
+    INR: "\u20B9",
+    RUB: "\u20BD",
+    TWD: "NT$",
+    BRL: "R$",
+    MXN: "MX$",
+    AUD: "A$",
+    CAD: "CA$",
+    CHF: "CHF",
+    SEK: "kr",
+    NOK: "kr",
+    DKK: "kr",
+    PLN: "z\u0142",
+    TRY: "\u20BA",
+    ZAR: "R",
+    AED: "AED",
+    SAR: "SAR",
+    THB: "\u0E3F",
+    VND: "\u20AB",
+    PHP: "\u20B1",
+    MYR: "RM",
+    IDR: "Rp",
+    NZD: "NZ$"
 };
 
 /* ---------------------------------------------------- number and money rules */
@@ -57,57 +80,99 @@ var CURRENCY_SYMBOLS = {
 */
 var NUMBER_FORMATS = {
     en: {
-        group: ",", decimal: ".", before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        before: true,
+        gap: "",
         symbols: { USD: "$", CNY: "CN\u00A5", EUR: "\u20AC" }
     },
     "en-IN": {
-        group: ",", decimal: ".", indian: true, before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        indian: true,
+        before: true,
+        gap: "",
         symbols: { USD: "$", CNY: "CN\u00A5", EUR: "\u20AC" }
     },
     zh: {
-        group: ",", decimal: ".", before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        before: true,
+        gap: "",
         symbols: { USD: "US$", CNY: "\u00A5", EUR: "\u20AC" }
     },
     hi: {
-        group: ",", decimal: ".", indian: true, before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        indian: true,
+        before: true,
+        gap: "",
         symbols: { USD: "$", CNY: "CN\u00A5", EUR: "\u20AC" }
     },
     id: {
-        group: ".", decimal: ",", before: true, gap: "",
+        group: ".",
+        decimal: ",",
+        before: true,
+        gap: "",
         symbols: { USD: "US$", CNY: "CN\u00A5", EUR: "\u20AC" }
     },
     fr: {
-        group: "\u202F", decimal: ",", before: false, gap: "\u00A0",
+        group: "\u202F",
+        decimal: ",",
+        before: false,
+        gap: "\u00A0",
         symbols: { USD: "$US", CNY: "CNY", EUR: "\u20AC" }
     },
     ru: {
-        group: "\u00A0", decimal: ",", before: false, gap: "\u00A0",
+        group: "\u00A0",
+        decimal: ",",
+        before: false,
+        gap: "\u00A0",
         symbols: { USD: "$", CNY: "CN\u00A5", EUR: "\u20AC" }
     },
     // A bare "es" follows Spain, not Latin America (ICU: "1.234.567,89 US$").
     es: {
-        group: ".", decimal: ",", before: false, gap: "\u00A0", minGroup: 2,
+        group: ".",
+        decimal: ",",
+        before: false,
+        gap: "\u00A0",
+        minGroup: 2,
         symbols: { USD: "US$", CNY: "CNY", EUR: "\u20AC" }
     },
     "es-419": {
-        group: ",", decimal: ".", before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        before: true,
+        gap: "",
         symbols: { USD: "USD", CNY: "CNY", EUR: "EUR" }
     },
     // Chile and Cuba tuck a sign against the digits but space a bare code out.
     "es-CL": {
-        group: ".", decimal: ",", before: true, gap: "",
+        group: ".",
+        decimal: ",",
+        before: true,
+        gap: "",
         symbols: { USD: "US$", CNY: "CNY", EUR: "EUR" }
     },
     "es-AR": {
-        group: ".", decimal: ",", before: true, gap: "\u00A0",
+        group: ".",
+        decimal: ",",
+        before: true,
+        gap: "\u00A0",
         symbols: { USD: "US$", CNY: "CNY", EUR: "EUR" }
     },
     "es-MX": {
-        group: ",", decimal: ".", before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        before: true,
+        gap: "",
         symbols: { USD: "USD", CNY: "CNY", EUR: "EUR" }
     },
     "es-CU": {
-        group: ",", decimal: ".", before: true, gap: "",
+        group: ",",
+        decimal: ".",
+        before: true,
+        gap: "",
         symbols: { USD: "US$", CNY: "CNY", EUR: "EUR" }
     }
 };
@@ -233,7 +298,7 @@ function money(value, currency, locale, decimals) {
     var fmt = numberFormat(locale);
     var symbol = Object.prototype.hasOwnProperty.call(fmt.symbols, code)
         ? fmt.symbols[code]
-        : (CURRENCY_SYMBOLS[code] || code);
+        : CURRENCY_SYMBOLS[code] || code;
     var gap = moneyGap(symbol, fmt);
     return fmt.before ? symbol + gap + text : text + gap + symbol;
 }
@@ -345,22 +410,22 @@ function metricText(metric, values) {
     var v = values || {};
     var text;
     switch (metric) {
-    case METRIC_TODAY_COST:
-        text = money(v.todayCost, v.currency, v.locale);
-        break;
-    case METRIC_TODAY_TOKENS:
-        text = tokens(v.todayTokens, v.locale);
-        break;
-    case METRIC_PERIOD_COST:
-        text = money(v.periodCost, v.currency, v.locale);
-        break;
-    case METRIC_LIFETIME_COST:
-        text = v.hasLifetime ? money(v.lifetimeCost, v.currency, v.locale) : DASH;
-        break;
-    case METRIC_BALANCE:
-    default:
-        text = money(v.balance, v.currency, v.locale);
-        break;
+        case METRIC_TODAY_COST:
+            text = money(v.todayCost, v.currency, v.locale);
+            break;
+        case METRIC_TODAY_TOKENS:
+            text = tokens(v.todayTokens, v.locale);
+            break;
+        case METRIC_PERIOD_COST:
+            text = money(v.periodCost, v.currency, v.locale);
+            break;
+        case METRIC_LIFETIME_COST:
+            text = v.hasLifetime ? money(v.lifetimeCost, v.currency, v.locale) : DASH;
+            break;
+        case METRIC_BALANCE:
+        default:
+            text = money(v.balance, v.currency, v.locale);
+            break;
     }
     return hideable(text, !!v.hidden);
 }

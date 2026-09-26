@@ -44,19 +44,19 @@ heures pleines/heures creuses :
 ```
 
 Ajoutez ensuite **DeepSeek Usage** à un panneau ou au bureau. Faites un clic
-droit sur le widget → *Configurer…* pour ajouter vos identifiants.
+droit sur le widget → _Configurer…_ pour ajouter vos identifiants.
 
 ## Identifiants
 
 Il existe deux types d'identifiants différents, et ils ne sont pas
 interchangeables.
 
-| | Clé d'API | Jeton de session |
-|---|---|---|
-| Où l'obtenir | <https://platform.deepseek.com/api_keys> | la valeur que le site de la plateforme conserve après votre connexion |
-| Portée | l'accès à l'API de votre compte | **l'accès complet au compte**, y compris la création et la suppression de clés d'API |
-| Vous donne | le solde uniquement | le solde, les dépenses cumulées et l'historique d'utilisation |
-| Stocké sous | `deepseek-api-key` dans KWallet | `deepseek-session-token` dans KWallet |
+|              | Clé d'API                                | Jeton de session                                                                     |
+| ------------ | ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| Où l'obtenir | <https://platform.deepseek.com/api_keys> | la valeur que le site de la plateforme conserve après votre connexion                |
+| Portée       | l'accès à l'API de votre compte          | **l'accès complet au compte**, y compris la création et la suppression de clés d'API |
+| Vous donne   | le solde uniquement                      | le solde, les dépenses cumulées et l'historique d'utilisation                        |
+| Stocké sous  | `deepseek-api-key` dans KWallet          | `deepseek-session-token` dans KWallet                                                |
 
 Les deux sont écrits dans KWallet (portefeuille `kdewallet`, dossier `Plasma`)
 et relus avec `kwallet-query`. La clé d'API suffit à elle seule pour le solde ;
@@ -100,7 +100,7 @@ Deux particularités à connaître :
   utile, jamais d'après le statut HTTP.
 - Les charges utiles de coût et de jetons imbriquent leurs séries différemment
   (`data.biz_data.data[]
-  .series[]` pour le coût, `data.biz_data.series[]` pour les jetons).
+.series[]` pour le coût, `data.biz_data.series[]` pour les jetons).
 
 Comme il n'existe aucun point de terminaison « usage » documenté, les chiffres de
 dépenses et la valeur « jours restants estimés » sont **dérivés** de cette API et
@@ -108,12 +108,12 @@ sont signalés comme tels dans la fenêtre contextuelle.
 
 ## Configuration
 
-| Paramètre | Valeur par défaut | Signification |
-|---|---|---|
-| Intervalle d'actualisation | 300 s | fréquence d'interrogation (minimum 30 s) |
-| Affichage du panneau | Solde | quel nombre apparaît dans le panneau |
-| Période de coût | 30 jours | fenêtre pour les totaux de la période et le mini-graphique |
-| Masquer tous les montants | désactivé | remplacer chaque montant à l'écran par des puces |
+| Paramètre                  | Valeur par défaut | Signification                                              |
+| -------------------------- | ----------------- | ---------------------------------------------------------- |
+| Intervalle d'actualisation | 300 s             | fréquence d'interrogation (minimum 30 s)                   |
+| Affichage du panneau       | Solde             | quel nombre apparaît dans le panneau                       |
+| Période de coût            | 30 jours          | fenêtre pour les totaux de la période et le mini-graphique |
+| Masquer tous les montants  | désactivé         | remplacer chaque montant à l'écran par des puces           |
 
 La répartition par clé ne liste que les **noms** des clés d'API. L'identifiant de
 clé masqué que rapporte la plateforme n'est délibérément jamais affiché nulle
@@ -131,8 +131,8 @@ l'infobulle.
 - **neutre** — inconnu : voir ci-dessous
 
 Le calendrier est [documenté](https://api-docs.deepseek.com/quick_start/pricing)
-comme étant *de 01:00 à 04:00 et de 06:00 à 10:00 UTC, du lundi au vendredi, hors
-jours fériés chinois* ; toutes les autres heures sont en heures creuses, y
+comme étant _de 01:00 à 04:00 et de 06:00 à 10:00 UTC, du lundi au vendredi, hors
+jours fériés chinois_ ; toutes les autres heures sont en heures creuses, y
 compris les week-ends et les jours fériés dans leur intégralité.
 
 ### Pourquoi il peut indiquer « Inconnu »
@@ -244,7 +244,7 @@ partagent le README de leur langue au lieu de le répéter.
 > traduction non relue est le moins acceptable. Tout le reste est un bonus.
 
 La voie choisie pour y remédier est celle des **propres équipes de traduction de
-KDE** (décision D13) : c'est la seule qui produise des traductions *relues* par
+KDE** (décision D13) : c'est la seule qui produise des traductions _relues_ par
 des personnes qui parlent réellement la langue. `Messages.sh` à la racine du
 dépôt est déjà le point d'entrée attendu par l'outillage de KDE, et
 `translate/README.md` énumère les étapes concrètes — la principale condition

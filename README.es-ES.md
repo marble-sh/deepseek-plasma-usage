@@ -43,18 +43,18 @@ pico/fuera de hora pico:
 ```
 
 Luego añade **Uso de DeepSeek** a un panel o al escritorio. Haz clic derecho en
-el widget → *Configurar…* para añadir tus credenciales.
+el widget → _Configurar…_ para añadir tus credenciales.
 
 ## Credenciales
 
 Existen dos credenciales distintas y no son intercambiables.
 
-| | Clave de API | Token de sesión |
-|---|---|---|
-| Dónde conseguirla | <https://platform.deepseek.com/api_keys> | el valor que conserva el sitio de la plataforma después de que inicias sesión |
-| Alcance | el acceso a la API de tu cuenta | **acceso completo a la cuenta**, incluida la creación y eliminación de claves de API |
-| Te proporciona | solo el saldo | saldo, gasto acumulado e historial de uso |
-| Se guarda como | `deepseek-api-key` en KWallet | `deepseek-session-token` en KWallet |
+|                   | Clave de API                             | Token de sesión                                                                      |
+| ----------------- | ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| Dónde conseguirla | <https://platform.deepseek.com/api_keys> | el valor que conserva el sitio de la plataforma después de que inicias sesión        |
+| Alcance           | el acceso a la API de tu cuenta          | **acceso completo a la cuenta**, incluida la creación y eliminación de claves de API |
+| Te proporciona    | solo el saldo                            | saldo, gasto acumulado e historial de uso                                            |
+| Se guarda como    | `deepseek-api-key` en KWallet            | `deepseek-session-token` en KWallet                                                  |
 
 Ambas se escriben en KWallet (cartera `kdewallet`, carpeta `Plasma`) y se leen
 de vuelta con `kwallet-query`. La clave de API por sí sola basta para el saldo;
@@ -105,12 +105,12 @@ tales en la ventana emergente.
 
 ## Configuración
 
-| Ajuste | Valor predeterminado | Significado |
-|---|---|---|
-| Intervalo de actualización | 300 s | con qué frecuencia se consulta (mínimo 30 s) |
-| El panel muestra | Saldo | qué número aparece en el panel |
-| Período de costo | 30 días | ventana para los totales del período y el minigráfico |
-| Ocultar todos los montos | desactivado | reemplaza cada monto en pantalla por puntos |
+| Ajuste                     | Valor predeterminado | Significado                                           |
+| -------------------------- | -------------------- | ----------------------------------------------------- |
+| Intervalo de actualización | 300 s                | con qué frecuencia se consulta (mínimo 30 s)          |
+| El panel muestra           | Saldo                | qué número aparece en el panel                        |
+| Período de costo           | 30 días              | ventana para los totales del período y el minigráfico |
+| Ocultar todos los montos   | desactivado          | reemplaza cada monto en pantalla por puntos           |
 
 El desglose por clave solo muestra los **nombres** de las claves de API. El id
 de clave enmascarado que informa la plataforma nunca se muestra en ningún lugar,
@@ -128,8 +128,8 @@ sobre herramientas.
 - **neutro** — desconocido: consulta más abajo
 
 El horario está [documentado](https://api-docs.deepseek.com/quick_start/pricing)
-como *de 01:00 a 04:00 y de 06:00 a 10:00 UTC, de lunes a viernes, excepto los
-días festivos públicos de China*; todas las demás horas son fuera de hora pico,
+como _de 01:00 a 04:00 y de 06:00 a 10:00 UTC, de lunes a viernes, excepto los
+días festivos públicos de China_; todas las demás horas son fuera de hora pico,
 incluidos los fines de semana y los días festivos por completo.
 
 ### Por qué puede decir "Desconocido"
@@ -243,7 +243,7 @@ español latinoamericano) comparten el README de su idioma en lugar de repetirlo
 > traducción sin revisar es menos aceptable. Todo lo demás es un extra.
 
 La vía elegida para solucionarlo son **los propios equipos de traducción de
-KDE** (decisión D13): es la única que produce traducciones *revisadas* por
+KDE** (decisión D13): es la única que produce traducciones _revisadas_ por
 personas que realmente hablan el idioma. `Messages.sh`, en la raíz del
 repositorio, ya es el punto de entrada que esperan las herramientas de KDE, y
 `translate/README.md` enumera los pasos concretos; la principal condición previa

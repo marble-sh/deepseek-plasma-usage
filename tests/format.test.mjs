@@ -75,7 +75,7 @@ const metricValues = {
     periodCost: 2.2,
     lifetimeCost: 12.5,
     hasLifetime: true,
-    hidden: false,
+    hidden: false
 };
 
 test("metricText selects the configured panel value", () => {
@@ -142,7 +142,7 @@ const LOCALE_CASES = [
     // Unknown tags fall back to English rather than throwing.
     ["pt_PT", "1,234,567.89", "$1,234,567.89"],
     ["", "1,234,567.89", "$1,234,567.89"],
-    ["zh_Hans_CN", "1,234,567.89", "US$1,234,567.89"],
+    ["zh_Hans_CN", "1,234,567.89", "US$1,234,567.89"]
 ];
 
 test("numbers and money follow the locale", () => {
@@ -176,8 +176,9 @@ test("the compact panel form takes the locale's decimal separator", () => {
 test("days left and the panel metric take the locale too", () => {
     assert.equal(fmt.daysLeftText(2.5, 1, "en_US"), "2.5d");
     assert.equal(fmt.daysLeftText(2.5, 1, "fr_FR"), "2,5d");
-    assert.equal(fmt.metricText(fmt.METRIC_BALANCE, Object.assign({}, metricValues, { locale: "fr_FR" })),
-        "7,78\u00A0$US");
-    assert.equal(fmt.metricText(fmt.METRIC_TODAY_TOKENS, Object.assign({}, metricValues, { locale: "fr_FR" })),
-        "1,5M");
+    assert.equal(
+        fmt.metricText(fmt.METRIC_BALANCE, Object.assign({}, metricValues, { locale: "fr_FR" })),
+        "7,78\u00A0$US"
+    );
+    assert.equal(fmt.metricText(fmt.METRIC_TODAY_TOKENS, Object.assign({}, metricValues, { locale: "fr_FR" })), "1,5M");
 });

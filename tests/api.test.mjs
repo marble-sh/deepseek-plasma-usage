@@ -26,10 +26,7 @@ test("usageUrl builds the verified query", () => {
         api.usageUrl("amount", 1, 2, 0),
         "https://platform.deepseek.com/api/v0/usage/by_api_key/amount?start=1&end=2&tz=0"
     );
-    assert.equal(
-        api.summaryUrl(),
-        "https://platform.deepseek.com/api/v0/users/get_user_summary"
-    );
+    assert.equal(api.summaryUrl(), "https://platform.deepseek.com/api/v0/users/get_user_summary");
 });
 
 test("parseEnvelope: success unwraps biz_data", () => {
@@ -65,7 +62,9 @@ test("parseSummary reads wallets and lifetime cost", () => {
 });
 
 test("parseOfficialBalance handles both success and the 401 text", () => {
-    const ok = api.parseOfficialBalance('{"is_available":true,"balance_infos":[{"currency":"USD","total_balance":"7.78","granted_balance":"0.00","topped_up_balance":"7.78"}]}');
+    const ok = api.parseOfficialBalance(
+        '{"is_available":true,"balance_infos":[{"currency":"USD","total_balance":"7.78","granted_balance":"0.00","topped_up_balance":"7.78"}]}'
+    );
     assert.equal(ok.total, 7.78);
     assert.equal(ok.toppedUp, 7.78);
     assert.equal(ok.available, true);
@@ -74,28 +73,71 @@ test("parseOfficialBalance handles both success and the 401 text", () => {
 
 function costBiz() {
     return {
-        data: [{
-            currency: "USD",
-            series: [
-                { api_key: { tracking_id: "A", name: "alpha", sensitive_id: "sk-a" }, model: "m1",
-                  buckets: [{ time: 1000, cost: "1.5" }, { time: 2000, cost: "0.5" }] },
-                { api_key: { tracking_id: "B", name: "beta", sensitive_id: "sk-b" }, model: "m2",
-                  buckets: [{ time: 1000, cost: "0.25" }] }
-            ]
-        }]
+        data: [
+            {
+                currency: "USD",
+                series: [
+                    {
+                        api_key: { tracking_id: "A", name: "alpha", sensitive_id: "sk-a" },
+                        model: "m1",
+                        buckets: [
+                            { time: 1000, cost: "1.5" },
+                            { time: 2000, cost: "0.5" }
+                        ]
+                    },
+                    {
+                        api_key: { tracking_id: "B", name: "beta", sensitive_id: "sk-b" },
+                        model: "m2",
+                        buckets: [{ time: 1000, cost: "0.25" }]
+                    }
+                ]
+            }
+        ]
     };
 }
 
 function amountBiz() {
     return {
         series: [
-            { api_key: { tracking_id: "A", name: "alpha" }, model: "m1",
-              buckets: [
-                  { time: 1000, usage: { RESPONSE_TOKEN: 10, REQUEST: 1, PROMPT_CACHE_HIT_TOKEN: 100, PROMPT_CACHE_MISS_TOKEN: 20 } },
-                  { time: 2000, usage: { RESPONSE_TOKEN: 5, REQUEST: 1, PROMPT_CACHE_HIT_TOKEN: 50, PROMPT_CACHE_MISS_TOKEN: 5 } }
-              ] },
-            { api_key: { tracking_id: "B", name: "beta" }, model: "m2",
-              buckets: [{ time: 1000, usage: { RESPONSE_TOKEN: 7, REQUEST: 2, PROMPT_CACHE_HIT_TOKEN: 0, PROMPT_CACHE_MISS_TOKEN: 3 } }] }
+            {
+                api_key: { tracking_id: "A", name: "alpha" },
+                model: "m1",
+                buckets: [
+                    {
+                        time: 1000,
+                        usage: {
+                            RESPONSE_TOKEN: 10,
+                            REQUEST: 1,
+                            PROMPT_CACHE_HIT_TOKEN: 100,
+                            PROMPT_CACHE_MISS_TOKEN: 20
+                        }
+                    },
+                    {
+                        time: 2000,
+                        usage: {
+                            RESPONSE_TOKEN: 5,
+                            REQUEST: 1,
+                            PROMPT_CACHE_HIT_TOKEN: 50,
+                            PROMPT_CACHE_MISS_TOKEN: 5
+                        }
+                    }
+                ]
+            },
+            {
+                api_key: { tracking_id: "B", name: "beta" },
+                model: "m2",
+                buckets: [
+                    {
+                        time: 1000,
+                        usage: {
+                            RESPONSE_TOKEN: 7,
+                            REQUEST: 2,
+                            PROMPT_CACHE_HIT_TOKEN: 0,
+                            PROMPT_CACHE_MISS_TOKEN: 3
+                        }
+                    }
+                ]
+            }
         ]
     };
 }
@@ -242,6 +284,5 @@ test("the pipeline reproduces the platform page's own totals", () => {
 
     // The two endpoints have to agree per day, or the In/Out split would mix
     // one day's tokens with another day's cost.
-    assert.equal(agg.totals.cacheHit + agg.totals.cacheMiss + agg.totals.response,
-        api.totalTokens(agg.totals));
+    assert.equal(agg.totals.cacheHit + agg.totals.cacheMiss + agg.totals.response, api.totalTokens(agg.totals));
 });

@@ -18,7 +18,10 @@
     "Balance": "शेष राशि",
     "Today's spend": "आज का खर्च",
     "Today's tokens": "आज के टोकन",
-    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": ["पिछले %1 दिन का खर्च", "पिछले %1 दिनों का खर्च"],
+    "trailing period for a cost\u0004Spend, last %1 day\u0000Spend, last %1 days": [
+      "पिछले %1 दिन का खर्च",
+      "पिछले %1 दिनों का खर्च"
+    ],
     "Lifetime spend": "कुल खर्च",
     "Could not write to KWallet.": "KWallet में लिखा नहीं जा सका।",
     "Saved to KWallet.": "KWallet में सहेजा गया।",

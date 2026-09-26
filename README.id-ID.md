@@ -41,18 +41,18 @@ sibuk:
 ```
 
 Lalu tambahkan **DeepSeek Usage** ke panel atau desktop. Klik kanan widget →
-*Configure…* untuk menambahkan kredensial Anda.
+_Configure…_ untuk menambahkan kredensial Anda.
 
 ## Kredensial
 
 Ada dua kredensial yang berbeda, dan keduanya tidak dapat dipertukarkan.
 
-| | Kunci API | Token sesi |
-|---|---|---|
-| Cara memperolehnya | <https://platform.deepseek.com/api_keys> | nilai yang disimpan situs platform setelah Anda masuk |
-| Cakupan | akses API akun Anda | **akses akun penuh**, termasuk membuat dan menghapus kunci API |
-| Yang Anda dapatkan | hanya saldo | saldo, pengeluaran seumur hidup, dan riwayat penggunaan |
-| Disimpan sebagai | `deepseek-api-key` di KWallet | `deepseek-session-token` di KWallet |
+|                    | Kunci API                                | Token sesi                                                     |
+| ------------------ | ---------------------------------------- | -------------------------------------------------------------- |
+| Cara memperolehnya | <https://platform.deepseek.com/api_keys> | nilai yang disimpan situs platform setelah Anda masuk          |
+| Cakupan            | akses API akun Anda                      | **akses akun penuh**, termasuk membuat dan menghapus kunci API |
+| Yang Anda dapatkan | hanya saldo                              | saldo, pengeluaran seumur hidup, dan riwayat penggunaan        |
+| Disimpan sebagai   | `deepseek-api-key` di KWallet            | `deepseek-session-token` di KWallet                            |
 
 Keduanya ditulis ke KWallet (wallet `kdewallet`, folder `Plasma`) dan dibaca
 kembali dengan `kwallet-query`. Kunci API saja sudah cukup untuk saldo;
@@ -102,12 +102,12 @@ demikian di popup.
 
 ## Konfigurasi
 
-| Pengaturan | Bawaan | Arti |
-|---|---|---|
-| Interval penyegaran | 300 s | seberapa sering melakukan polling (minimum 30 s) |
-| Panel menampilkan | Saldo | angka mana yang muncul di panel |
-| Periode biaya | 30 hari | jendela untuk total periode dan sparkline |
-| Sembunyikan semua jumlah | nonaktif | ganti setiap jumlah di layar dengan titik-titik |
+| Pengaturan               | Bawaan   | Arti                                             |
+| ------------------------ | -------- | ------------------------------------------------ |
+| Interval penyegaran      | 300 s    | seberapa sering melakukan polling (minimum 30 s) |
+| Panel menampilkan        | Saldo    | angka mana yang muncul di panel                  |
+| Periode biaya            | 30 hari  | jendela untuk total periode dan sparkline        |
+| Sembunyikan semua jumlah | nonaktif | ganti setiap jumlah di layar dengan titik-titik  |
 
 Rincian per kunci hanya mencantumkan **nama** kunci API. ID kunci tersamarkan
 yang dilaporkan platform sengaja tidak pernah ditampilkan di mana pun.
@@ -123,8 +123,8 @@ status dan sisa waktu di dalamnya pada popup dan tooltip.
 - **netral** — tidak diketahui: lihat di bawah
 
 Jadwalnya [terdokumentasi](https://api-docs.deepseek.com/quick_start/pricing)
-sebagai *01:00–04:00 dan 06:00–10:00 UTC, Senin sampai Jumat, tidak termasuk
-hari libur nasional Tiongkok*; semua jam lain di luar jam sibuk, termasuk akhir
+sebagai _01:00–04:00 dan 06:00–10:00 UTC, Senin sampai Jumat, tidak termasuk
+hari libur nasional Tiongkok_; semua jam lain di luar jam sibuk, termasuk akhir
 pekan dan hari libur sepenuhnya.
 
 ### Mengapa bisa tertulis "Tidak diketahui"
@@ -235,7 +235,7 @@ bahasanya alih-alih mengulanginya.
 
 Rute yang dipilih untuk memperbaikinya adalah **tim penerjemahan KDE sendiri**
 (keputusan D13): itu satu-satunya cara yang menghasilkan terjemahan yang
-*ditinjau* oleh orang yang benar-benar menguasai bahasanya. `Messages.sh` di
+_ditinjau_ oleh orang yang benar-benar menguasai bahasanya. `Messages.sh` di
 akar repositori sudah menjadi titik masuk yang diharapkan perkakas KDE, dan
 `translate/README.md` mencantumkan langkah-langkah konkretnya — prasyarat
 utamanya adalah widget harus berada di repositori KDE sebelum tim tersebut dapat
