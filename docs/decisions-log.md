@@ -200,6 +200,43 @@ Round 8 — 2026-09-26 (accuracy audit against a real account)
   empty, so the reconciliation runs against a fixture built from the account's own
   usage page rather than a fresh fetch.
 
+---
+
+Round 9 — 2026-09-26 (number and money localisation)
+
+| # | Decision | Detail | Reasoning | Lifespan |
+|---|----------|--------|-----------|----------|
+| D36 | Numbers and money follow **CLDR per locale**, from an explicit table | `format.js` gains `NUMBER_FORMATS` (separators, grouping style, sign position and its gap) and `formatNumber`/`money` that take a locale; `Qt.locale().name` is read once in `main.qml` and passed to the three formatters. | The UI was English-formatted everywhere: `1,234,567.89`, sign always first. Everything the widget ships breaks at least one rule — `1.234.567,89` and `1 234 567,89` for separators, `12,34,567.89` for Indian grouping, `US$`/`$US`/`USD` for the sign and where it goes. Separators are locale data, not text, so they do not belong in the catalogue. | permanent |
+| D37 | The table is **transcribed from ICU and asserted locale by locale** | The provenance one-liner is in the `format.js` header; `tests/format.test.mjs` carries a 19-locale table of expected number and money strings, with the separator and gap characters as escapes. | Whether the gap is `U+202F`, `U+00A0` or a plain space is invisible in a screenshot and impossible to remember; a bad transcription has to fail the suite, not merely look odd. | permanent |
+
+### Findings recorded, not changed
+
+- **Bare `es` follows Spain, not Latin America** (ICU: `1.234.567,89 US$`), the
+  opposite of what D9 assumed when it refused to alias a bare `es` catalogue. Only
+  reachable when the locale really is plain `es`.
+- **`money()` still shows three decimals below $1** where CLDR's currency pattern
+  is two. That is now visible in the screenshots (a French per-key cost reads
+  `0,885 $US`), making it the one remaining CLDR deviation on a card-level value.
+  Left alone again deliberately: it is a product choice that avoids `$0.00` for
+  tiny amounts, not a missing separator, and changing it moves every small figure.
+- **The compact panel form keeps Latin K/M/B suffixes** (documented on
+  `compactNumber`). CLDR's compact forms have their own divisors and suffixes per
+  locale (`zh` 3亿, `hi` 29.7 क॰, `ru` 297,3 млн, `fr` 297,3 k) — a table of its
+  own for the one metric that uses it, the panel's token count.
+
+### Verified during round 9 (level 1)
+
+- A dev-only script (`docs/state/verify-format.mjs`, since deleted) compared the
+  table against `Intl` for 21 locale spellings × 4 numbers × 3 currencies:
+  **168 values, 0 mismatches**. The generic symbol list differs from ICU's English
+  names by design (RUB, SEK, PLN, HUF, ... render as the sign, not the code).
+- `format.test.mjs` pins the same expectations a locale at a time, including the
+  no-break and narrow-no-break characters as escapes.
+- Screenshots read back: `fr-FR` (`6,74 $US`, `151 220 605`), `hi-IN`
+  (`29,57,84,330`), `zh-CN` (`US$6.74`).
+- Full gauntlet green: `qmllint` 0, `node --test` 51/51, `--check` 0,
+  `./install.sh` 0.
+
 ### Verified during round 2 (live, level 1)
 
 - The in-package catalogue path works: a 3-string probe `.mo` at
