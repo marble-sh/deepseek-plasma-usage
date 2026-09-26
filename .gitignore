@@ -11,6 +11,9 @@ docs/state/
 # The reference plasmoid is untracked reference material
 NoriWeather-main/
 
+# Reference only: an external peak-hours script, deliberately not part of the widget
+deepseek-is-peak.py
+
 # Editor / OS noise
 *~
 *.swp

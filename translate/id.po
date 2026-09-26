@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 18:54-0300\n"
-"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"POT-Creation-Date: 2026-09-26 19:25-0300\n"
+"PO-Revision-Date: 2026-09-26 19:25-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: id\n"
@@ -256,12 +256,16 @@ msgid "Granted %1 · topped up %2"
 msgstr "Hibah %1 · isi ulang %2"
 
 #: contents/ui/FullRepresentation.qml
+msgid "Changes in %1"
+msgstr "Berubah dalam %1"
+
+#: contents/ui/FullRepresentation.qml
 msgid "Daily spend, %1"
 msgstr "Pengeluaran harian, %1"
 
 #: contents/ui/FullRepresentation.qml
-msgid "Peak %1"
-msgstr "Puncak %1"
+msgid "Highest %1"
+msgstr "Tertinggi %1"
 
 #: contents/ui/FullRepresentation.qml
 msgid "Tokens"
@@ -290,6 +294,16 @@ msgid_plural "Last %1 days"
 msgstr[0] "%1 hari terakhir"
 
 #: contents/ui/main.qml
+msgctxt "DeepSeek is charging full-price peak rates"
+msgid "Peak"
+msgstr "Jam puncak"
+
+#: contents/ui/main.qml
+msgctxt "DeepSeek is charging discounted off-peak rates"
+msgid "Off-peak"
+msgstr "Luar jam puncak"
+
+#: contents/ui/main.qml
 msgid "Add a DeepSeek API key in the widget settings."
 msgstr "Tambahkan kunci API DeepSeek di pengaturan widget."
 
@@ -312,6 +326,10 @@ msgstr "%1: %2"
 #: contents/ui/main.qml
 msgid "Lifetime spend: %1"
 msgstr "Pengeluaran total: %1"
+
+#: contents/ui/main.qml
+msgid "%1 · changes in %2"
+msgstr "%1 · berubah dalam %2"
 
 #: contents/ui/main.qml
 msgid "Refresh"

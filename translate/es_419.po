@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 18:54-0300\n"
-"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"POT-Creation-Date: 2026-09-26 19:25-0300\n"
+"PO-Revision-Date: 2026-09-26 19:25-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: es_419\n"
@@ -260,11 +260,15 @@ msgid "Granted %1 · topped up %2"
 msgstr "Otorgado %1 · recargado %2"
 
 #: contents/ui/FullRepresentation.qml
+msgid "Changes in %1"
+msgstr "Cambia en %1"
+
+#: contents/ui/FullRepresentation.qml
 msgid "Daily spend, %1"
 msgstr "Gasto diario, %1"
 
 #: contents/ui/FullRepresentation.qml
-msgid "Peak %1"
+msgid "Highest %1"
 msgstr "Máximo %1"
 
 #: contents/ui/FullRepresentation.qml
@@ -295,6 +299,16 @@ msgstr[0] "En %1 día"
 msgstr[1] "En %1 días"
 
 #: contents/ui/main.qml
+msgctxt "DeepSeek is charging full-price peak rates"
+msgid "Peak"
+msgstr "Horas pico"
+
+#: contents/ui/main.qml
+msgctxt "DeepSeek is charging discounted off-peak rates"
+msgid "Off-peak"
+msgstr "Fuera de pico"
+
+#: contents/ui/main.qml
 msgid "Add a DeepSeek API key in the widget settings."
 msgstr "Agrega una clave de API de DeepSeek en la configuración del widget."
 
@@ -317,6 +331,10 @@ msgstr "%1: %2"
 #: contents/ui/main.qml
 msgid "Lifetime spend: %1"
 msgstr "Gasto total: %1"
+
+#: contents/ui/main.qml
+msgid "%1 · changes in %2"
+msgstr "%1 · cambia en %2"
 
 #: contents/ui/main.qml
 msgid "Refresh"

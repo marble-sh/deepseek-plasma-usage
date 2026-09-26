@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 18:54-0300\n"
-"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"POT-Creation-Date: 2026-09-26 19:25-0300\n"
+"PO-Revision-Date: 2026-09-26 19:25-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: hi_IN\n"
@@ -259,12 +259,16 @@ msgid "Granted %1 · topped up %2"
 msgstr "अनुदान %1 · टॉप-अप %2"
 
 #: contents/ui/FullRepresentation.qml
+msgid "Changes in %1"
+msgstr "%1 में बदलेगा"
+
+#: contents/ui/FullRepresentation.qml
 msgid "Daily spend, %1"
 msgstr "दैनिक खर्च, %1"
 
 #: contents/ui/FullRepresentation.qml
-msgid "Peak %1"
-msgstr "शिखर %1"
+msgid "Highest %1"
+msgstr "उच्चतम %1"
 
 #: contents/ui/FullRepresentation.qml
 msgid "Tokens"
@@ -294,6 +298,16 @@ msgstr[0] "पिछला %1 दिन"
 msgstr[1] "पिछले %1 दिन"
 
 #: contents/ui/main.qml
+msgctxt "DeepSeek is charging full-price peak rates"
+msgid "Peak"
+msgstr "पीक समय"
+
+#: contents/ui/main.qml
+msgctxt "DeepSeek is charging discounted off-peak rates"
+msgid "Off-peak"
+msgstr "ऑफ-पीक समय"
+
+#: contents/ui/main.qml
 msgid "Add a DeepSeek API key in the widget settings."
 msgstr "विजेट सेटिंग में DeepSeek API कुंजी जोड़ें।"
 
@@ -316,6 +330,10 @@ msgstr "%1: %2"
 #: contents/ui/main.qml
 msgid "Lifetime spend: %1"
 msgstr "कुल खर्च: %1"
+
+#: contents/ui/main.qml
+msgid "%1 · changes in %2"
+msgstr "%1 · %2 में बदलेगा"
 
 #: contents/ui/main.qml
 msgid "Refresh"

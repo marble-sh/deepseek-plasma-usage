@@ -94,6 +94,35 @@ such in the popup.
 | Cost period | 30 days | window for the period totals and the sparkline |
 | Hide all amounts | off | replace every amount on screen with bullets |
 
+The per-key breakdown lists API key **names** only. The masked key id that the
+platform reports is deliberately never rendered anywhere.
+
+## Peak and off-peak pricing
+
+DeepSeek charges half price outside its peak hours, so the widget shows which
+rate is in effect: a small dot on the panel chip, and the state plus the time
+left in it in the popup.
+
+- **green** — off-peak: you are paying the discounted rate
+- **red** — peak: you are paying full price
+
+The schedule is [documented](https://api-docs.deepseek.com/quick_start/pricing)
+as *01:00–04:00 and 06:00–10:00 UTC, Monday to Friday, excluding Chinese public
+holidays*; all other hours are off-peak, including weekends and holidays in full.
+
+> [!IMPORTANT]
+> The weekday and time-of-day part of the schedule is exact. The **holiday list
+> is deliberately empty**, because the State Council announces those dates only
+> shortly before each year and can revise them during it, so there is no
+> reliable way to derive them. While the table is empty the indicator is
+> *pessimistic but never optimistic*: on a Chinese public holiday it will report
+> peak for a few hours while DeepSeek is actually charging the off-peak rate.
+> It will never claim a discount that is not there.
+>
+> To fix a given year, add the announced dates to `CHINESE_HOLIDAYS` in
+> `contents/ui/js/peak.js` as `YYYY-MM-DD` in China Standard Time. The logic is
+> already unit-tested against sample dates, so adding them is a data change.
+
 ## Development
 
 The parsing, formatting and KWallet command logic live in plain JavaScript

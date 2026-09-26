@@ -12,8 +12,10 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
+import org.kde.coreaddons as KCoreAddons
 import "js/wallet.js" as WalletJs
 import "js/format.js" as Fmt
+import "js/peak.js" as Peak
 
 PlasmoidItem {
     id: root
@@ -25,6 +27,19 @@ PlasmoidItem {
     readonly property int secretsRevision: Plasmoid.configuration.secretsRevision
 
     readonly property string periodLabel: i18ncp("trailing period for a cost", "Last %1 day", "Last %1 days", root.periodDays)
+
+    // Peak / off-peak pricing. The schedule is defined to the minute, so a clock
+    // tick keeps the state and the countdown honest between network refreshes.
+    // See js/peak.js for the rule and its documented holiday caveat.
+    property date now: new Date()
+    readonly property bool peakRates: Peak.isPeak(now.getTime())
+    readonly property string peakStateText: peakRates
+        ? i18nc("DeepSeek is charging full-price peak rates", "Peak")
+        : i18nc("DeepSeek is charging discounted off-peak rates", "Off-peak")
+    readonly property real peakRemainingMs: Peak.msUntilChange(now.getTime())
+    readonly property string peakRemainingText: peakRemainingMs === null
+        ? ""
+        : KCoreAddons.Format.formatSpelloutDuration(peakRemainingMs)
 
     // Set once the KWallet round-trip has finished, so the "needs configuring"
     // overlay does not flash on every startup.
@@ -48,6 +63,7 @@ PlasmoidItem {
         api: apiClient
         metric: root.metric
         hideAmounts: root.hideAmounts
+        peakRates: root.peakRates
 
         onToggleRequested: root.expanded = !root.expanded
     }
@@ -57,6 +73,9 @@ PlasmoidItem {
         hideAmounts: root.hideAmounts
         hasSession: apiClient.hasSession
         periodLabel: root.periodLabel
+        peakRates: root.peakRates
+        peakStateText: root.peakStateText
+        peakRemainingText: root.peakRemainingText
 
         onRefreshRequested: apiClient.refresh()
     }
@@ -84,8 +103,19 @@ PlasmoidItem {
         } else if (apiClient.platformOk) {
             lines.push(i18n("Lifetime spend: %1", root.shownMoney(apiClient.totalCost)));
         }
+        lines.push(root.peakRemainingText.length > 0
+            ? i18n("%1 · changes in %2", root.peakStateText, root.peakRemainingText)
+            : root.peakStateText);
         lines.push(i18n("Updated %1", apiClient.updatedLabel()));
         return lines.join("\n");
+    }
+
+    Timer {
+        // The peak state and its countdown are defined to the minute.
+        interval: 60000
+        repeat: true
+        running: true
+        onTriggered: root.now = new Date()
     }
 
     Plasmoid.contextualActions: [

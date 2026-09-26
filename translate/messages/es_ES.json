@@ -8,6 +8,8 @@
     "Hide all amounts": "Ocultar todos los importes",
     "Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown.": "Modo solo saldo. Añade un token de sesión de la plataforma en los ajustes para ver también el uso de tokens, el historial de gastos y el desglose por clave.",
     "Stored in KWallet — enter a new token to replace it": "Guardado en KWallet — introduce un token nuevo para reemplazarlo",
-    "Stored in KWallet — enter a new key to replace it": "Guardada en KWallet — introduce una clave nueva para reemplazarla"
+    "Stored in KWallet — enter a new key to replace it": "Guardada en KWallet — introduce una clave nueva para reemplazarla",
+    "DeepSeek is charging full-price peak rates\u0004Peak": "Horas punta",
+    "DeepSeek is charging discounted off-peak rates\u0004Off-peak": "Fuera de punta"
   }
 }

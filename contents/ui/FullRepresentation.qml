@@ -24,6 +24,12 @@ Item {
     property bool hasSession: false
     property string periodLabel: ""
 
+    // Peak / off-peak pricing state, computed centrally in main.qml so both
+    // representations and the tooltip agree.
+    property bool peakRates: false
+    property string peakStateText: ""
+    property string peakRemainingText: ""
+
     signal refreshRequested()
 
     readonly property string currency: api ? api.displayCurrency : ""
@@ -64,50 +70,58 @@ Item {
         ];
     }
 
-    // One row per metric so the table fits the popup width; a narrow label
-    // column plus two value columns.
-    readonly property var tokenRows: {
+    // Cells for ONE GridLayout rather than one layout per row. Separate per-row
+    // layouts each size their own columns from their own contents, which is why
+    // the columns did not line up.
+    readonly property var tokenCells: {
         var a = api;
         var today = a ? a.todayTotals : null;
         var period = a ? a.totals : null;
-        return [
-            {
-                label: "",
-                today: i18n("Today"),
-                period: root.periodLabel,
-                header: true
-            },
-            {
-                label: i18nc("token usage table row", "Cost"),
-                today: today ? root.money(today.cost) : root.noData,
-                period: period ? root.money(period.cost) : root.noData,
-                header: false
-            },
-            {
-                label: i18nc("token usage table row: input tokens", "In"),
-                today: today ? root.tokens(today.cacheHit + today.cacheMiss) : root.noData,
-                period: period ? root.tokens(period.cacheHit + period.cacheMiss) : root.noData,
-                header: false
-            },
-            {
-                label: i18nc("token usage table row: output tokens", "Out"),
-                today: today ? root.tokens(today.response) : root.noData,
-                period: period ? root.tokens(period.response) : root.noData,
-                header: false
-            },
-            {
-                label: i18nc("token usage table row: cache-hit tokens", "Cached"),
-                today: today ? root.tokens(today.cacheHit) : root.noData,
-                period: period ? root.tokens(period.cacheHit) : root.noData,
-                header: false
-            },
-            {
-                label: i18nc("token usage table row: request count", "Requests"),
-                today: today ? Fmt.compactNumber(today.requests) : root.noData,
-                period: period ? Fmt.compactNumber(period.requests) : root.noData,
-                header: false
-            }
+        var rows = [
+            ["", i18n("Today"), root.periodLabel],
+            [i18nc("token usage table row", "Cost"),
+                today ? root.money(today.cost) : root.noData,
+                period ? root.money(period.cost) : root.noData],
+            [i18nc("token usage table row: input tokens", "In"),
+                today ? root.tokens(today.cacheHit + today.cacheMiss) : root.noData,
+                period ? root.tokens(period.cacheHit + period.cacheMiss) : root.noData],
+            [i18nc("token usage table row: output tokens", "Out"),
+                today ? root.tokens(today.response) : root.noData,
+                period ? root.tokens(period.response) : root.noData],
+            [i18nc("token usage table row: cache-hit tokens", "Cached"),
+                today ? root.tokens(today.cacheHit) : root.noData,
+                period ? root.tokens(period.cacheHit) : root.noData],
+            [i18nc("token usage table row: request count", "Requests"),
+                today ? Fmt.compactNumber(today.requests) : root.noData,
+                period ? Fmt.compactNumber(period.requests) : root.noData]
         ];
+        var cells = [];
+        for (var r = 0; r < rows.length; r++) {
+            for (var c = 0; c < rows[r].length; c++) {
+                cells.push({ text: rows[r][c], column: c, header: r === 0 });
+            }
+        }
+        return cells;
+    }
+
+    // Same treatment for the per-key list so the figures line up down the
+    // column. Only the key's name is shown; the masked key id is deliberately
+    // not rendered anywhere.
+    readonly property var perKeyCells: {
+        var keys = api ? api.perKey : [];
+        var cells = [];
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            cells.push({ text: key.name, column: 0, bold: true, dim: false });
+            cells.push({
+                text: root.tokens(key.cacheHit + key.cacheMiss + key.response),
+                column: 1,
+                bold: false,
+                dim: true
+            });
+            cells.push({ text: root.money(key.cost), column: 2, bold: true, dim: false });
+        }
+        return cells;
     }
 
     function shown(text) {
@@ -278,6 +292,38 @@ Item {
                 }
             }
 
+            // ------------------------------------------------ peak / off-peak
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Kirigami.Units.smallSpacing
+
+                Rectangle {
+                    id: peakDot
+
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: Math.max(6, Math.round(Kirigami.Units.gridUnit * 0.4))
+                    Layout.preferredHeight: Layout.preferredWidth
+                    radius: width / 2
+                    color: root.peakRates ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.positiveTextColor
+                }
+
+                PlasmaComponents.Label {
+                    text: root.peakStateText
+                    font.bold: true
+                }
+
+                PlasmaComponents.Label {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    visible: root.peakRemainingText.length > 0
+                    text: root.peakRemainingText.length > 0
+                        ? i18n("Changes in %1", root.peakRemainingText)
+                        : ""
+                    elide: Text.ElideRight
+                    opacity: 0.7
+                }
+            }
+
             // ---------------------------------------------------- sparkline
             ColumnLayout {
                 Layout.fillWidth: true
@@ -297,7 +343,8 @@ Item {
                     }
 
                     PlasmaComponents.Label {
-                        text: i18n("Peak %1", root.money(root.peakCost))
+                        // Not "Peak": that word now means the peak-rate pricing state.
+                        text: i18n("Highest %1", root.money(root.peakCost))
                         font: Kirigami.Theme.smallFont
                         opacity: 0.7
                     }
@@ -371,45 +418,27 @@ Item {
                     font.bold: true
                 }
 
-                Repeater {
-                    model: root.tokenRows
+                // One GridLayout for the whole table, so the columns are shared
+                // between every row and therefore line up. Per-row layouts each
+                // sized their own columns, which misaligned the figures.
+                GridLayout {
+                    Layout.fillWidth: true
+                    columns: 3
+                    columnSpacing: Kirigami.Units.largeSpacing
+                    rowSpacing: Kirigami.Units.smallSpacing
 
-                    delegate: RowLayout {
-                        id: tokenRow
+                    Repeater {
+                        model: root.tokenCells
 
-                        property var row: modelData
-                        readonly property bool isHeader: tokenRow.row ? tokenRow.row.header : false
-
-                        Layout.fillWidth: true
-                        spacing: Kirigami.Units.largeSpacing
-
-                        PlasmaComponents.Label {
-                            Layout.preferredWidth: Kirigami.Units.gridUnit * 6
-                            Layout.minimumWidth: 0
-                            text: tokenRow.row ? tokenRow.row.label : ""
+                        delegate: PlasmaComponents.Label {
+                            text: modelData.text
                             elide: Text.ElideRight
-                            opacity: tokenRow.isHeader ? 0.7 : 1
-                            font: tokenRow.isHeader ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
+                            opacity: modelData.header ? 0.7 : 1
+                            font: modelData.header ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
+                            horizontalAlignment: modelData.column === 0 ? Text.AlignLeft : Text.AlignRight
                             Layout.minimumWidth: 0
-                            horizontalAlignment: Text.AlignRight
-                            text: tokenRow.row ? tokenRow.row.today : ""
-                            elide: Text.ElideRight
-                            opacity: tokenRow.isHeader ? 0.7 : 1
-                            font: tokenRow.isHeader ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            Layout.minimumWidth: 0
-                            horizontalAlignment: Text.AlignRight
-                            text: tokenRow.row ? tokenRow.row.period : ""
-                            elide: Text.ElideRight
-                            opacity: tokenRow.isHeader ? 0.7 : 1
-                            font: tokenRow.isHeader ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
+                            Layout.preferredWidth: modelData.column === 0 ? Kirigami.Units.gridUnit * 6 : -1
+                            Layout.fillWidth: modelData.column !== 0
                         }
                     }
                 }
@@ -426,48 +455,26 @@ Item {
                     font.bold: true
                 }
 
-                Repeater {
-                    model: root.api ? root.api.perKey : []
+                GridLayout {
+                    Layout.fillWidth: true
+                    columns: 3
+                    columnSpacing: Kirigami.Units.largeSpacing
+                    rowSpacing: Kirigami.Units.smallSpacing
 
-                    delegate: RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Kirigami.Units.largeSpacing
+                    Repeater {
+                        model: root.perKeyCells
 
-                        ColumnLayout {
-                            Layout.fillWidth: true
+                        delegate: PlasmaComponents.Label {
+                            text: modelData.text
+                            elide: Text.ElideRight
+                            // Only sub-properties of the font group here: assigning
+                            // the whole group (`font: ...`) and then a
+                            // sub-property is a QML error.
+                            font.bold: modelData.bold
+                            opacity: modelData.dim ? 0.55 : 1
+                            horizontalAlignment: modelData.column === 0 ? Text.AlignLeft : Text.AlignRight
                             Layout.minimumWidth: 0
-                            spacing: 0
-
-                            PlasmaComponents.Label {
-                                Layout.fillWidth: true
-                                Layout.minimumWidth: 0
-                                text: modelData.name
-                                elide: Text.ElideRight
-                                font.bold: true
-                            }
-
-                            PlasmaComponents.Label {
-                                Layout.fillWidth: true
-                                Layout.minimumWidth: 0
-                                visible: text.length > 0
-                                text: modelData.maskedId
-                                elide: Text.ElideMiddle
-                                opacity: 0.6
-                                font: Kirigami.Theme.smallFont
-                            }
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.alignment: Qt.AlignRight
-                            text: root.tokens(modelData.cacheHit + modelData.cacheMiss + modelData.response)
-                            opacity: 0.6
-                            font: Kirigami.Theme.smallFont
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.alignment: Qt.AlignRight
-                            text: root.money(modelData.cost)
-                            font.bold: true
+                            Layout.fillWidth: modelData.column === 0
                         }
                     }
                 }

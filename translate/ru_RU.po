@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 18:54-0300\n"
-"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"POT-Creation-Date: 2026-09-26 19:25-0300\n"
+"PO-Revision-Date: 2026-09-26 19:25-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: ru_RU\n"
@@ -261,11 +261,15 @@ msgid "Granted %1 · topped up %2"
 msgstr "Подарено %1 · пополнено %2"
 
 #: contents/ui/FullRepresentation.qml
+msgid "Changes in %1"
+msgstr "Изменение через %1"
+
+#: contents/ui/FullRepresentation.qml
 msgid "Daily spend, %1"
 msgstr "Расход по дням, %1"
 
 #: contents/ui/FullRepresentation.qml
-msgid "Peak %1"
+msgid "Highest %1"
 msgstr "Максимум %1"
 
 #: contents/ui/FullRepresentation.qml
@@ -297,6 +301,16 @@ msgstr[1] "за %1 дня"
 msgstr[2] "за %1 дней"
 
 #: contents/ui/main.qml
+msgctxt "DeepSeek is charging full-price peak rates"
+msgid "Peak"
+msgstr "Пиковые часы"
+
+#: contents/ui/main.qml
+msgctxt "DeepSeek is charging discounted off-peak rates"
+msgid "Off-peak"
+msgstr "Непиковые часы"
+
+#: contents/ui/main.qml
 msgid "Add a DeepSeek API key in the widget settings."
 msgstr "Добавьте ключ API DeepSeek в настройках виджета."
 
@@ -319,6 +333,10 @@ msgstr "%1: %2"
 #: contents/ui/main.qml
 msgid "Lifetime spend: %1"
 msgstr "Всего израсходовано: %1"
+
+#: contents/ui/main.qml
+msgid "%1 · changes in %2"
+msgstr "%1 · изменение через %2"
 
 #: contents/ui/main.qml
 msgid "Refresh"
