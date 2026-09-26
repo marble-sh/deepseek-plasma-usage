@@ -366,6 +366,9 @@ Item {
                     Layout.preferredHeight: Kirigami.Units.gridUnit * 2.5
 
                     property var days: root.api ? root.api.perDay : []
+                    // The requested window, so day buckets can be placed by date.
+                    property int windowStart: root.api ? root.api.windowStart : 0
+                    property int windowEnd: root.api ? root.api.windowEnd : 0
                     property color barColor: Kirigami.Theme.highlightColor
                     property color axisColor: Qt.rgba(Kirigami.Theme.textColor.r,
                                                       Kirigami.Theme.textColor.g,
@@ -373,6 +376,8 @@ Item {
                                                       0.3)
 
                     onDaysChanged: requestPaint()
+                    onWindowStartChanged: requestPaint()
+                    onWindowEndChanged: requestPaint()
                     onWidthChanged: requestPaint()
                     onHeightChanged: requestPaint()
                     onBarColorChanged: requestPaint()
@@ -390,12 +395,11 @@ Item {
                         ctx.stroke();
 
                         var list = days || [];
-                        var n = list.length;
-                        if (n === 0) {
+                        if (list.length === 0) {
                             return;
                         }
                         var max = 0;
-                        for (var i = 0; i < n; i++) {
+                        for (var i = 0; i < list.length; i++) {
                             if (list[i].cost > max) {
                                 max = list[i].cost;
                             }
@@ -404,12 +408,24 @@ Item {
                             return;
                         }
 
-                        var slot = width / n;
+                        // One slot per day of the whole period, not per day that
+                        // happens to have spend. Buckets are local midnights, so
+                        // a bucket's slot is its offset from the window start.
+                        // Spacing the bars evenly by array index instead would
+                        // draw a month of activity out of four recent days.
+                        var slots = chart.windowEnd > chart.windowStart
+                            ? Math.max(1, Math.round((chart.windowEnd - chart.windowStart) / 86400))
+                            : list.length;
+                        var slot = width / slots;
                         var barWidth = Math.max(1, slot * 0.7);
                         ctx.fillStyle = barColor;
-                        for (var j = 0; j < n; j++) {
+                        for (var j = 0; j < list.length; j++) {
+                            var index = Math.round((list[j].time - chart.windowStart) / 86400);
+                            if (index < 0 || index >= slots) {
+                                continue;
+                            }
                             var barHeight = Math.max(1, Math.round((height - 2) * (list[j].cost / max)));
-                            var x = j * slot + (slot - barWidth) / 2;
+                            var x = index * slot + (slot - barWidth) / 2;
                             ctx.fillRect(x, height - 1 - barHeight, barWidth, barHeight);
                         }
                     }

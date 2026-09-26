@@ -229,6 +229,9 @@ test("the pipeline reproduces the platform page's own totals", () => {
     assert.equal(agg.perDay.length, 4);
     for (const day of agg.perDay) {
         assert.ok(day.time >= w.start && day.time < w.end, `bucket ${day.time} outside the window`);
+        // The sparkline places a bucket in slot (time - windowStart) / 86400, so
+        // that only lands on a whole slot while buckets stay day-aligned.
+        assert.equal((day.time - w.start) % 86400, 0, `bucket ${day.time} is not day-aligned`);
     }
     assert.equal(agg.perDay[0].time, api.daysAgo(now, 4));
     assert.equal(agg.perDay[agg.perDay.length - 1].time, api.startOfToday(now));

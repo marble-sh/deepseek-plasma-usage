@@ -40,6 +40,10 @@ QtObject {
     property var perKey: []
     property var perDay: []
     property var totals: ({ cost: 0, response: 0, cacheHit: 0, cacheMiss: 0, requests: 0 })
+    // The window actually requested (Api.usageWindow). The sparkline needs it to
+    // place each day in its real slot instead of spacing buckets evenly.
+    property int windowStart: 0
+    property int windowEnd: 0
 
     // official data
     property string officialCurrency: ""
@@ -113,6 +117,8 @@ QtObject {
         var tz = Api.tzOffsetSeconds(now)
         // One place for the window, so it is unit-tested (Api.usageWindow).
         var span = Api.usageWindow(now, periodDays)
+        windowStart = span.start
+        windowEnd = span.end
         var headers = { "authorization": "Bearer " + sessionToken }
         var acc = { summary: null, cost: null, amount: null }
         var failure = ""
