@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Code scanning for the JavaScript. CodeQL is free for public repositories, and
+# the interesting surface here is small but real: shell command construction in
+# js/wallet.js, and the parsing in js/api.js that turns server responses into the
+# figures the widget displays.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly, so a newly published query still gets a look at code that has not
+    # changed since. Off the hour to avoid the queue.
+    - cron: "23 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze JavaScript
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          # security-and-quality is noisier than the default for a project with
+          # no dependencies; it also covers correctness patterns worth seeing.
+          queries: security-and-quality
+      - name: Analyse
+        uses: github/codeql-action/analyze@v4

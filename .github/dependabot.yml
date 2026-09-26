@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Only two ecosystems here, and both are small: the workflows themselves, and the
+# one devDependency (Prettier). Grouping them means one pull request a week rather
+# than one per action.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ["*"]
+    # Prettier's formatting is asserted by CI, so a major bump that changes how it
+    # formats a file will show up as a red `Prettier` check rather than quietly
+    # reformatting the repository.
+    versioning-strategy: increase
