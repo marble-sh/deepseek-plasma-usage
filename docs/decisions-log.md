@@ -107,6 +107,30 @@ Round 4 — 2026-09-26 (UI fixes)
   `Peak`, countdown), off-peak (green dot), and unknown (neutral dot, `Unknown`,
   no countdown — the value that exposed the `null`-to-`0` coercion).
 
+---
+
+Round 6 — 2026-09-26 (CI, screenshots, README translations)
+
+| # | Decision | Detail | Reasoning | Lifespan |
+|---|----------|--------|-----------|----------|
+| D25 | CI is four jobs on a stock Ubuntu runner, with **no Plasma or KDE packages** | `.github/workflows/ci.yml`: unit tests, `./translate/build.sh --check`, `qmllint`, and `./install.sh --pack` to prove the archive still builds. | Verified locally that Qt 6 `qmllint` resolves no imports (a bogus `import` still exits 0; a syntax error exits 255), so the QML job needs only `qt6-declarative-dev-tools`. The applet's logic is plain JS, so node runs it directly and every gate stays installable. | permanent |
+| D26 | The holiday-table alarm runs **on a schedule, not on push** | `.github/workflows/holiday-alarm.yml`, monthly (`17 6 1 * *`) plus `workflow_dispatch`, running only `tests/peak.test.mjs`; a failure step writes the fix into the job summary. | The alarm is time-triggered, not change-triggered. A push-only run would never fire in the window where the table has gone stale, which is the only window that matters. | permanent |
+| D27 | Screenshots are regenerated against the **dev mock**, never the live account | `PLATFORM_BASE` pointed at `tests/mock-platform-server.mjs` with a fake session token in KWallet; the popup additionally forced `preferredRepresentation: fullRepresentation`. Every edit reverted and confirmed by grepping for `TEMP-VERIFY` / `127.0.0.1:8731`. The panel chip is the compact representation, cropped from a `plasmawindowed` render. | The popup shows balances, so a live capture would publish them. In `full` mode the official endpoint is only a fallback, so pointing the platform base at the mock means the API key in KWallet is never sent anywhere. | permanent |
+| D28 | One README translation **per language**; the regional catalogue variants share it | `README.{zh-CN,hi-IN,id-ID,fr-FR,ru-RU,es-ES}.md` plus English `README.md`, each carrying the identical badge row. Badge colour = the emoji flag's dominant colour; equal-height tricolours use the first non-white band, so France and Russia are both blue. | The app ships 17 catalogues but only 7 languages, so a file per regional variant would be six near-identical copies that drift immediately. `es-ES` is written in neutral Spanish to serve `es_419` and the four Latin-American codes. | until reviewed |
+
+### Verified during round 6 (level 1)
+
+- The seven README files were checked programmatically rather than by eye: the
+extracted fenced-code regions are byte-identical to the English file's
+(`diff` empty), the identifier counts match, and every relative link target
+resolves on disk.
+- The language-navigation block is byte-identical across all seven files.
+- Both workflows parse under `yaml.safe_load`, and the CI file's four job ids are
+as documented.
+- The screenshots were captured and then **read back**: the popup shows the
+aligned `Today`/`Last 30 days` columns, `Highest $1.29`, the `Off-peak` row with
+a green dot and its countdown, and no masked key id (D19).
+
 ### Verified during round 2 (live, level 1)
 
 - The in-package catalogue path works: a 3-string probe `.mo` at

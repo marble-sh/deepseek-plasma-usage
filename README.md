@@ -1,5 +1,13 @@
 # DeepSeek Usage — a Plasma 6 widget
 
+- 🇬🇧/🇺🇸 [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
+- 🇨🇳 [![简体中文](https://img.shields.io/badge/Language-简体中文-EE1C25)](README.zh-CN.md)
+- 🇮🇳 [![हिन्दी](https://img.shields.io/badge/Language-हिन्दी-FF9933)](README.hi-IN.md)
+- 🇮🇩 [![Bahasa Indonesia](https://img.shields.io/badge/Language-Bahasa%20Indonesia-CE1126)](README.id-ID.md)
+- 🇫🇷 [![Français](https://img.shields.io/badge/Language-Français-0055A4)](README.fr-FR.md)
+- 🇷🇺 [![Русский](https://img.shields.io/badge/Language-Русский-0039A6)](README.ru-RU.md)
+- 🇪🇸 [![Español](https://img.shields.io/badge/Language-Español-F1BF00)](README.es-ES.md)
+
 A small, dependency-free KDE Plasma 6 applet that shows your DeepSeek API
 balance and usage in the panel, with a detailed popup.
 
@@ -15,7 +23,7 @@ balance and usage in the panel, with a detailed popup.
 
 ![Rich mode](docs/images/rich-mode.png)
 
-As a panel chip (icon plus the chosen number):
+As a panel chip — the icon, the number you choose, and the peak/off-peak dot:
 
 ![Panel chip](docs/images/panel-mode.png)
 
@@ -167,6 +175,21 @@ the popup (Hindi and Russian run much longer than English):
 tests/capture-locales.sh /tmp/shots zh_CN ru_RU hi_IN
 ```
 
+### Continuous integration
+
+The checks above run in CI (`.github/workflows/ci.yml`), on a stock Ubuntu
+runner and without Plasma: `node --test`, `./translate/build.sh --check`,
+a QML syntax check with `qmllint`, and `./install.sh --pack` to prove the
+distribution archive still builds. `qmllint` on Qt 6 resolves no imports, so it
+needs no KDE packages, which is what makes that job possible at all.
+
+One workflow does not run on push. `.github/workflows/holiday-alarm.yml` runs
+`tests/peak.test.mjs` on the first of every month, because that file contains a
+deliberate alarm: it fails once the Chinese-holiday table stops covering the
+current year, and the State Council only publishes the next year's dates in
+November or December. A red run there is the reminder to add the published
+blocks with `addRange()`, not a bug.
+
 ## Translations
 
 The widget ships 17 catalogues: Simplified Chinese, English (India), Hindi,
@@ -175,6 +198,12 @@ Latin-American variants), plus bare-language aliases that widen Qt's locale
 fallback. Translations live in `translate/`; see
 [`translate/README.md`](translate/README.md) for the workflow and the table
 format.
+
+This README is translated as well; the language links at the top of the page
+point at those files. They are **machine translations of this document, kept to
+one file per language** — the regional catalogue variants (`en_IN`, `ru_BY`,
+`es_419` and the four Latin-American Spanish codes) share their language's
+README rather than repeating it.
 
 ```sh
 ./translate/merge.sh          # re-extract template.pot after changing i18n() calls
