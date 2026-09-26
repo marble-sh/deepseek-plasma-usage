@@ -238,6 +238,44 @@ Round 9 — 2026-09-26 (number and money localisation)
 - Full gauntlet green: `qmllint` 0, `node --test` 51/51, `--check` 0,
   `./install.sh` 0.
 
+---
+
+Round 10 — 2026-09-26 (public repository, GitHub configuration, Prettier)
+
+| #   | Decision                                                                                                                                             | Detail                                                                                                                                                                                                                                                                  | Reasoning                                                                                                                                                                                                                                                                                                                                                                       | Lifespan                             |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| D38 | Published as **`marble-sh/deepseek-plasma-usage`**, public, wiki off                                                                                 | `gh repo create --public --source . --disable-wiki` with the description as given; topics `plasma kde plasmoid deepseek qt i18n`; GitHub detects the GPL-2.0 licence from `LICENSE`.                                                                                    | A widget this size needs an issue tracker and a place for release archives, not a wiki that would immediately go stale beside the READMEs.                                                                                                                                                                                                                                      | permanent                            |
+| D39 | `main` is protected: a PR is required, the five CI checks are required, history is linear, force pushes and deletions are refused, admins are exempt | `docs/state/protection.json`, applied with `gh api -X PUT .../branches/main/protection`. Merge commits are disabled repository-wide so the UI cannot offer a button the linear-history rule rejects, and merged branches are deleted.                                   | A solo maintainer cannot approve their own PR, so requiring an approval would block every merge; zero approvals still gets the PR workflow, the required checks and a record of the discussion. Admins stay exempt so one wedged check cannot lock the branch. `strict: false` because requiring branches to be up to date would mean a rebase per push on a project this size. | permanent                            |
+| D40 | **SemVer**, policy in `CHANGELOG.md`, guarded by a test                                                                                              | The version is in `package.json` and in `metadata.json` as `KPlugin.Version`; `tests/version.test.mjs` fails if either disagrees with the newest `CHANGELOG.md` heading. A release is an annotated tag `v<version>`.                                                    | Three copies of one fact drift apart; the guard makes them one. Plasma reads `KPlugin.Version` for the widget's About, npm and `gh release` read `package.json`, so both have to be right.                                                                                                                                                                                      | permanent                            |
+| D41 | The QML gate treats **only parse errors** as failures                                                                                                | `tests/lint-qml.sh` runs `qmllint` and, when it exits non-zero, fails only if the output contains a parse error; otherwise it says the imports could not be resolved.                                                                                                   | The runner cannot install Plasma 6 QML modules — Ubuntu 24.04 still ships Plasma 5 — and qmllint gives unresolvable imports the same exit status as a parse error. It is a syntax checker in this project's use of it anyway: with the modules present it exits 0 for these files.                                                                                              | until a Plasma 6 runner is available |
+| D42 | Prettier is a **devDependency**, not a runtime one                                                                                                   | `prettier@3.9.9` pinned; `npm run format` / `format:check`; a CI job runs `npm ci` then `npm run format:check`. `.prettierignore` excludes QML, shell and gettext (unparsable) and the byte-managed generated files. `printWidth` is 120 and `proseWrap` is `preserve`. | The widget still ships with no runtime dependencies; this is tooling. The generated gettext files must not be rewritten or `translate/build.sh --check` would fail. See the `CONTRIBUTING.md` diff for the two odd-looking options.                                                                                                                                             | permanent                            |
+
+### Correction (recorded, not hidden)
+
+D25 claimed the `qmllint` CI job needed no KDE packages because _"qmllint on Qt 6
+resolves no imports"_. That was tested against the Qt 6.11 installed here and does
+not hold for the Qt 6.4 that Ubuntu 24.04 ships: it reports the unresolvable
+`org.kde.*` imports as warnings and exits non-zero, the same status as a parse
+error, so the first CI run failed for a reason that was not a defect. The claim was
+wrong, not merely incomplete, and D41 is what replaces it.
+
+### Verified during round 10 (level 1)
+
+- The repository exists and the first push landed: `main` at `3402632`, five check
+  runs green (`Unit tests (node)`, `Prettier`, `Translations up to date`,
+  `QML syntax`, `Pack the plasmoid`).
+- The first run **failed** on `QML syntax` and was read rather than re-run: the log
+  showed `Failed to import org.kde.plasma.configuration` and exit 255. That is what
+  produced D41 and the correction above; the second run is green.
+- `gh repo view` reports `visibility: PUBLIC`, `has_wiki: false`,
+  `licenseInfo: gpl-2.0`; the six topics are set; `mergeCommitAllowed` is false
+  while squash and rebase remain enabled.
+- The protection is read back from the API: five required contexts, zero required
+  approvals and a PR requirement both present, `required_linear_history` true,
+  force pushes and deletions false, admins not enforced.
+- Locally: `npm test` 54/54, `translate/build.sh --check` 0, `prettier --check`
+  clean, `tests/lint-qml.sh` exits 0 on this Plasma 6 machine.
+
 ### Verified during round 2 (live, level 1)
 
 - The in-package catalogue path works: a 3-string probe `.mo` at
