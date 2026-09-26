@@ -77,6 +77,25 @@ function daysAgo(now, days) {
     return Math.floor(d.getTime() / 1000);
 }
 
+// Query window for the two usage endpoints: `periodDays` local days ending with
+// today. `start` is inclusive, `end` is exclusive (tomorrow's local midnight),
+// so the two are exactly periodDays * 86400 apart and the bucket at `start` is
+// the oldest day included.
+//
+// The recorded live probe (docs/state/api-contract.md) asked for
+// [2026-08-28T00:00-03:00, 2026-09-27T00:00-03:00) on 2026-09-26, which is
+// daysAgo(29) to tomorrow -- the window the platform's own page labels
+// "Last 30 days". Subtracting the whole period instead would ask for 31 days and
+// silently inflate every period total by one day's spend.
+function usageWindow(now, periodDays) {
+    var days = toNumber(periodDays);
+    if (!isFinite(days) || days < 1) {
+        days = 1;
+    }
+    days = Math.floor(days);
+    return { start: daysAgo(now, days - 1), end: startOfToday(now) + 86400 };
+}
+
 /* ---------------------------------------------------------- parse helpers */
 
 function toNumber(value) {

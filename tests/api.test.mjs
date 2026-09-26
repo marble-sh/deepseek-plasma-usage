@@ -5,6 +5,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { load } from "./load.mjs";
 
+/*
+    The recorded live probe this suite pins (docs/state/api-contract.md) was
+    taken on a GMT-3 machine, and the platform's day buckets are local
+    midnights, so pin the zone. Without it the window assertions would depend on
+    the CI runner's zone, which is UTC. `node --test` runs each file in its own
+    process, so this cannot leak into the other suites.
+*/
+process.env.TZ = "Etc/GMT+3";
+
 const api = load("contents/ui/js/api.js");
 
 test("usageUrl builds the verified query", () => {
@@ -139,4 +148,48 @@ test("time helpers agree with the local timezone", () => {
     assert.ok(api.daysAgo(now, 30) < today);
     assert.ok(api.startOfMonth(now) <= today);
     assert.equal(api.startOfMonth(now), new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000);
+});
+
+test("usageWindow asks for exactly the requested number of local days", () => {
+    const now = new Date("2026-09-26T18:12:43-03:00");
+    const w = api.usageWindow(now, 30);
+
+    // The whole point: `end` is tomorrow's local midnight, so a 30-day window
+    // starts 29 days back and spans 30 * 86400. Starting 30 days back would
+    // span 31 days and fold one extra day into every period total.
+    assert.equal(w.end - w.start, 30 * 86400);
+    assert.equal(w.start, api.daysAgo(now, 29));
+    assert.equal(w.end, api.startOfToday(now) + 86400);
+});
+
+// The window the platform's own usage page labels "Last 30 days": the exact
+// query recorded in docs/state/api-contract.md and asserted by the first test.
+// This is the case that was wrong before -- daysAgo(30) gave 1787799600
+// (2026-08-27), one day early, i.e. a 31-day window.
+test("usageWindow reproduces the recorded live probe", () => {
+    const now = new Date("2026-09-26T18:12:43-03:00");
+    const w = api.usageWindow(now, 30);
+
+    assert.equal(w.start, 1787886000); // 2026-08-28T00:00-03:00
+    assert.equal(w.end, 1790478000); // 2026-09-27T00:00-03:00
+    assert.equal(
+        api.usageUrl("cost", w.start, w.end, api.tzOffsetSeconds(now)),
+        "https://platform.deepseek.com/api/v0/usage/by_api_key/cost?start=1787886000&end=1790478000&tz=-10800"
+    );
+});
+
+test("usageWindow stays one day wide for a one-day period or bad input", () => {
+    const now = new Date("2026-09-26T18:12:43-03:00");
+
+    const one = api.usageWindow(now, 1);
+    assert.equal(one.start, api.startOfToday(now));
+    assert.equal(one.end - one.start, 86400);
+
+    for (const bad of [0, -5, undefined, null, NaN, "nonsense"]) {
+        const w = api.usageWindow(now, bad);
+        assert.equal(w.end - w.start, 86400, `periodDays=${String(bad)}`);
+    }
+
+    // A fractional period is floored rather than allowed to skew the window.
+    assert.equal(api.usageWindow(now, 30.9).end - api.usageWindow(now, 30.9).start, 30 * 86400);
 });

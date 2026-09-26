@@ -111,8 +111,8 @@ QtObject {
     function _refreshPlatform() {
         var now = new Date()
         var tz = Api.tzOffsetSeconds(now)
-        var start = Api.daysAgo(now, Math.max(1, periodDays))
-        var end = Api.startOfToday(now) + 86400
+        // One place for the window, so it is unit-tested (Api.usageWindow).
+        var span = Api.usageWindow(now, periodDays)
         var headers = { "authorization": "Bearer " + sessionToken }
         var acc = { summary: null, cost: null, amount: null }
         var failure = ""
@@ -170,7 +170,7 @@ QtObject {
             step()
         })
 
-        _get(Api.usageUrl("cost", start, end, tz), headers, function (err, text) {
+        _get(Api.usageUrl("cost", span.start, span.end, tz), headers, function (err, text) {
             if (err) {
                 failure = failure || err
             } else {
@@ -184,7 +184,7 @@ QtObject {
             step()
         })
 
-        _get(Api.usageUrl("amount", start, end, tz), headers, function (err, text) {
+        _get(Api.usageUrl("amount", span.start, span.end, tz), headers, function (err, text) {
             if (err) {
                 failure = failure || err
             } else {
