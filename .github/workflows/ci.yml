@@ -27,8 +27,8 @@ jobs:
     name: Unit tests (node)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Test the pure JS modules
@@ -38,8 +38,8 @@ jobs:
     name: Prettier
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -54,8 +54,8 @@ jobs:
     name: Translations up to date
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Install gettext
@@ -72,22 +72,26 @@ jobs:
     name: QML syntax
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install qmllint
         run: |
           sudo apt-get update
           sudo apt-get install -y qt6-declarative-dev-tools
           # The binary lands here, which is not on PATH by default.
           echo "/usr/lib/qt6/bin" >> "$GITHUB_PATH"
+      # Ubuntu 24.04 ships Plasma 5, so the org.kde.* QML modules this applet
+      # imports are not installable next to Qt 6, and qmllint folds "Failed to
+      # import" into the same non-zero exit as a parse error. The script narrows
+      # that to parse errors; a Plasma 6 machine exits 0 there anyway.
       - name: Lint the QML
-        run: qmllint contents/ui/*.qml contents/config/config.qml
+        run: tests/lint-qml.sh
 
   package:
     name: Pack the plasmoid
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Install gettext
