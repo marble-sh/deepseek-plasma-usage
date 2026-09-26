@@ -32,14 +32,27 @@ PlasmoidItem {
     // tick keeps the state and the countdown honest between network refreshes.
     // See js/peak.js for the rule and its documented holiday caveat.
     property date now: new Date()
-    readonly property bool peakRates: Peak.isPeak(now.getTime())
-    readonly property string peakStateText: peakRates
-        ? i18nc("DeepSeek is charging full-price peak rates", "Peak")
-        : i18nc("DeepSeek is charging discounted off-peak rates", "Off-peak")
-    readonly property real peakRemainingMs: Peak.msUntilChange(now.getTime())
-    readonly property string peakRemainingText: peakRemainingMs === null
-        ? ""
-        : KCoreAddons.Format.formatSpelloutDuration(peakRemainingMs)
+    readonly property string peakState: Peak.state(now.getTime())
+    readonly property bool peakRates: peakState === Peak.PEAK
+    // False when the holiday list for this year has not been published or added
+    // yet. Reporting that beats reporting a wrong rate.
+    readonly property bool peakKnown: peakState !== Peak.UNKNOWN
+    readonly property string peakStateText: {
+        switch (peakState) {
+        case Peak.PEAK:
+            return i18nc("DeepSeek is charging full-price peak rates", "Peak");
+        case Peak.OFF_PEAK:
+            return i18nc("DeepSeek is charging discounted off-peak rates", "Off-peak");
+        default:
+            return i18nc("DeepSeek's peak or off-peak rate cannot be determined", "Unknown");
+        }
+    }
+    // Computed in one block on purpose: a `real` property would coerce a null
+    // result to 0 and then render as "0 seconds" instead of no countdown.
+    readonly property string peakRemainingText: {
+        var remaining = Peak.msUntilChange(now.getTime());
+        return remaining === null ? "" : KCoreAddons.Format.formatSpelloutDuration(remaining);
+    }
 
     // Set once the KWallet round-trip has finished, so the "needs configuring"
     // overlay does not flash on every startup.
@@ -64,6 +77,7 @@ PlasmoidItem {
         metric: root.metric
         hideAmounts: root.hideAmounts
         peakRates: root.peakRates
+        peakKnown: root.peakKnown
 
         onToggleRequested: root.expanded = !root.expanded
     }
@@ -74,6 +88,7 @@ PlasmoidItem {
         hasSession: apiClient.hasSession
         periodLabel: root.periodLabel
         peakRates: root.peakRates
+        peakKnown: root.peakKnown
         peakStateText: root.peakStateText
         peakRemainingText: root.peakRemainingText
 

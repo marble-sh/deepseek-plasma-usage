@@ -27,6 +27,7 @@ Item {
     // Peak / off-peak pricing state, computed centrally in main.qml so both
     // representations and the tooltip agree.
     property bool peakRates: false
+    property bool peakKnown: true
     property string peakStateText: ""
     property string peakRemainingText: ""
 
@@ -304,7 +305,9 @@ Item {
                     Layout.preferredWidth: Math.max(6, Math.round(Kirigami.Units.gridUnit * 0.4))
                     Layout.preferredHeight: Layout.preferredWidth
                     radius: width / 2
-                    color: root.peakRates ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.positiveTextColor
+                    color: !root.peakKnown
+                        ? Kirigami.Theme.neutralTextColor
+                        : root.peakRates ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.positiveTextColor
                 }
 
                 PlasmaComponents.Label {

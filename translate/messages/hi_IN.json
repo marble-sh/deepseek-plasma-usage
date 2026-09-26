@@ -73,6 +73,7 @@
     "Today: %1": "आज: %1",
     "%1: %2": "%1: %2",
     "Lifetime spend: %1": "कुल खर्च: %1",
-    "Refresh": "रीफ़्रेश"
+    "Refresh": "रीफ़्रेश",
+    "DeepSeek's peak or off-peak rate cannot be determined\u0004Unknown": "अज्ञात"
   }
 }

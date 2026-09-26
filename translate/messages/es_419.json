@@ -73,6 +73,7 @@
     "Today: %1": "Hoy: %1",
     "%1: %2": "%1: %2",
     "Lifetime spend: %1": "Gasto total: %1",
-    "Refresh": "Actualizar"
+    "Refresh": "Actualizar",
+    "DeepSeek's peak or off-peak rate cannot be determined\u0004Unknown": "Desconocido"
   }
 }

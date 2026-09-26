@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 19:25-0300\n"
+"POT-Creation-Date: 2026-09-26 19:34-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -299,6 +299,11 @@ msgstr ""
 #: contents/ui/main.qml
 msgctxt "DeepSeek is charging discounted off-peak rates"
 msgid "Off-peak"
+msgstr ""
+
+#: contents/ui/main.qml
+msgctxt "DeepSeek's peak or off-peak rate cannot be determined"
+msgid "Unknown"
 msgstr ""
 
 #: contents/ui/main.qml

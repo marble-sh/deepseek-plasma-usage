@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 19:25-0300\n"
-"PO-Revision-Date: 2026-09-26 19:25-0300\n"
+"POT-Creation-Date: 2026-09-26 19:34-0300\n"
+"PO-Revision-Date: 2026-09-26 19:34-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: hi_IN\n"
@@ -306,6 +306,11 @@ msgstr "पीक समय"
 msgctxt "DeepSeek is charging discounted off-peak rates"
 msgid "Off-peak"
 msgstr "ऑफ-पीक समय"
+
+#: contents/ui/main.qml
+msgctxt "DeepSeek's peak or off-peak rate cannot be determined"
+msgid "Unknown"
+msgstr "अज्ञात"
 
 #: contents/ui/main.qml
 msgid "Add a DeepSeek API key in the widget settings."

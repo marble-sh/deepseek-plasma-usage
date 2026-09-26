@@ -101,27 +101,44 @@ platform reports is deliberately never rendered anywhere.
 
 DeepSeek charges half price outside its peak hours, so the widget shows which
 rate is in effect: a small dot on the panel chip, and the state plus the time
-left in it in the popup.
+left in it in the popup and tooltip.
 
 - **green** — off-peak: you are paying the discounted rate
 - **red** — peak: you are paying full price
+- **neutral** — unknown: see below
 
 The schedule is [documented](https://api-docs.deepseek.com/quick_start/pricing)
 as *01:00–04:00 and 06:00–10:00 UTC, Monday to Friday, excluding Chinese public
 holidays*; all other hours are off-peak, including weekends and holidays in full.
 
-> [!IMPORTANT]
-> The weekday and time-of-day part of the schedule is exact. The **holiday list
-> is deliberately empty**, because the State Council announces those dates only
-> shortly before each year and can revise them during it, so there is no
-> reliable way to derive them. While the table is empty the indicator is
-> *pessimistic but never optimistic*: on a Chinese public holiday it will report
-> peak for a few hours while DeepSeek is actually charging the off-peak rate.
-> It will never claim a discount that is not there.
->
-> To fix a given year, add the announced dates to `CHINESE_HOLIDAYS` in
-> `contents/ui/js/peak.js` as `YYYY-MM-DD` in China Standard Time. The logic is
-> already unit-tested against sample dates, so adding them is a data change.
+### Why it can say "Unknown"
+
+The weekday and time-of-day part of that rule is exact and always applies. The
+holiday exception is different: the State Council publishes the following year's
+dates only in November or December and can revise them, so it is data that has to
+be maintained by hand and cannot be derived.
+
+The widget therefore will not guess. `CHINESE_HOLIDAYS` in
+`contents/ui/js/peak.js` holds the published schedule, block by block, for the
+years that have been announced:
+
+```js
+addRange("2026-10-01", "2026-10-07"); // National Day
+```
+
+When asked about a year the table does not cover, the state is reported as
+**Unknown** rather than assuming those days are ordinary working days — assuming
+that would report peak while DeepSeek was charging the off-peak rate. Estimated
+dates must not be added either, for the same reason in the other direction: a
+wrong entry would claim a discount that does not exist.
+
+### Keeping it current
+
+`node --test tests/peak.test.mjs` includes a deliberate maintenance alarm: it
+**fails once the table no longer covers the current year**, and also fails if any
+covered year looks half-filled. Add the newly published year with `addRange()`
+and the tests go green again. Announced in November/December for the following
+year, so that is the once-a-year chore.
 
 ## Development
 

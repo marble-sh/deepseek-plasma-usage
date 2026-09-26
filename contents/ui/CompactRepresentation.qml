@@ -21,6 +21,7 @@ Item {
     property int metric: Fmt.METRIC_BALANCE
     property bool hideAmounts: false
     property bool peakRates: false
+    property bool peakKnown: true
 
     signal toggleRequested()
 
@@ -81,14 +82,17 @@ Item {
         }
 
         // Peak-rate state at a glance: green means the discounted off-peak rate
-        // is in effect, red means full-price peak hours. The tooltip spells it
-        // out, including how long the current state lasts.
+        // is in effect, red means full-price peak hours, and a muted dot means
+        // the year's holiday list is not known so no claim is made either way.
+        // The tooltip spells out the state and how long it lasts.
         Rectangle {
             Layout.alignment: Qt.AlignCenter
             Layout.preferredWidth: Math.max(6, Math.round(Kirigami.Units.gridUnit * 0.4))
             Layout.preferredHeight: Layout.preferredWidth
             radius: width / 2
-            color: root.peakRates ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.positiveTextColor
+            color: !root.peakKnown
+                ? Kirigami.Theme.neutralTextColor
+                : root.peakRates ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.positiveTextColor
         }
     }
 }

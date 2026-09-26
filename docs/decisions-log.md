@@ -68,8 +68,12 @@ Round 4 — 2026-09-26 (UI fixes)
 | D15 | The token and per-key tables use **one `GridLayout`**, never a layout per row | Cells are emitted as a flat list (`tokenCells`, `perKeyCells`) and placed by a single grid. | A per-row layout sizes its own columns from its own contents, so no two rows agreed on where a column ended — which is exactly the misalignment reported. A grid shares columns between rows. | permanent |
 | D16 | Peak / off-peak **rate indicator** | Green/red dot on the panel chip; state plus time left in the popup and tooltip. Logic in new pure module `contents/ui/js/peak.js`, 10 unit tests. | The rate halves off-peak, so this is the one number that changes what the widget's figures *mean*. | permanent |
 | D17 | The duration string comes from **`KCoreAddons.Format.formatSpelloutDuration`** | Not `formatDuration`, and not new i18n strings. | `formatDuration` returns a clock (`26:33:05`), which reads as a time of day for spans over 24 h. The spellout form keeps the two most significant units (`3 hours and 15 minutes`, `1 day and 2 hours`) and is localized by KDE's own translations, so it costs no new strings. | permanent |
-| D18 | The Chinese-holiday table ships **empty** and the limitation is documented loudly | `CHINESE_HOLIDAYS` in `js/peak.js`; README explains the failure mode and how to fill it. | The State Council publishes the dates ~a month before each year and can revise them, and DeepSeek's pricing page states the rule without listing them. Shipping a stale 2025 list would be dead data that *looks* current; an empty table errs pessimistic and never claims a discount that is not there. | until the dates are published |
+| D18 | The Chinese-holiday table holds the **published schedule** (2026) and the widget reports **Unknown** rather than guessing | `CHINESE_HOLIDAYS` filled block-by-block with `addRange()` from the announced 2026 schedule; `state()` is tri-valued (`peak`/`offPeak`/`unknown`) and returns `unknown` when the table does not cover the year. Estimated future years are deliberately **not** added. | Revised from "ship an empty table": an empty table is *wrong* (not merely cautious) on the ~29 holiday days a year, and the user asked for accuracy. Guessing in either direction is a wrong answer, so the honest third state has to exist. | permanent |
 | D19 | The per-key breakdown shows **only key names**, never the key id | The masked `sensitive_id` is no longer rendered. It is kept in the parsed data model (it is a grouping fallback in `api.js` and is asserted by tests). | User request: the masked id is not worth showing and it is still a fragment of a credential. | permanent |
+| D20 | Evidence for the 2026 dates, and the block interpretation | Taken from publicholidays.cn, which cites the gov.cn release and flags 2027/2028 as *estimates*; only the fully-announced year was used. Each holiday's whole published **block** is listed (e.g. National Day 1–7 October), not just its statutory days. | DeepSeek is a Chinese company excluding its national holidays, the blocks are what the State Council publishes, and the user's own reference script used the same blocks. The reference script's 2025 list could not be verified from the same source, so it was not copied in — unused data that might be wrong is worse than absent data. | permanent |
+| D21 | The scan horizon is **14 days**, not 8 | `SCAN_HORIZON_DAYS`; a test pins the Spring Festival case. | A holiday block can hold the schedule steady for over ten days (13 Feb 10:00 UTC → 24 Feb 01:00 UTC in 2026), so a 7- or 8-day horizon would have silently dropped the countdown every Spring Festival. | permanent |
+| D22 | Two bugs found by rendering the new states, both fixed | (a) `readonly property real peakRemainingMs` coerces a JS `null` to `0`, so the unknown state rendered "Changes in 0 seconds" — the value is now kept in a JS block and the intermediate property is gone. (b) The 8-day horizon above. | Neither was reachable before the tri-state and the holiday data existed, which is exactly why they were rendered rather than assumed. | permanent |
+| D23 | A test is used as the **maintenance alarm** for the holiday data | `the holiday table covers the current year` and `every covered year looks complete rather than half-filled` in `tests/peak.test.mjs`. | Accuracy has to be enforced by something that runs, not by a README line. The suite goes red as soon as the year rolls over, which is when the dates need adding anyway. | permanent |
 
 ### Verified during round 4 (level 1)
 
@@ -92,6 +96,15 @@ Round 4 — 2026-09-26 (UI fixes)
   itself wrong at first — it asserted that the China-date conversion changes the
   answer, and checking that revealed it cannot, because both peak windows end
   before 16:00 UTC. The test now checks the conversion directly and says why.
+
+### Verified during round 5 (level 1)
+
+- `node --test` → **41/41** (26 api/format/wallet + 15 peak); `qmllint` → 0;
+  `./translate/build.sh --check` → 0 (17 catalogues × 74 strings);
+  `./install.sh` → 0. Re-run after the final documentation edit.
+- The three states were **rendered on-device** rather than assumed: peak (red dot,
+  `Peak`, countdown), off-peak (green dot), and unknown (neutral dot, `Unknown`,
+  no countdown — the value that exposed the `null`-to-`0` coercion).
 
 ### Verified during round 2 (live, level 1)
 

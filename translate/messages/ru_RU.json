@@ -73,6 +73,7 @@
     "Today: %1": "Сегодня: %1",
     "%1: %2": "%1: %2",
     "Lifetime spend: %1": "Всего израсходовано: %1",
-    "Refresh": "Обновить"
+    "Refresh": "Обновить",
+    "DeepSeek's peak or off-peak rate cannot be determined\u0004Unknown": "Неизвестно"
   }
 }
