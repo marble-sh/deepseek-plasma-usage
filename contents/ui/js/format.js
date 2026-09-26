@@ -69,6 +69,26 @@ function tokens(value) {
     return compactNumber(value);
 }
 
+// Exact count with thousands separators: 297270684 -> "297,270,684". Used in
+// the popup, where the point is to be checkable against the platform's own
+// figures; compactNumber() stays for the panel, where space is tight.
+function grouped(value) {
+    var n = toNumber(value);
+    if (isNaN(n)) {
+        return "\u2014";
+    }
+    var rounded = Math.round(n);
+    var digits = String(Math.abs(rounded));
+    var out = "";
+    for (var i = 0; i < digits.length; i++) {
+        if (i > 0 && (digits.length - i) % 3 === 0) {
+            out += ",";
+        }
+        out += digits.charAt(i);
+    }
+    return (rounded < 0 ? "-" : "") + out;
+}
+
 // Balance divided by an average daily spend; null when burn is not positive.
 function daysLeft(balance, burnPerDay) {
     var b = toNumber(balance);

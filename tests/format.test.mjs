@@ -89,3 +89,20 @@ test("metricText honours privacy mode", () => {
     assert.equal(fmt.metricText(fmt.METRIC_BALANCE, hidden), "\u2022\u2022\u2022");
     assert.equal(fmt.metricText(fmt.METRIC_TODAY_TOKENS, hidden), "\u2022\u2022\u2022");
 });
+
+// The popup shows exact counts so its figures can be reconciled with the
+// platform's own page; compactNumber() remains the panel's form.
+test("grouped renders exact counts with thousands separators", () => {
+    assert.equal(fmt.grouped(0), "0");
+    assert.equal(fmt.grouped(7), "7");
+    assert.equal(fmt.grouped(999), "999");
+    assert.equal(fmt.grouped(1000), "1,000");
+    assert.equal(fmt.grouped(1325), "1,325");
+    assert.equal(fmt.grouped(297270684), "297,270,684");
+    assert.equal(fmt.grouped(1234567890123), "1,234,567,890,123");
+    assert.equal(fmt.grouped(1234.6), "1,235"); // rounds, never truncates
+    assert.equal(fmt.grouped("-1234"), "-1,234");
+    assert.equal(fmt.grouped("297270684"), "297,270,684"); // API values are strings
+    assert.equal(fmt.grouped(NaN), "\u2014");
+    assert.equal(fmt.grouped("nonsense"), "\u2014");
+});

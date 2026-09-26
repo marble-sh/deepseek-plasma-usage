@@ -93,8 +93,8 @@ Item {
                 today ? root.tokens(today.cacheHit) : root.noData,
                 period ? root.tokens(period.cacheHit) : root.noData],
             [i18nc("token usage table row: request count", "Requests"),
-                today ? Fmt.compactNumber(today.requests) : root.noData,
-                period ? Fmt.compactNumber(period.requests) : root.noData]
+                today ? root.count(today.requests) : root.noData,
+                period ? root.count(period.requests) : root.noData]
         ];
         var cells = [];
         for (var r = 0; r < rows.length; r++) {
@@ -133,8 +133,14 @@ Item {
         return shown(Fmt.money(value, root.currency));
     }
 
+    // Exact, grouped counts in the popup, so the figures can be checked against
+    // the platform's own. The panel chip keeps Fmt.tokens' compact form.
     function tokens(value) {
-        return shown(Fmt.tokens(value));
+        return shown(Fmt.grouped(value));
+    }
+
+    function count(value) {
+        return shown(Fmt.grouped(value));
     }
 
     implicitWidth: Kirigami.Units.gridUnit * 24
