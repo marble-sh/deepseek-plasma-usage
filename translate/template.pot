@@ -1,0 +1,316 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the deepseek-usage package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: deepseek-usage\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-26 18:54-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: contents/config/config.qml contents/ui/ConfigGeneral.qml
+msgid "General"
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "Add a DeepSeek API key or session token in the widget settings."
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "Could not read the balance — check the API key."
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "The session token was rejected."
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "HTTP error %1"
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "Request timed out"
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "Network error"
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "never"
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgid "just now"
+msgstr ""
+
+#: contents/ui/ApiClient.qml
+msgctxt "minutes ago"
+msgid "%1 minute ago"
+msgid_plural "%1 minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: contents/ui/ApiClient.qml
+msgctxt "hours ago"
+msgid "%1 hour ago"
+msgid_plural "%1 hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Set up"
+msgstr ""
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Error"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Enter a value first."
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Balance"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's spend"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's tokens"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "trailing period for a cost"
+msgid "Spend, last %1 day"
+msgid_plural "Spend, last %1 days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Lifetime spend"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Could not write to KWallet."
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Saved to KWallet."
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Credentials"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Both values are stored in KWallet and never in the widget's configuration file."
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key:"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new key to replace it"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "sk-…"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "store the entered credential in KWallet"
+msgid "Save"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "discard the stored credential"
+msgid "Clear"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key status:"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Not set"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token (optional)"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. "
+"Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance."
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token:"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new token to replace it"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Paste the token from platform.deepseek.com"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session status:"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Presentation"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Panel shows:"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Refresh interval (seconds):"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Cost period (days):"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Privacy:"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Hide all amounts"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Today"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Estimated days left"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row"
+msgid "Cost"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: input tokens"
+msgid "In"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: output tokens"
+msgid "Out"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: cache-hit tokens"
+msgid "Cached"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: request count"
+msgid "Requests"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "DeepSeek Usage"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "Updated %1"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Refresh now"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Includes %1 bonus credit"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Granted %1 · topped up %2"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Daily spend, %1"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Peak %1"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Tokens"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Per API key"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown."
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml
+msgid "Costs and the days-left estimate are derived from the platform usage API, which is undocumented and may change without notice."
+msgstr ""
+
+#: contents/ui/main.qml
+msgctxt "trailing period for a cost"
+msgid "Last %1 day"
+msgid_plural "Last %1 days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: contents/ui/main.qml
+msgid "Add a DeepSeek API key in the widget settings."
+msgstr ""
+
+#: contents/ui/main.qml
+msgid "Loading…"
+msgstr ""
+
+#: contents/ui/main.qml
+msgid "Balance: %1"
+msgstr ""
+
+#: contents/ui/main.qml
+msgid "Today: %1"
+msgstr ""
+
+#: contents/ui/main.qml
+msgid "%1: %2"
+msgstr ""
+
+#: contents/ui/main.qml
+msgid "Lifetime spend: %1"
+msgstr ""
+
+#: contents/ui/main.qml
+msgid "Refresh"
+msgstr ""

@@ -1,0 +1,22 @@
+# Configuration for the Transifex CLI (https://www.transifex.com).
+#
+# NOT used by the build. Checked in so that handing the catalogue to Transifex is
+# a few minutes of work; see translate/README.md for the caveats, including the
+# fact that this has never been run against a real Transifex project.
+#
+#   tx push -s           # upload translate/template.pot
+#   tx pull -a           # download every language into translate/<lang>.po
+#
+# Transifex states that it is free forever for projects whose source is public,
+# OSI-licensed and has no funding, revenue or commercialisation model.
+# Replace `ORG` with the organisation slug before use.
+
+[o:ORG:p:deepseek-usage:r:widget]
+source_file = translate/template.pot
+source_lang = en
+type = PO
+# <lang> is Transifex's language code, which for most of ours matches the repo
+# (zh_CN, hi_IN, id_ID, fr_FR, ru_RU, es_ES, es_AR, es_CL, es_MX). Verify the
+# regional variants after the first `tx pull -a` and rename if Transifex spells
+# one differently (es_CU and ru_BY are the likely candidates).
+file_filter = translate/<lang>.po

@@ -114,6 +114,34 @@ Static checks for the QML side:
 qmllint contents/ui/*.qml contents/config/config.qml
 ```
 
+Rendering the applet once per locale, to spot mojibake or text that overflows
+the popup (Hindi and Russian run much longer than English):
+
+```sh
+tests/capture-locales.sh /tmp/shots zh_CN ru_RU hi_IN
+```
+
+## Translations
+
+The widget ships 17 catalogues: Simplified Chinese, English (India), Hindi,
+Indonesian, French, Russian (Russia and Belarus), Spanish (Spain and four
+Latin-American variants), plus bare-language aliases that widen Qt's locale
+fallback. Translations live in `translate/`; see
+[`translate/README.md`](translate/README.md) for the workflow and the table
+format.
+
+```sh
+./translate/merge.sh          # re-extract template.pot after changing i18n() calls
+./translate/build.sh          # regenerate .po and compile .mo
+./translate/build.sh --check  # CI: fail if any catalogue is out of date
+```
+
+> [!NOTE]
+> **Every catalogue is machine-generated and unreviewed by a native speaker.**
+> It is a solid starting point, not finished translation. `translate/` also
+> ships ready-made Crowdin and Transifex configs for handing the work to real
+> translators, and explains which platform is the best fit.
+
 ## License
 
 GPL-2.0-or-later. See `LICENSE`.

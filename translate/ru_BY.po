@@ -1,0 +1,325 @@
+# Russian translation of the DeepSeek Usage plasmoid.
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Unreviewed: generated without a native-speaker pass (see translate/README.md).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: deepseek-usage\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-26 18:54-0300\n"
+"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"Last-Translator: Unreviewed machine translation\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ru_BY\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: translate/generate.mjs\n"
+#: contents/config/config.qml contents/ui/ConfigGeneral.qml
+msgid "General"
+msgstr "Общие"
+
+#: contents/ui/ApiClient.qml
+msgid "Add a DeepSeek API key or session token in the widget settings."
+msgstr "Добавьте ключ API или токен сеанса DeepSeek в настройках виджета."
+
+#: contents/ui/ApiClient.qml
+msgid "Could not read the balance — check the API key."
+msgstr "Не удалось прочитать баланс — проверьте ключ API."
+
+#: contents/ui/ApiClient.qml
+msgid "The session token was rejected."
+msgstr "Токен сеанса отклонён."
+
+#: contents/ui/ApiClient.qml
+msgid "HTTP error %1"
+msgstr "Ошибка HTTP %1"
+
+#: contents/ui/ApiClient.qml
+msgid "Request timed out"
+msgstr "Превышено время ожидания запроса"
+
+#: contents/ui/ApiClient.qml
+msgid "Network error"
+msgstr "Ошибка сети"
+
+#: contents/ui/ApiClient.qml
+msgid "never"
+msgstr "никогда"
+
+#: contents/ui/ApiClient.qml
+msgid "just now"
+msgstr "только что"
+
+#: contents/ui/ApiClient.qml
+msgctxt "minutes ago"
+msgid "%1 minute ago"
+msgid_plural "%1 minutes ago"
+msgstr[0] "%1 минуту назад"
+msgstr[1] "%1 минуты назад"
+msgstr[2] "%1 минут назад"
+
+#: contents/ui/ApiClient.qml
+msgctxt "hours ago"
+msgid "%1 hour ago"
+msgid_plural "%1 hours ago"
+msgstr[0] "%1 час назад"
+msgstr[1] "%1 часа назад"
+msgstr[2] "%1 часов назад"
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Set up"
+msgstr "Настроить"
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Error"
+msgstr "Ошибка"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Enter a value first."
+msgstr "Сначала введите значение."
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Balance"
+msgstr "Баланс"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's spend"
+msgstr "Расход за сегодня"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's tokens"
+msgstr "Токены за сегодня"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "trailing period for a cost"
+msgid "Spend, last %1 day"
+msgid_plural "Spend, last %1 days"
+msgstr[0] "Расход за %1 день"
+msgstr[1] "Расход за %1 дня"
+msgstr[2] "Расход за %1 дней"
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Lifetime spend"
+msgstr "Всего израсходовано"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Could not write to KWallet."
+msgstr "Не удалось записать в KWallet."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Saved to KWallet."
+msgstr "Сохранено в KWallet."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Credentials"
+msgstr "Учётные данные"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"Both values are stored in KWallet and never in the widget's configuration file."
+msgstr "Оба значения хранятся в KWallet и никогда — в файле настроек виджета."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key:"
+msgstr "Ключ API:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new key to replace it"
+msgstr "Сохранён в KWallet — введите новый ключ для замены"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "sk-…"
+msgstr "sk-…"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "store the entered credential in KWallet"
+msgid "Save"
+msgstr "Сохранить"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "discard the stored credential"
+msgid "Clear"
+msgstr "Очистить"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key status:"
+msgstr "Состояние ключа API:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet"
+msgstr "Сохранён в KWallet"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Not set"
+msgstr "Не задано"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token (optional)"
+msgstr "Токен сеанса (необязательно)"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance."
+msgstr ""
+"Токен сеанса — это значение, которое сайт платформы DeepSeek сохраняет после входа в систему. Он даёт полный доступ к вашей учётной записи — включая создание и удаление ключей API — поэтому обращайтесь с ним как с паролем. Он нужен только для статистики токенов, истории расходов и разбивки по ключам; для баланса достаточно одного ключа API."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token:"
+msgstr "Токен сеанса:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new token to replace it"
+msgstr "Сохранён в KWallet — введите новый токен для замены"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Paste the token from platform.deepseek.com"
+msgstr "Вставьте токен с platform.deepseek.com"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session status:"
+msgstr "Состояние сеанса:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Presentation"
+msgstr "Отображение"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Panel shows:"
+msgstr "На панели:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Refresh interval (seconds):"
+msgstr "Интервал обновления (секунды):"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Cost period (days):"
+msgstr "Период расходов (дни):"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Privacy:"
+msgstr "Приватность:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Hide all amounts"
+msgstr "Скрывать все суммы"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Today"
+msgstr "Сегодня"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Estimated days left"
+msgstr "Осталось дней (оценка)"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row"
+msgid "Cost"
+msgstr "Стоимость"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: input tokens"
+msgid "In"
+msgstr "Входные"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: output tokens"
+msgid "Out"
+msgstr "Выходные"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: cache-hit tokens"
+msgid "Cached"
+msgstr "Из кэша"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: request count"
+msgid "Requests"
+msgstr "Запросы"
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "DeepSeek Usage"
+msgstr "Использование DeepSeek"
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "Updated %1"
+msgstr "Обновлено %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Refresh now"
+msgstr "Обновить сейчас"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Includes %1 bonus credit"
+msgstr "Включая %1 бонусных средств"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Granted %1 · topped up %2"
+msgstr "Подарено %1 · пополнено %2"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Daily spend, %1"
+msgstr "Расход по дням, %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Peak %1"
+msgstr "Максимум %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Tokens"
+msgstr "Токены"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Per API key"
+msgstr "По ключам API"
+
+#: contents/ui/FullRepresentation.qml
+msgid ""
+"Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown."
+msgstr ""
+"Режим «только баланс». Добавьте токен сеанса платформы в настройках, чтобы также видеть статистику токенов, историю расходов и разбивку по ключам."
+
+#: contents/ui/FullRepresentation.qml
+msgid ""
+"Costs and the days-left estimate are derived from the platform usage API, which is undocumented and may change without notice."
+msgstr ""
+"Расходы и оценка остатка дней получены из API статистики платформы, которое не документировано и может измениться без предупреждения."
+
+#: contents/ui/main.qml
+msgctxt "trailing period for a cost"
+msgid "Last %1 day"
+msgid_plural "Last %1 days"
+msgstr[0] "за %1 день"
+msgstr[1] "за %1 дня"
+msgstr[2] "за %1 дней"
+
+#: contents/ui/main.qml
+msgid "Add a DeepSeek API key in the widget settings."
+msgstr "Добавьте ключ API DeepSeek в настройках виджета."
+
+#: contents/ui/main.qml
+msgid "Loading…"
+msgstr "Загрузка…"
+
+#: contents/ui/main.qml
+msgid "Balance: %1"
+msgstr "Баланс: %1"
+
+#: contents/ui/main.qml
+msgid "Today: %1"
+msgstr "Сегодня: %1"
+
+#: contents/ui/main.qml
+msgid "%1: %2"
+msgstr "%1: %2"
+
+#: contents/ui/main.qml
+msgid "Lifetime spend: %1"
+msgstr "Всего израсходовано: %1"
+
+#: contents/ui/main.qml
+msgid "Refresh"
+msgstr "Обновить"

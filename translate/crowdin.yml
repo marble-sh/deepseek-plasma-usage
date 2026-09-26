@@ -1,0 +1,38 @@
+# Configuration for Crowdin (https://crowdin.com).
+#
+# NOT used by the build. Checked in so that handing the catalogue to Crowdin is
+# a few minutes of work; see translate/README.md for the caveats, including the
+# fact that this has never been run against a real Crowdin project.
+#
+#   crowdin upload sources
+#   crowdin download -l zh-CN
+#
+# Requires a project that has been granted Crowdin's open-source plan.
+
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+
+# The repo layout is already the layout Crowdin expects, so keep it.
+preserve_hierarchy: true
+
+files:
+  - source: /translate/template.pot
+    translation: /translate/%locale_with_underscore%.po
+    type: gettext
+    languages_mapping:
+      # Crowdin locale id -> the code used in this repo (see translate/LINGUAS).
+      locale_with_underscore:
+        zh-CN: zh_CN
+        en-IN: en_IN
+        hi-IN: hi_IN
+        id-ID: id_ID
+        fr: fr_FR
+        ru: ru_RU
+        ru-BY: ru_BY
+        es-ES: es_ES
+        es-419: es_419
+        es-AR: es_AR
+        es-CL: es_CL
+        es-MX: es_MX
+        # Crowdin has no "Spanish, Cuba": this locale would have to be served by
+        # es-419 here and copied into es_CU.po locally.

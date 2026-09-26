@@ -1,0 +1,318 @@
+# Indonesian translation of the DeepSeek Usage plasmoid.
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Unreviewed: generated without a native-speaker pass (see translate/README.md).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: deepseek-usage\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-26 18:54-0300\n"
+"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"Last-Translator: Unreviewed machine translation\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: translate/generate.mjs\n"
+#: contents/config/config.qml contents/ui/ConfigGeneral.qml
+msgid "General"
+msgstr "Umum"
+
+#: contents/ui/ApiClient.qml
+msgid "Add a DeepSeek API key or session token in the widget settings."
+msgstr "Tambahkan kunci API atau token sesi DeepSeek di pengaturan widget."
+
+#: contents/ui/ApiClient.qml
+msgid "Could not read the balance — check the API key."
+msgstr "Tidak dapat membaca saldo — periksa kunci API."
+
+#: contents/ui/ApiClient.qml
+msgid "The session token was rejected."
+msgstr "Token sesi ditolak."
+
+#: contents/ui/ApiClient.qml
+msgid "HTTP error %1"
+msgstr "Kesalahan HTTP %1"
+
+#: contents/ui/ApiClient.qml
+msgid "Request timed out"
+msgstr "Permintaan habis waktu"
+
+#: contents/ui/ApiClient.qml
+msgid "Network error"
+msgstr "Kesalahan jaringan"
+
+#: contents/ui/ApiClient.qml
+msgid "never"
+msgstr "belum pernah"
+
+#: contents/ui/ApiClient.qml
+msgid "just now"
+msgstr "baru saja"
+
+#: contents/ui/ApiClient.qml
+msgctxt "minutes ago"
+msgid "%1 minute ago"
+msgid_plural "%1 minutes ago"
+msgstr[0] "%1 menit lalu"
+
+#: contents/ui/ApiClient.qml
+msgctxt "hours ago"
+msgid "%1 hour ago"
+msgid_plural "%1 hours ago"
+msgstr[0] "%1 jam lalu"
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Set up"
+msgstr "Siapkan"
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Error"
+msgstr "Kesalahan"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Enter a value first."
+msgstr "Masukkan nilai terlebih dahulu."
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Balance"
+msgstr "Saldo"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's spend"
+msgstr "Pengeluaran hari ini"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's tokens"
+msgstr "Token hari ini"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "trailing period for a cost"
+msgid "Spend, last %1 day"
+msgid_plural "Spend, last %1 days"
+msgstr[0] "Pengeluaran, %1 hari terakhir"
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Lifetime spend"
+msgstr "Pengeluaran total"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Could not write to KWallet."
+msgstr "Tidak dapat menulis ke KWallet."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Saved to KWallet."
+msgstr "Tersimpan di KWallet."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Credentials"
+msgstr "Kredensial"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"Both values are stored in KWallet and never in the widget's configuration file."
+msgstr ""
+"Kedua nilai disimpan di KWallet dan tidak pernah di berkas konfigurasi widget."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key:"
+msgstr "Kunci API:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new key to replace it"
+msgstr "Tersimpan di KWallet — masukkan kunci baru untuk menggantinya"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "sk-…"
+msgstr "sk-…"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "store the entered credential in KWallet"
+msgid "Save"
+msgstr "Simpan"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "discard the stored credential"
+msgid "Clear"
+msgstr "Hapus"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key status:"
+msgstr "Status kunci API:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet"
+msgstr "Tersimpan di KWallet"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Not set"
+msgstr "Belum diatur"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token (optional)"
+msgstr "Token sesi (opsional)"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance."
+msgstr ""
+"Token sesi adalah nilai yang disimpan situs platform DeepSeek setelah Anda masuk. Token ini memberi akses penuh ke akun Anda — termasuk membuat dan menghapus kunci API — jadi perlakukan seperti kata sandi. Hanya penggunaan token, riwayat biaya, dan rincian per kunci yang memerlukannya; kunci API saja sudah cukup untuk saldo."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token:"
+msgstr "Token sesi:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new token to replace it"
+msgstr "Tersimpan di KWallet — masukkan token baru untuk menggantinya"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Paste the token from platform.deepseek.com"
+msgstr "Tempel token dari platform.deepseek.com"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session status:"
+msgstr "Status sesi:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Presentation"
+msgstr "Tampilan"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Panel shows:"
+msgstr "Panel menampilkan:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Refresh interval (seconds):"
+msgstr "Interval penyegaran (detik):"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Cost period (days):"
+msgstr "Periode biaya (hari):"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Privacy:"
+msgstr "Privasi:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Hide all amounts"
+msgstr "Sembunyikan semua jumlah"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Today"
+msgstr "Hari ini"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Estimated days left"
+msgstr "Perkiraan hari tersisa"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row"
+msgid "Cost"
+msgstr "Biaya"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: input tokens"
+msgid "In"
+msgstr "Input"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: output tokens"
+msgid "Out"
+msgstr "Output"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: cache-hit tokens"
+msgid "Cached"
+msgstr "Cache"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: request count"
+msgid "Requests"
+msgstr "Permintaan"
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "DeepSeek Usage"
+msgstr "Penggunaan DeepSeek"
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "Updated %1"
+msgstr "Diperbarui %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Refresh now"
+msgstr "Segarkan sekarang"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Includes %1 bonus credit"
+msgstr "Termasuk kredit bonus %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Granted %1 · topped up %2"
+msgstr "Hibah %1 · isi ulang %2"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Daily spend, %1"
+msgstr "Pengeluaran harian, %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Peak %1"
+msgstr "Puncak %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Tokens"
+msgstr "Token"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Per API key"
+msgstr "Per kunci API"
+
+#: contents/ui/FullRepresentation.qml
+msgid ""
+"Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown."
+msgstr ""
+"Mode saldo saja. Tambahkan token sesi platform di pengaturan untuk juga melihat penggunaan token, riwayat biaya, dan rincian per kunci."
+
+#: contents/ui/FullRepresentation.qml
+msgid ""
+"Costs and the days-left estimate are derived from the platform usage API, which is undocumented and may change without notice."
+msgstr ""
+"Biaya dan perkiraan hari tersisa dihitung dari API penggunaan platform, yang tidak terdokumentasi dan dapat berubah tanpa pemberitahuan."
+
+#: contents/ui/main.qml
+msgctxt "trailing period for a cost"
+msgid "Last %1 day"
+msgid_plural "Last %1 days"
+msgstr[0] "%1 hari terakhir"
+
+#: contents/ui/main.qml
+msgid "Add a DeepSeek API key in the widget settings."
+msgstr "Tambahkan kunci API DeepSeek di pengaturan widget."
+
+#: contents/ui/main.qml
+msgid "Loading…"
+msgstr "Memuat…"
+
+#: contents/ui/main.qml
+msgid "Balance: %1"
+msgstr "Saldo: %1"
+
+#: contents/ui/main.qml
+msgid "Today: %1"
+msgstr "Hari ini: %1"
+
+#: contents/ui/main.qml
+msgid "%1: %2"
+msgstr "%1: %2"
+
+#: contents/ui/main.qml
+msgid "Lifetime spend: %1"
+msgstr "Pengeluaran total: %1"
+
+#: contents/ui/main.qml
+msgid "Refresh"
+msgstr "Segarkan"

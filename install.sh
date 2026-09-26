@@ -39,6 +39,17 @@ stage() {
     cp -R "$HERE/contents" "$STAGE/"
 }
 
+# The compiled translations are committed under contents/locale, so this is
+# only needed after changing strings or translations. It is a soft step: with no
+# gettext installed the committed .mo files are used as they are.
+refresh_translations() {
+    if ! command -v msgfmt >/dev/null 2>&1; then
+        echo "install.sh: gettext not found, using the committed translations"
+        return
+    fi
+    "$HERE/translate/build.sh" >/dev/null
+}
+
 case "${1:-}" in
 --help | -h)
     help
@@ -49,6 +60,7 @@ case "${1:-}" in
     exit 0
     ;;
 --pack)
+    refresh_translations
     stage
     OUT="$HERE/deepseek-usage.plasmoid"
     rm -f "$OUT"
@@ -65,6 +77,7 @@ case "${1:-}" in
     ;;
 esac
 
+refresh_translations
 stage
 
 if kpackagetool6 --type Plasma/Applet --upgrade "$STAGE"; then

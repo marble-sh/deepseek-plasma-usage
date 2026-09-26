@@ -147,14 +147,14 @@ KCM.SimpleKCM {
             }
 
             QQC2.Button {
-                text: i18n("Save")
+                text: i18nc("store the entered credential in KWallet", "Save")
                 icon.name: "document-save"
                 enabled: apiKeyField.text.length > 0
                 onClicked: page.writeSecret(WalletJs.API_KEY_ENTRY, apiKeyField.text)
             }
 
             QQC2.Button {
-                text: i18n("Clear")
+                text: i18nc("discard the stored credential", "Clear")
                 icon.name: "edit-clear"
                 enabled: page.apiKeySet
                 onClicked: {
@@ -197,14 +197,14 @@ KCM.SimpleKCM {
             }
 
             QQC2.Button {
-                text: i18n("Save")
+                text: i18nc("store the entered credential in KWallet", "Save")
                 icon.name: "document-save"
                 enabled: sessionField.text.length > 0
                 onClicked: page.writeSecret(WalletJs.SESSION_TOKEN_ENTRY, sessionField.text)
             }
 
             QQC2.Button {
-                text: i18n("Clear")
+                text: i18nc("discard the stored credential", "Clear")
                 icon.name: "edit-clear"
                 enabled: page.sessionTokenSet
                 onClicked: {

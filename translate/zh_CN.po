@@ -1,0 +1,315 @@
+# Chinese (Simplified) translation of the DeepSeek Usage plasmoid.
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Unreviewed: generated without a native-speaker pass (see translate/README.md).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: deepseek-usage\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-26 18:54-0300\n"
+"PO-Revision-Date: 2026-09-26 18:54-0300\n"
+"Last-Translator: Unreviewed machine translation\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: translate/generate.mjs\n"
+#: contents/config/config.qml contents/ui/ConfigGeneral.qml
+msgid "General"
+msgstr "常规"
+
+#: contents/ui/ApiClient.qml
+msgid "Add a DeepSeek API key or session token in the widget settings."
+msgstr "请在小部件设置中添加 DeepSeek API 密钥或会话令牌。"
+
+#: contents/ui/ApiClient.qml
+msgid "Could not read the balance — check the API key."
+msgstr "无法读取余额——请检查 API 密钥。"
+
+#: contents/ui/ApiClient.qml
+msgid "The session token was rejected."
+msgstr "会话令牌被拒绝。"
+
+#: contents/ui/ApiClient.qml
+msgid "HTTP error %1"
+msgstr "HTTP 错误 %1"
+
+#: contents/ui/ApiClient.qml
+msgid "Request timed out"
+msgstr "请求超时"
+
+#: contents/ui/ApiClient.qml
+msgid "Network error"
+msgstr "网络错误"
+
+#: contents/ui/ApiClient.qml
+msgid "never"
+msgstr "从未"
+
+#: contents/ui/ApiClient.qml
+msgid "just now"
+msgstr "刚刚"
+
+#: contents/ui/ApiClient.qml
+msgctxt "minutes ago"
+msgid "%1 minute ago"
+msgid_plural "%1 minutes ago"
+msgstr[0] "%1 分钟前"
+
+#: contents/ui/ApiClient.qml
+msgctxt "hours ago"
+msgid "%1 hour ago"
+msgid_plural "%1 hours ago"
+msgstr[0] "%1 小时前"
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Set up"
+msgstr "设置"
+
+#: contents/ui/CompactRepresentation.qml
+msgid "Error"
+msgstr "错误"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Enter a value first."
+msgstr "请先输入内容。"
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Balance"
+msgstr "余额"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's spend"
+msgstr "今日支出"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Today's tokens"
+msgstr "今日 Token"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "trailing period for a cost"
+msgid "Spend, last %1 day"
+msgid_plural "Spend, last %1 days"
+msgstr[0] "近 %1 天支出"
+
+#: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
+msgid "Lifetime spend"
+msgstr "累计支出"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Could not write to KWallet."
+msgstr "无法写入 KWallet。"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Saved to KWallet."
+msgstr "已保存到 KWallet。"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Credentials"
+msgstr "凭据"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"Both values are stored in KWallet and never in the widget's configuration file."
+msgstr "这两个值都保存在 KWallet 中，绝不会写入小部件的配置文件。"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key:"
+msgstr "API 密钥："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new key to replace it"
+msgstr "已保存到 KWallet——输入新密钥以替换"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "sk-…"
+msgstr "sk-…"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "store the entered credential in KWallet"
+msgid "Save"
+msgstr "保存"
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "discard the stored credential"
+msgid "Clear"
+msgstr "清除"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "API key status:"
+msgstr "API 密钥状态："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet"
+msgstr "已保存到 KWallet"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Not set"
+msgstr "未设置"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token (optional)"
+msgstr "会话令牌（可选）"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance."
+msgstr ""
+"会话令牌是 DeepSeek 平台网站在你登录后保存的值。它可以完全访问你的账户——包括创建和删除 API 密钥——因此请像对待密码一样对待它。只有 Token 用量、费用历史和按密钥的明细需要它；仅查看余额只需要 API 密钥。"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session token:"
+msgstr "会话令牌："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Stored in KWallet — enter a new token to replace it"
+msgstr "已保存到 KWallet——输入新令牌以替换"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Paste the token from platform.deepseek.com"
+msgstr "粘贴来自 platform.deepseek.com 的令牌"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Session status:"
+msgstr "会话状态："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Presentation"
+msgstr "显示"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Panel shows:"
+msgstr "面板显示："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Refresh interval (seconds):"
+msgstr "刷新间隔（秒）："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Cost period (days):"
+msgstr "费用统计周期（天）："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Privacy:"
+msgstr "隐私："
+
+#: contents/ui/ConfigGeneral.qml
+msgid "Hide all amounts"
+msgstr "隐藏所有金额"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Today"
+msgstr "今日"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Estimated days left"
+msgstr "预计可用天数"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row"
+msgid "Cost"
+msgstr "费用"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: input tokens"
+msgid "In"
+msgstr "输入"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: output tokens"
+msgid "Out"
+msgstr "输出"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: cache-hit tokens"
+msgid "Cached"
+msgstr "缓存"
+
+#: contents/ui/FullRepresentation.qml
+msgctxt "token usage table row: request count"
+msgid "Requests"
+msgstr "请求数"
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "DeepSeek Usage"
+msgstr "DeepSeek 用量"
+
+#: contents/ui/FullRepresentation.qml contents/ui/main.qml
+msgid "Updated %1"
+msgstr "更新于 %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Refresh now"
+msgstr "立即刷新"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Includes %1 bonus credit"
+msgstr "含 %1 赠送额度"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Granted %1 · topped up %2"
+msgstr "赠送 %1 · 充值 %2"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Daily spend, %1"
+msgstr "每日支出，%1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Peak %1"
+msgstr "峰值 %1"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Tokens"
+msgstr "Token"
+
+#: contents/ui/FullRepresentation.qml
+msgid "Per API key"
+msgstr "按 API 密钥"
+
+#: contents/ui/FullRepresentation.qml
+msgid ""
+"Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown."
+msgstr "仅余额模式。在设置中添加平台会话令牌，即可同时查看 Token 用量、费用历史和按密钥的明细。"
+
+#: contents/ui/FullRepresentation.qml
+msgid ""
+"Costs and the days-left estimate are derived from the platform usage API, which is undocumented and may change without notice."
+msgstr "费用和可用天数估算来自平台用量 API，该 API 没有公开文档，可能会在不另行通知的情况下变更。"
+
+#: contents/ui/main.qml
+msgctxt "trailing period for a cost"
+msgid "Last %1 day"
+msgid_plural "Last %1 days"
+msgstr[0] "近 %1 天"
+
+#: contents/ui/main.qml
+msgid "Add a DeepSeek API key in the widget settings."
+msgstr "请在小部件设置中添加 DeepSeek API 密钥。"
+
+#: contents/ui/main.qml
+msgid "Loading…"
+msgstr "加载中…"
+
+#: contents/ui/main.qml
+msgid "Balance: %1"
+msgstr "余额：%1"
+
+#: contents/ui/main.qml
+msgid "Today: %1"
+msgstr "今日：%1"
+
+#: contents/ui/main.qml
+msgid "%1: %2"
+msgstr "%1：%2"
+
+#: contents/ui/main.qml
+msgid "Lifetime spend: %1"
+msgstr "累计支出：%1"
+
+#: contents/ui/main.qml
+msgid "Refresh"
+msgstr "刷新"

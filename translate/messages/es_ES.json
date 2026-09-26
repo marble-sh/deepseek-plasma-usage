@@ -1,0 +1,13 @@
+{
+  "_note": "Spain overrides on top of the es_419 base. Only strings that genuinely differ in Spain are listed; everything else is inherited. Keys are gettext keys: [msgctxt + U+0004] + msgid [+ U+0000 + msgid_plural]. The .po file is generated from this table by translate/generate.mjs.",
+  "overrides": {
+    "Add a DeepSeek API key or session token in the widget settings.": "Añade una clave de API o un token de sesión de DeepSeek en los ajustes del widget.",
+    "Add a DeepSeek API key in the widget settings.": "Añade una clave de API de DeepSeek en los ajustes del widget.",
+    "Enter a value first.": "Introduce un valor primero.",
+    "Cost period (days):": "Periodo de gastos (días):",
+    "Hide all amounts": "Ocultar todos los importes",
+    "Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown.": "Modo solo saldo. Añade un token de sesión de la plataforma en los ajustes para ver también el uso de tokens, el historial de gastos y el desglose por clave.",
+    "Stored in KWallet — enter a new token to replace it": "Guardado en KWallet — introduce un token nuevo para reemplazarlo",
+    "Stored in KWallet — enter a new key to replace it": "Guardada en KWallet — introduce una clave nueva para reemplazarla"
+  }
+}

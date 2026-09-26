@@ -78,31 +78,31 @@ Item {
                 header: true
             },
             {
-                label: i18n("Cost"),
+                label: i18nc("token usage table row", "Cost"),
                 today: today ? root.money(today.cost) : root.noData,
                 period: period ? root.money(period.cost) : root.noData,
                 header: false
             },
             {
-                label: i18n("In"),
+                label: i18nc("token usage table row: input tokens", "In"),
                 today: today ? root.tokens(today.cacheHit + today.cacheMiss) : root.noData,
                 period: period ? root.tokens(period.cacheHit + period.cacheMiss) : root.noData,
                 header: false
             },
             {
-                label: i18n("Out"),
+                label: i18nc("token usage table row: output tokens", "Out"),
                 today: today ? root.tokens(today.response) : root.noData,
                 period: period ? root.tokens(period.response) : root.noData,
                 header: false
             },
             {
-                label: i18n("Cached"),
+                label: i18nc("token usage table row: cache-hit tokens", "Cached"),
                 today: today ? root.tokens(today.cacheHit) : root.noData,
                 period: period ? root.tokens(period.cacheHit) : root.noData,
                 header: false
             },
             {
-                label: i18n("Requests"),
+                label: i18nc("token usage table row: request count", "Requests"),
                 today: today ? Fmt.compactNumber(today.requests) : root.noData,
                 period: period ? Fmt.compactNumber(period.requests) : root.noData,
                 header: false
