@@ -23,6 +23,8 @@ QtObject {
     property string apiKey: ""
     property string sessionToken: ""
     property int periodDays: 30
+    // Set by main.qml (Qt.locale().name); formats the "days left" estimate.
+    property string numberLocale: "en_US"
 
     // ------------------------------------------------------------- state
     property bool loading: false
@@ -67,7 +69,7 @@ QtObject {
     readonly property bool hasUsage: perDay.length > 0 || perKey.length > 0
     readonly property real averageDaily: Api.averageDailyCost(perDay, Math.max(1, periodDays))
     readonly property real estimatedDaysLeft: Fmt.daysLeft(displayBalance, averageDaily)
-    readonly property string estimatedDaysLeftLabel: Fmt.daysLeftText(displayBalance, averageDaily)
+    readonly property string estimatedDaysLeftLabel: Fmt.daysLeftText(displayBalance, averageDaily, numberLocale)
 
     // ----------------------------------------------------------- fetching
     function refresh() {

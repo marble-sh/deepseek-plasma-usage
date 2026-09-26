@@ -10,8 +10,15 @@ const fmt = load("contents/ui/js/format.js");
 test("money formats with currency symbols", () => {
     assert.equal(fmt.money(7.78, "USD"), "$7.78");
     assert.equal(fmt.money("7.78", "USD"), "$7.78");
-    assert.equal(fmt.money(110, "CNY"), "\u00A5110.00");
-    assert.equal(fmt.money(1, "SEK"), "SEK 1.00");
+    // CLDR tells CNY and JPY apart in English, and uses the code for some
+    // currencies; a bare code is spaced off the digits with a no-break space.
+    assert.equal(fmt.money(110, "CNY"), "CN\u00A5110.00");
+    assert.equal(fmt.money(110, "CNY", "zh_CN"), "\u00A5110.00");
+    // The symbol list wins over ICU's English habit of spelling out the code.
+    assert.equal(fmt.money(1, "SEK"), "kr\u00A01.00");
+    assert.equal(fmt.money(1, "RUB"), "\u20BD1.00");
+    assert.equal(fmt.money(1, "XYZ"), "XYZ\u00A01.00");
+    assert.equal(fmt.money(1, ""), "1.00");
 });
 
 test("money uses more precision for small amounts", () => {
@@ -105,4 +112,72 @@ test("grouped renders exact counts with thousands separators", () => {
     assert.equal(fmt.grouped("297270684"), "297,270,684"); // API values are strings
     assert.equal(fmt.grouped(NaN), "\u2014");
     assert.equal(fmt.grouped("nonsense"), "\u2014");
+});
+
+/*
+    Number and money rendering per locale, transcribed from CLDR through ICU.
+    `node -e 'new Intl.NumberFormat("es-CL", {style:"currency",
+    currency:"USD"}).format(1234567.89)'` prints the money column, which is how the
+    table in format.js was written; these assertions are that same output, so a bad
+    transcription fails here instead of only in a screenshot.
+*/
+const LOCALE_CASES = [
+    // locale,      number for 1234567.89,   money for 1234567.89 USD
+    ["en_US", "1,234,567.89", "$1,234,567.89"],
+    ["en", "1,234,567.89", "$1,234,567.89"],
+    ["en_IN", "12,34,567.89", "$12,34,567.89"], // Indian grouping: 2,2,3
+    ["hi_IN", "12,34,567.89", "$12,34,567.89"],
+    ["zh_CN", "1,234,567.89", "US$1,234,567.89"], // US$ so it is not read as \u00A5
+    ["id_ID", "1.234.567,89", "US$1.234.567,89"],
+    ["fr_FR", "1\u202F234\u202F567,89", "1\u202F234\u202F567,89\u00A0$US"],
+    ["ru_RU", "1\u00A0234\u00A0567,89", "1\u00A0234\u00A0567,89\u00A0$"],
+    ["ru_BY", "1\u00A0234\u00A0567,89", "1\u00A0234\u00A0567,89\u00A0$"],
+    ["es_ES", "1.234.567,89", "1.234.567,89\u00A0US$"],
+    ["es", "1.234.567,89", "1.234.567,89\u00A0US$"], // a bare "es" is Spain
+    ["es_419", "1,234,567.89", "USD\u00A01,234,567.89"],
+    ["es_CL", "1.234.567,89", "US$1.234.567,89"],
+    ["es_AR", "1.234.567,89", "US$\u00A01.234.567,89"],
+    ["es_MX", "1,234,567.89", "USD\u00A01,234,567.89"],
+    ["es_CU", "1,234,567.89", "US$1,234,567.89"],
+    // Unknown tags fall back to English rather than throwing.
+    ["pt_PT", "1,234,567.89", "$1,234,567.89"],
+    ["", "1,234,567.89", "$1,234,567.89"],
+    ["zh_Hans_CN", "1,234,567.89", "US$1,234,567.89"],
+];
+
+test("numbers and money follow the locale", () => {
+    for (const [locale, number, money] of LOCALE_CASES) {
+        assert.equal(fmt.formatNumber(1234567.89, locale, 2), number, `number ${locale}`);
+        assert.equal(fmt.money(1234567.89, "USD", locale, 2), money, `money ${locale}`);
+    }
+});
+
+test("grouping only applies where CLDR says it does", () => {
+    // Spain's minimumGroupingDigits is 2: one separator would leave a lone
+    // leading digit, so 1000 has none while longer numbers still group.
+    assert.equal(fmt.formatNumber(1000, "es_ES", 2), "1000,00");
+    assert.equal(fmt.formatNumber(10000, "es_ES", 2), "10.000,00");
+    assert.equal(fmt.formatNumber(1234567890, "es_ES", 2), "1.234.567.890,00");
+    // Its Latin-American neighbours do group 1000.
+    assert.equal(fmt.formatNumber(1000, "es_CL", 2), "1.000,00");
+    assert.equal(fmt.formatNumber(1000, "es_MX", 2), "1,000.00");
+    assert.equal(fmt.formatNumber(1000, "en_IN", 2), "1,000.00");
+});
+
+test("the compact panel form takes the locale's decimal separator", () => {
+    // The K/M/B suffix stays Latin; see the note on compactNumber.
+    assert.equal(fmt.compactNumber(1500000, "en_US"), "1.5M");
+    assert.equal(fmt.compactNumber(1500000, "fr_FR"), "1,5M");
+    assert.equal(fmt.compactNumber(1500000, "id_ID"), "1,5M");
+    assert.equal(fmt.compactNumber(1500000, "zh_CN"), "1.5M");
+    assert.equal(fmt.compactNumber(297270684, "fr_FR"), "297,3M");
+});
+
+test("days left and the panel metric take the locale too", () => {
+    assert.equal(fmt.daysLeftText(2.5, 1, "en_US"), "2.5d");
+    assert.equal(fmt.daysLeftText(2.5, 1, "fr_FR"), "2,5d");
+    assert.equal(fmt.metricText(fmt.METRIC_BALANCE, Object.assign({}, metricValues, { locale: "fr_FR" })),
+        "7,78\u00A0$US");
+    assert.equal(fmt.metricText(fmt.METRIC_TODAY_TOKENS, Object.assign({}, metricValues, { locale: "fr_FR" })),
+        "1,5M");
 });

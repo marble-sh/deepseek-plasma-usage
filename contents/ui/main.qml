@@ -28,6 +28,12 @@ PlasmoidItem {
 
     readonly property string periodLabel: i18ncp("trailing period for a cost", "Last %1 day", "Last %1 days", root.periodDays)
 
+    // Numbers follow the locale's own conventions -- thousands and decimal
+    // separators, and where the currency sign goes -- which is locale data rather
+    // than text, so it comes from Qt.locale() and not from the translation
+    // catalogue. Defined once here and passed down to everything that formats.
+    readonly property string numberLocale: Qt.locale().name
+
     // Peak / off-peak pricing. The schedule is defined to the minute, so a clock
     // tick keeps the state and the countdown honest between network refreshes.
     // See js/peak.js for the rule and its documented holiday caveat.
@@ -68,6 +74,7 @@ PlasmoidItem {
         id: apiClient
 
         periodDays: root.periodDays
+        numberLocale: root.numberLocale
     }
 
     preferredRepresentation: Plasmoid.formFactor === PlasmaCore.Types.Planar ? fullRepresentation : compactRepresentation
@@ -78,6 +85,7 @@ PlasmoidItem {
         hideAmounts: root.hideAmounts
         peakRates: root.peakRates
         peakKnown: root.peakKnown
+        numberLocale: root.numberLocale
 
         onToggleRequested: root.expanded = !root.expanded
     }
@@ -91,6 +99,7 @@ PlasmoidItem {
         peakKnown: root.peakKnown
         peakStateText: root.peakStateText
         peakRemainingText: root.peakRemainingText
+        numberLocale: root.numberLocale
 
         onRefreshRequested: apiClient.refresh()
     }
@@ -163,7 +172,7 @@ PlasmoidItem {
     Component.onCompleted: root.reloadSecrets()
 
     function shownMoney(value) {
-        return Fmt.hideable(Fmt.money(value, apiClient.displayCurrency), root.hideAmounts);
+        return Fmt.hideable(Fmt.money(value, apiClient.displayCurrency, root.numberLocale), root.hideAmounts);
     }
 
     // Reads the API key and the session token, one after the other: the wallet

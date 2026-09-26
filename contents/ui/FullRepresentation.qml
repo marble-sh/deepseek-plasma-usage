@@ -23,6 +23,8 @@ Item {
     property bool hideAmounts: false
     property bool hasSession: false
     property string periodLabel: ""
+    // Set by main.qml (Qt.locale().name).
+    property string numberLocale: "en_US"
 
     // Peak / off-peak pricing state, computed centrally in main.qml so both
     // representations and the tooltip agree.
@@ -130,17 +132,17 @@ Item {
     }
 
     function money(value) {
-        return shown(Fmt.money(value, root.currency));
+        return shown(Fmt.money(value, root.currency, root.numberLocale));
     }
 
     // Exact, grouped counts in the popup, so the figures can be checked against
     // the platform's own. The panel chip keeps Fmt.tokens' compact form.
     function tokens(value) {
-        return shown(Fmt.grouped(value));
+        return shown(Fmt.grouped(value, root.numberLocale));
     }
 
     function count(value) {
-        return shown(Fmt.grouped(value));
+        return shown(Fmt.grouped(value, root.numberLocale));
     }
 
     implicitWidth: Kirigami.Units.gridUnit * 24

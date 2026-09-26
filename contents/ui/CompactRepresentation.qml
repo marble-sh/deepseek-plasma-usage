@@ -22,6 +22,8 @@ Item {
     property bool hideAmounts: false
     property bool peakRates: false
     property bool peakKnown: true
+    // Set by main.qml (Qt.locale().name).
+    property string numberLocale: "en_US"
 
     signal toggleRequested()
 
@@ -38,6 +40,7 @@ Item {
         }
         return Fmt.metricText(root.metric, {
             currency: api.displayCurrency,
+            locale: root.numberLocale,
             balance: api.displayBalance,
             todayCost: api.todayTotals.cost,
             todayTokens: api.todayTokens,
