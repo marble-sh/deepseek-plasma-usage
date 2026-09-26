@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+name: Feature request
+description: Suggest something the widget should show or do
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Worth knowing before you ask: the widget deliberately has **no runtime
+        dependencies** beyond Plasma and Qt, and its figures are limited to what
+        DeepSeek's two APIs expose. `CONTRIBUTING.md` explains both.
+
+  - type: textarea
+    id: want
+    attributes:
+      label: What you would like
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: What it would let you do
+      description: The problem behind the request is more useful than the solution.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where it belongs
+      options:
+        - The panel chip
+        - The popup
+        - The settings page
+        - Translations
+        - Something else
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Confirmations
+      options:
+        - label: There is no credential of any kind in this request
+          required: true

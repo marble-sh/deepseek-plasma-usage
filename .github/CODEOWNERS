@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Everyone listed here is asked for a review automatically. `main` requires a
+# pull request but zero approvals (a solo maintainer cannot approve their own),
+# so this is a notification, not a gate.
+
+# Everything, by default.
+* @marble-sh
+
+# The translation tables are the source of truth for every catalogue, and the
+# compiled .mo files are generated from them.
+/translate/ @marble-sh
+
+# The workflow files and the release script decide what ships.
+/.github/ @marble-sh
+/scripts/ @marble-sh
+
+# The locale and money tables are transcribed from CLDR; see format.js's header.
+/contents/ui/js/format.js @marble-sh
