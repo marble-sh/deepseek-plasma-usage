@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Maintenance alarm for the Chinese-holiday table in contents/ui/js/peak.js.
+#
+# The peak/off-peak indicator reports "Unknown" for any year the table does not
+# cover rather than guessing, and tests/peak.test.mjs deliberately fails once the
+# table stops covering the current year. The State Council publishes the
+# following year's dates in November or December, so this runs that single test
+# on the first of every month: the suite cannot go a whole year unnoticed with
+# the previous year's dates in it.
+#
+# A red run here is not a bug in the widget. It is the reminder to add the newly
+# published year.
+name: Holiday table alarm
+
+on:
+  schedule:
+    # 06:17 UTC on the first of the month. Deliberately off the hour so it does
+    # not queue behind the jobs that all fire at 00:00.
+    - cron: "17 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  holiday-table:
+    name: Holiday table covers the current year
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Check the holiday table
+        run: node --test tests/peak.test.mjs
+      - name: What to do when this fails
+        if: failure()
+        run: |
+          {
+            echo "## The Chinese-holiday table needs the new year"
+            echo
+            echo "A \`tests/peak.test.mjs\` case failed, which means"
+            echo "\`CHINESE_HOLIDAYS\` in \`contents/ui/js/peak.js\` no longer covers"
+            echo "the year the widget is being asked about."
+            echo
+            echo "Fix: add the published State Council blocks with \`addRange()\`:"
+            echo
+            echo '```js'
+            echo 'addRange("2027-10-01", "2027-10-07"); // National Day'
+            echo '```'
+            echo
+            echo "Do not add estimated dates. A wrong entry would claim a discount"
+            echo "that does not exist, which is the one thing the tri-state design"
+            echo "exists to prevent."
+          } >> "$GITHUB_STEP_SUMMARY"

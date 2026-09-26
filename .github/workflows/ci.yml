@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Continuous integration for the DeepSeek Usage plasmoid.
+#
+# These gates mirror the local development gauntlet in README.md. None of them
+# needs Plasma: the applet's logic lives in plain JavaScript modules that node
+# runs directly, the catalogue check is gettext + node, and qmllint on Qt 6
+# resolves no imports, so a stock Ubuntu runner can gate the QML syntax too.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Unit tests (node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Test the pure JS modules
+        run: >-
+          node --test
+          tests/api.test.mjs
+          tests/format.test.mjs
+          tests/wallet.test.mjs
+          tests/peak.test.mjs
+
+  catalogues:
+    name: Translations up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install gettext
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext
+      # Fails if the .po files, LINGUAS or the compiled .mo files would change:
+      # the tables in translate/messages/ are the source of truth and everything
+      # else is generated.
+      - name: Check catalogues
+        run: ./translate/build.sh --check
+
+  qmllint:
+    name: QML syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install qmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qt6-declarative-dev-tools
+          # The binary lands here, which is not on PATH by default.
+          echo "/usr/lib/qt6/bin" >> "$GITHUB_PATH"
+      - name: Lint the QML
+        run: qmllint contents/ui/*.qml contents/config/config.qml
+
+  package:
+    name: Pack the plasmoid
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install gettext
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext
+      # Staging + zipping is what ./install.sh --pack does, and it is the one
+      # step whose failure would only surface at release time, so it runs here.
+      - name: Build the distribution archive
+        run: |
+          ./install.sh --pack
+          test -s deepseek-usage.plasmoid
