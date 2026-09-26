@@ -34,7 +34,30 @@ Round 2 — 2026-09-26 (internationalization)
 | D9 | Locales shipped: **17** | The 12 requested (`zh_CN`, `en_IN`, `hi_IN`, `id_ID`, `fr_FR`, `ru_RU`, `ru_BY`, `es_ES`, `es_CL`, `es_AR`, `es_MX`, `es_CU`) plus bare-language aliases `ru`, `fr`, `id`, `hi` and `es_419`. No bare `es` (ES vs LA is genuinely ambiguous — better to fall back to English than to silently pick one). `es_CL/AR/MX/CU` are **deliberate aliases** of `es_419`: none of the current strings differ between them. | Region codes alone leave generic-`<lang>` users in English (Qt tries `<lang>_<REGION>` then `<lang>`). | permanent |
 | D10 | Add **`msgctxt`** to the ambiguous short strings | Token-table row labels and the Save/Clear buttons. | `In`/`Out`/`Cost` are genuinely ambiguous for a translator without context. | permanent |
 | D11 | `qmlformat --check` **dropped from the gauntlet** | It reorders imports alphabetically and strips the blank lines that group declarations, which fights the KDE QML style the project follows. `qmllint` remains the gate. | A gate that forces worse code is not a gate. | permanent |
-| D12 | **Do not sign up to Crowdin/Transifex on the user's behalf** | Config files committed (`translate/crowdin.yml`, `translate/.tx/config`, both explicitly marked never-run) and the trade-offs documented instead. | Creating an account, applying for an open-source plan and inviting translators are human actions. Transifex's OSS terms were verified from its own page; Crowdin's page 404'd, so its terms are stated as unverified. KDE's own l10n/WebLate is noted as the most idiomatic route for a plasmoid. | permanent |
+| D12 | **Do not sign up to Crowdin/Transifex on the user's behalf** | Config files committed (`translate/crowdin.yml`, `translate/.tx/config`, both explicitly marked never-run) and the trade-offs documented instead. | Creating an account, applying for an open-source plan and inviting translators are human actions. Transifex's OSS terms were verified from its own page; Crowdin's page 404'd, so its terms are stated as unverified. | permanent, but see D13 |
+| D13 | Translation route = **KDE's own l10n teams** (user's choice) | `Messages.sh` added at the repo root as the entry point KDE's automation runs; `translate/README.md` documents the precondition (the widget must live in a KDE repository) and the ordered steps. Crowdin/Transifex configs demoted to a documented fallback. | It is the only route that produces **reviewed** translations by speakers of the language — the entire point of the exercise, given D14. | until the widget enters KDE |
+| D14 | The machine-generated catalogues are **explicitly marked unreviewed**, with **hi/ru/zh as the review priority** | Every `.po` carries `Last-Translator: Unreviewed machine translation` and the gettext placeholder `Language-Team`; the README and `translate/README.md` say so prominently and name the priority languages. | They are unreviewed, and silently shipping them as if they were finished would misrepresent their quality. | until reviewed |
+
+### Correction (recorded, not hidden)
+
+Earlier in this session I described **WebLate** as the tool KDE uses. The KDE
+wiki page I later read states that KDE stores translations in **SVN** and that
+translators use **Lokalize**; it does not document WebLate. That claim was
+unsupported and has been corrected in `translate/README.md` and `README.md`.
+The `Infrastructure/Scripty` wiki page is empty, so the exact current procedure
+for getting a project picked up by KDE's translation automation is **not
+verified** and is flagged as such.
+
+### Verified during round 3 (level 1)
+
+- The KDE `Messages.sh` convention was taken from a real, installed KDE file
+  (`/usr/share/sddm/themes/breeze/Messages.sh`: `$XGETTEXT … -o $podir/<domain>.pot`)
+  rather than from memory.
+- Our `Messages.sh` was **smoke-tested** with a simulated `$XGETTEXT`/`$podir`
+  environment: it produces a pot containing the **same 70 msgids** as
+  `translate/merge.sh` (`diff` of the sorted msgid sets is empty), named
+  `plasma_applet_org.deepseek.plasma.usage.pot` — i.e. the two extraction paths
+  agree and cannot drift.
 
 ### Verified during round 2 (live, level 1)
 

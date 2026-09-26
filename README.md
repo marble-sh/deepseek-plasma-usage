@@ -136,11 +136,23 @@ format.
 ./translate/build.sh --check  # CI: fail if any catalogue is out of date
 ```
 
-> [!NOTE]
-> **Every catalogue is machine-generated and unreviewed by a native speaker.**
-> It is a solid starting point, not finished translation. `translate/` also
-> ships ready-made Crowdin and Transifex configs for handing the work to real
-> translators, and explains which platform is the best fit.
+> [!WARNING]
+> **Every catalogue is machine-generated and has never been reviewed by a native
+> speaker.** Each `.po` records this in its header, and its `Language-Team` field
+> is still gettext's "no catalogue has been claimed" placeholder. Treat them as a
+> starting point, not as finished translation.
+>
+> **Priority for review: Hindi, Russian and Simplified Chinese** — the languages
+> this widget is most likely to be used in, and the ones where an unreviewed
+> translation is least acceptable. Everything else is a bonus.
+
+The chosen route for fixing that is **KDE's own translation teams** (decision
+D13): it is the only one that yields *reviewed* translations by people who
+actually speak the language. `Messages.sh` in the repository root is already the
+entry point KDE's tooling expects, and `translate/README.md` lists the concrete
+steps — the main precondition being that the widget has to live in a KDE
+repository before the teams can pick it up. Crowdin/Transifex configs are kept
+only as a fallback, explicitly marked as never run.
 
 ## License
 
