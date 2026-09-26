@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <entry name="refreshInterval" type="Int">
+      <default>300</default>
+      <min>30</min>
+      <max>86400</max>
+    </entry>
+    <entry name="panelMetric" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="costPeriodDays" type="Int">
+      <default>30</default>
+      <min>1</min>
+      <max>90</max>
+    </entry>
+    <entry name="hideAmounts" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Bumped by the config page after secrets are written to KWallet so the
+         applet re-reads them. -->
+    <entry name="secretsRevision" type="Int">
+      <default>0</default>
+    </entry>
+  </group>
+</kcfg>

@@ -1,0 +1,496 @@
+/*
+    SPDX-FileCopyrightText: 2026 cassidy
+    SPDX-License-Identifier: GPL-2.0-or-later
+
+    Expanded representation (D2 — as much data as the configured credentials
+    allow). Balance, today/period/lifetime spend, token breakdown, a daily
+    spend sparkline and a per-key breakdown.
+
+    Costs and the days-left estimate are *derived* from the platform usage API
+    (undocumented, may change); the view says so.
+*/
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.kirigami as Kirigami
+import "js/format.js" as Fmt
+
+Item {
+    id: root
+
+    property QtObject api
+    property bool hideAmounts: false
+    property bool hasSession: false
+    property string periodLabel: ""
+
+    signal refreshRequested()
+
+    readonly property string currency: api ? api.displayCurrency : ""
+    readonly property bool hasUsage: api ? api.hasUsage : false
+    readonly property bool isPlatform: api ? api.platformOk : false
+    readonly property string noData: "\u2014"
+
+    readonly property real peakCost: {
+        var list = api ? api.perDay : [];
+        var max = 0;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].cost > max) {
+                max = list[i].cost;
+            }
+        }
+        return max;
+    }
+
+    readonly property var figures: {
+        var a = api;
+        return [
+            {
+                label: i18n("Today"),
+                value: (a && a.hasUsage) ? root.money(a.todayTotals.cost) : root.noData
+            },
+            {
+                label: root.periodLabel,
+                value: (a && a.hasUsage) ? root.money(a.totals.cost) : root.noData
+            },
+            {
+                label: i18n("Lifetime spend"),
+                value: (a && a.platformOk) ? root.money(a.totalCost) : root.noData
+            },
+            {
+                label: i18n("Estimated days left"),
+                value: (a && a.platformOk) ? a.estimatedDaysLeftLabel : root.noData
+            }
+        ];
+    }
+
+    // One row per metric so the table fits the popup width; a narrow label
+    // column plus two value columns.
+    readonly property var tokenRows: {
+        var a = api;
+        var today = a ? a.todayTotals : null;
+        var period = a ? a.totals : null;
+        return [
+            {
+                label: "",
+                today: i18n("Today"),
+                period: root.periodLabel,
+                header: true
+            },
+            {
+                label: i18n("Cost"),
+                today: today ? root.money(today.cost) : root.noData,
+                period: period ? root.money(period.cost) : root.noData,
+                header: false
+            },
+            {
+                label: i18n("In"),
+                today: today ? root.tokens(today.cacheHit + today.cacheMiss) : root.noData,
+                period: period ? root.tokens(period.cacheHit + period.cacheMiss) : root.noData,
+                header: false
+            },
+            {
+                label: i18n("Out"),
+                today: today ? root.tokens(today.response) : root.noData,
+                period: period ? root.tokens(period.response) : root.noData,
+                header: false
+            },
+            {
+                label: i18n("Cached"),
+                today: today ? root.tokens(today.cacheHit) : root.noData,
+                period: period ? root.tokens(period.cacheHit) : root.noData,
+                header: false
+            },
+            {
+                label: i18n("Requests"),
+                today: today ? Fmt.compactNumber(today.requests) : root.noData,
+                period: period ? Fmt.compactNumber(period.requests) : root.noData,
+                header: false
+            }
+        ];
+    }
+
+    function shown(text) {
+        return Fmt.hideable(text, root.hideAmounts);
+    }
+
+    function money(value) {
+        return shown(Fmt.money(value, root.currency));
+    }
+
+    function tokens(value) {
+        return shown(Fmt.tokens(value));
+    }
+
+    implicitWidth: Kirigami.Units.gridUnit * 24
+    readonly property real contentHeight: column.implicitHeight + Kirigami.Units.gridUnit * 2
+    implicitHeight: Math.min(contentHeight, Kirigami.Units.gridUnit * 42)
+
+    Flickable {
+        id: scroll
+
+        anchors.fill: parent
+        contentWidth: width
+        contentHeight: root.contentHeight
+        clip: true
+        boundsBehavior: Flickable.StopAtBounds
+        interactive: contentHeight > height
+
+        ScrollBar.vertical: ScrollBar {}
+
+        ColumnLayout {
+            id: column
+
+            // gridUnit gutters on both sides: the attached vertical scroll bar
+            // is drawn over the Flickable's right edge, so right-aligned values
+            // need room to stay readable.
+            x: Kirigami.Units.gridUnit
+            y: Kirigami.Units.gridUnit
+            width: scroll.width - Kirigami.Units.gridUnit * 2
+            spacing: Kirigami.Units.largeSpacing
+
+            // ------------------------------------------------------- header
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Kirigami.Units.smallSpacing
+
+                PlasmaComponents.Label {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    text: i18n("DeepSeek Usage")
+                    elide: Text.ElideRight
+                    font.bold: true
+                }
+
+                PlasmaComponents.Label {
+                    visible: root.api ? root.api.hasData : false
+                    text: root.api ? i18n("Updated %1", root.api.updatedLabel()) : ""
+                    font: Kirigami.Theme.smallFont
+                    opacity: 0.7
+                }
+
+                PlasmaComponents.ToolButton {
+                    icon.name: "view-refresh"
+                    enabled: root.api ? (root.api.configured && !root.api.loading) : false
+                    onClicked: root.refreshRequested()
+
+                    PlasmaComponents.ToolTip.text: i18n("Refresh now")
+                    PlasmaComponents.ToolTip.visible: hovered
+                    PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
+                }
+            }
+
+            // ------------------------------------------------------- errors
+            Rectangle {
+                Layout.fillWidth: true
+                visible: root.api ? root.api.errorText.length > 0 : false
+                implicitHeight: errorLabel.implicitHeight + Kirigami.Units.smallSpacing * 2
+                radius: Kirigami.Units.cornerRadius
+                color: Qt.rgba(Kirigami.Theme.negativeTextColor.r,
+                               Kirigami.Theme.negativeTextColor.g,
+                               Kirigami.Theme.negativeTextColor.b,
+                               0.15)
+
+                PlasmaComponents.Label {
+                    id: errorLabel
+
+                    anchors.fill: parent
+                    anchors.margins: Kirigami.Units.smallSpacing
+                    text: root.api ? root.api.errorText : ""
+                    color: Kirigami.Theme.negativeTextColor
+                    wrapMode: Text.Wrap
+                }
+            }
+
+            // -------------------------------------------------- balance hero
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 0
+
+                PlasmaComponents.Label {
+                    text: i18n("Balance")
+                    font: Kirigami.Theme.smallFont
+                    opacity: 0.7
+                }
+
+                PlasmaComponents.Label {
+                    text: root.money(root.api ? root.api.displayBalance : 0)
+                    font.bold: true
+                    font.pixelSize: Math.round(Kirigami.Units.gridUnit * 1.4)
+                }
+
+                PlasmaComponents.Label {
+                    Layout.fillWidth: true
+                    visible: text.length > 0
+                    wrapMode: Text.Wrap
+                    font: Kirigami.Theme.smallFont
+                    opacity: 0.7
+                    text: {
+                        if (!root.api) {
+                            return "";
+                        }
+                        if (root.api.platformOk) {
+                            return root.api.bonus > 0
+                                ? i18n("Includes %1 bonus credit", root.money(root.api.bonus))
+                                : "";
+                        }
+                        if (root.api.officialOk) {
+                            return i18n("Granted %1 · topped up %2",
+                                        root.money(root.api.officialGranted),
+                                        root.money(root.api.officialToppedUp));
+                        }
+                        return "";
+                    }
+                }
+            }
+
+            // -------------------------------------------------- key figures
+            GridLayout {
+                Layout.fillWidth: true
+                columns: 2
+                columnSpacing: Kirigami.Units.largeSpacing
+                rowSpacing: Kirigami.Units.smallSpacing
+
+                Repeater {
+                    model: root.figures
+
+                    delegate: ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            text: modelData.label
+                            elide: Text.ElideRight
+                            font: Kirigami.Theme.smallFont
+                            opacity: 0.7
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            text: modelData.value
+                            elide: Text.ElideRight
+                            font.bold: true
+                        }
+                    }
+                }
+            }
+
+            // ---------------------------------------------------- sparkline
+            ColumnLayout {
+                Layout.fillWidth: true
+                visible: root.hasUsage
+                spacing: Kirigami.Units.smallSpacing
+
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    PlasmaComponents.Label {
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 0
+                        text: i18n("Daily spend, %1", root.periodLabel)
+                        elide: Text.ElideRight
+                        font: Kirigami.Theme.smallFont
+                        opacity: 0.7
+                    }
+
+                    PlasmaComponents.Label {
+                        text: i18n("Peak %1", root.money(root.peakCost))
+                        font: Kirigami.Theme.smallFont
+                        opacity: 0.7
+                    }
+                }
+
+                Canvas {
+                    id: chart
+
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: Kirigami.Units.gridUnit * 2.5
+
+                    property var days: root.api ? root.api.perDay : []
+                    property color barColor: Kirigami.Theme.highlightColor
+                    property color axisColor: Qt.rgba(Kirigami.Theme.textColor.r,
+                                                      Kirigami.Theme.textColor.g,
+                                                      Kirigami.Theme.textColor.b,
+                                                      0.3)
+
+                    onDaysChanged: requestPaint()
+                    onWidthChanged: requestPaint()
+                    onHeightChanged: requestPaint()
+                    onBarColorChanged: requestPaint()
+                    onAxisColorChanged: requestPaint()
+
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.clearRect(0, 0, width, height);
+
+                        ctx.strokeStyle = axisColor;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(0, height - 0.5);
+                        ctx.lineTo(width, height - 0.5);
+                        ctx.stroke();
+
+                        var list = days || [];
+                        var n = list.length;
+                        if (n === 0) {
+                            return;
+                        }
+                        var max = 0;
+                        for (var i = 0; i < n; i++) {
+                            if (list[i].cost > max) {
+                                max = list[i].cost;
+                            }
+                        }
+                        if (max <= 0) {
+                            return;
+                        }
+
+                        var slot = width / n;
+                        var barWidth = Math.max(1, slot * 0.7);
+                        ctx.fillStyle = barColor;
+                        for (var j = 0; j < n; j++) {
+                            var barHeight = Math.max(1, Math.round((height - 2) * (list[j].cost / max)));
+                            var x = j * slot + (slot - barWidth) / 2;
+                            ctx.fillRect(x, height - 1 - barHeight, barWidth, barHeight);
+                        }
+                    }
+                }
+            }
+
+            // -------------------------------------------------- token table
+            ColumnLayout {
+                Layout.fillWidth: true
+                visible: root.hasUsage
+                spacing: Kirigami.Units.smallSpacing
+
+                PlasmaComponents.Label {
+                    text: i18n("Tokens")
+                    font.bold: true
+                }
+
+                Repeater {
+                    model: root.tokenRows
+
+                    delegate: RowLayout {
+                        id: tokenRow
+
+                        property var row: modelData
+                        readonly property bool isHeader: tokenRow.row ? tokenRow.row.header : false
+
+                        Layout.fillWidth: true
+                        spacing: Kirigami.Units.largeSpacing
+
+                        PlasmaComponents.Label {
+                            Layout.preferredWidth: Kirigami.Units.gridUnit * 6
+                            Layout.minimumWidth: 0
+                            text: tokenRow.row ? tokenRow.row.label : ""
+                            elide: Text.ElideRight
+                            opacity: tokenRow.isHeader ? 0.7 : 1
+                            font: tokenRow.isHeader ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            horizontalAlignment: Text.AlignRight
+                            text: tokenRow.row ? tokenRow.row.today : ""
+                            elide: Text.ElideRight
+                            opacity: tokenRow.isHeader ? 0.7 : 1
+                            font: tokenRow.isHeader ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            horizontalAlignment: Text.AlignRight
+                            text: tokenRow.row ? tokenRow.row.period : ""
+                            elide: Text.ElideRight
+                            opacity: tokenRow.isHeader ? 0.7 : 1
+                            font: tokenRow.isHeader ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
+                        }
+                    }
+                }
+            }
+
+            // --------------------------------------------------- per key
+            ColumnLayout {
+                Layout.fillWidth: true
+                visible: root.api ? root.api.perKey.length > 0 : false
+                spacing: Kirigami.Units.smallSpacing
+
+                PlasmaComponents.Label {
+                    text: i18n("Per API key")
+                    font.bold: true
+                }
+
+                Repeater {
+                    model: root.api ? root.api.perKey : []
+
+                    delegate: RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Kirigami.Units.largeSpacing
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            spacing: 0
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 0
+                                text: modelData.name
+                                elide: Text.ElideRight
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 0
+                                visible: text.length > 0
+                                text: modelData.maskedId
+                                elide: Text.ElideMiddle
+                                opacity: 0.6
+                                font: Kirigami.Theme.smallFont
+                            }
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.alignment: Qt.AlignRight
+                            text: root.tokens(modelData.cacheHit + modelData.cacheMiss + modelData.response)
+                            opacity: 0.6
+                            font: Kirigami.Theme.smallFont
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.alignment: Qt.AlignRight
+                            text: root.money(modelData.cost)
+                            font.bold: true
+                        }
+                    }
+                }
+            }
+
+            // ------------------------------------------------------- notes
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                visible: root.api ? (!root.api.platformOk && !root.hasSession) : false
+                wrapMode: Text.Wrap
+                font: Kirigami.Theme.smallFont
+                opacity: 0.7
+                text: i18n("Balance-only mode. Add a platform session token in the settings to also see token usage, cost history and the per-key breakdown.")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                visible: root.hasUsage
+                wrapMode: Text.Wrap
+                font: Kirigami.Theme.smallFont
+                opacity: 0.6
+                text: i18n("Costs and the days-left estimate are derived from the platform usage API, which is undocumented and may change without notice.")
+            }
+        }
+    }
+}

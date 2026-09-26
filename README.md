@@ -1,0 +1,119 @@
+# DeepSeek Usage — a Plasma 6 widget
+
+A small, dependency-free KDE Plasma 6 applet that shows your DeepSeek API
+balance and usage in the panel, with a detailed popup.
+
+- **Panel:** an icon plus the number you choose (balance, today's spend,
+  today's tokens, period spend or lifetime spend).
+- **Popup:** balance, today/period/lifetime spend, an estimated "days left",
+  in/out/cached tokens and request counts, a daily-spend sparkline and a
+  per-API-key breakdown.
+- **Secrets live in KWallet**, never in the widget's configuration file.
+- **No runtime dependencies** beyond Plasma and Qt: network access is QML
+  `XMLHttpRequest`, parsing is plain JavaScript, and KWallet is reached through
+  `kwallet-query`.
+
+![Rich mode](docs/images/rich-mode.png)
+
+As a panel chip (icon plus the chosen number):
+
+![Panel chip](docs/images/panel-mode.png)
+
+## Install
+
+```sh
+./install.sh            # install or upgrade for the current user
+./install.sh --pack     # write deepseek-usage.plasmoid for distribution
+./install.sh --uninstall
+```
+
+Then add **DeepSeek Usage** to a panel or the desktop. Right-click the widget →
+*Configure…* to add your credentials.
+
+## Credentials
+
+Two different credentials exist, and they are not interchangeable.
+
+| | API key | Session token |
+|---|---|---|
+| Where to get it | <https://platform.deepseek.com/api_keys> | the value the platform site keeps after you log in |
+| Scope | your account's API access | **full account access**, including creating and deleting API keys |
+| Gives you | balance only | balance, lifetime spend and usage history |
+| Stored as | `deepseek-api-key` in KWallet | `deepseek-session-token` in KWallet |
+
+Both are written to KWallet (wallet `kdewallet`, folder `Plasma`) and read back
+with `kwallet-query`. The API key alone is enough for the balance; adding the
+session token enables the usage sections. If the session token stops working
+the widget falls back to the balance and tells you why.
+
+> [!WARNING]
+> The session token is as powerful as your password. Treat it like one, and
+> remove it from KWallet if you stop using rich mode.
+
+## Data sources
+
+The widget is a hybrid because DeepSeek exposes two unrelated APIs.
+
+**Official API** (`api.deepseek.com`) — API-key authenticated, documented,
+reliable, but it only reports the balance:
+
+```
+GET https://api.deepseek.com/user/balance
+Authorization: Bearer <API_KEY>
+```
+
+**Platform API** (`platform.deepseek.com/api/v0`) — the backend behind the web
+usage page. It is session authenticated and **undocumented**, so it can change
+at any time:
+
+```
+GET /users/get_user_summary
+GET /usage/by_api_key/amount?start=&end=&tz=
+GET /usage/by_api_key/cost?start=&end=&tz=
+authorization: Bearer <SESSION_TOKEN>
+```
+
+Two quirks worth knowing:
+
+- The platform API answers **HTTP 200 even for auth failures**, putting the
+  real status in the JSON body (`{"code":40003,...}`). The widget therefore
+  classifies results from the payload, never from the HTTP status.
+- Cost and token payloads nest their series differently (`data.biz_data.data[]
+  .series[]` for cost, `data.biz_data.series[]` for tokens).
+
+Because there is no documented "usage" endpoint, the spend figures and the
+"estimated days left" value are **derived** from this API and are labelled as
+such in the popup.
+
+## Configuration
+
+| Setting | Default | Meaning |
+|---|---|---|
+| Refresh interval | 300 s | how often to poll (minimum 30 s) |
+| Panel shows | Balance | which number appears in the panel |
+| Cost period | 30 days | window for the period totals and the sparkline |
+| Hide all amounts | off | replace every amount on screen with bullets |
+
+## Development
+
+The parsing, formatting and KWallet command logic live in plain JavaScript
+modules under `contents/ui/js/` so they can be tested without a Plasma session:
+
+```sh
+node --test tests/api.test.mjs tests/format.test.mjs tests/wallet.test.mjs
+```
+
+`tests/mock-platform-server.mjs` serves the recorded payload shapes of the
+platform API, which is the only way to exercise rich mode without live
+credentials. Point `PLATFORM_BASE` in `contents/ui/js/api.js` at
+`http://127.0.0.1:8731/api/v0` while you test, then put it back.
+
+Static checks for the QML side:
+
+```sh
+qmllint contents/ui/*.qml contents/config/config.qml
+```
+
+## License
+
+GPL-2.0-or-later. See `LICENSE`.

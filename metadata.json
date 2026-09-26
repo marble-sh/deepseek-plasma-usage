@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "cassidy"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Shows DeepSeek API balance and usage across all API keys",
+        "Description[en_GB]": "Shows DeepSeek API balance and usage across all API keys",
+        "EnabledByDefault": true,
+        "Icon": "office-chart-bar",
+        "Id": "org.deepseek.plasma.usage",
+        "License": "GPL-2.0+",
+        "Name": "DeepSeek Usage",
+        "Name[en_GB]": "DeepSeek Usage",
+        "Website": ""
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

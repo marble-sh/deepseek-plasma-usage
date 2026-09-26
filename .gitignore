@@ -1,0 +1,13 @@
+# Build output / local scratch
+build/
+*.plasmoid
+
+# Session bookkeeping is local-only: it may reference secrets and private probes
+docs/state/
+
+# The reference plasmoid is untracked reference material
+NoriWeather-main/
+
+# Editor / OS noise
+*~
+*.swp
