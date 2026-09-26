@@ -4,6 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { load } from "./load.mjs";
+import { costPayload, amountPayload, summaryPayload } from "./mock-platform-server.mjs";
 
 /*
     The recorded live probe this suite pins (docs/state/api-contract.md) was
@@ -192,4 +193,52 @@ test("usageWindow stays one day wide for a one-day period or bad input", () => {
 
     // A fractional period is floored rather than allowed to skew the window.
     assert.equal(api.usageWindow(now, 30.9).end - api.usageWindow(now, 30.9).start, 30 * 86400);
+});
+
+/*
+    End to end, on the payload shapes the platform really returns: the mock's
+    data is a snapshot of a real account's usage page (see its header comment),
+    so this asserts that the widget's own parsing and aggregation reproduce the
+    figures the platform displayed. If the two ever disagree, one of them is
+    wrong and it is checkable by hand.
+*/
+test("the pipeline reproduces the platform page's own totals", () => {
+    const envelope = text => api.parseEnvelope(text);
+
+    const cost = envelope(JSON.stringify(costPayload()));
+    const amount = envelope(JSON.stringify(amountPayload()));
+    const summary = api.parseSummary(envelope(JSON.stringify(summaryPayload())).biz);
+    assert.equal(cost.ok, true);
+    assert.equal(amount.ok, true);
+
+    // The cards at the top of the platform page.
+    assert.equal(summary.balance, 6.74);
+    assert.equal(summary.bonus, 0);
+    assert.equal(summary.totalCost, 3.25);
+
+    // The "Last 30 days" row: cost, requests and tokens.
+    const agg = api.aggregateUsage(cost.biz, amount.biz);
+    assert.ok(Math.abs(agg.totals.cost - 3.25) < 1e-9, `cost ${agg.totals.cost}`);
+    assert.equal(agg.totals.requests, 1325);
+    assert.equal(api.totalTokens(agg.totals), 297270684);
+
+    // Only four of the thirty days have activity, and every one of them falls
+    // inside the window the widget asks for -- that is Api.usageWindow's job.
+    const now = new Date();
+    const w = api.usageWindow(now, 30);
+    assert.equal(agg.perDay.length, 4);
+    for (const day of agg.perDay) {
+        assert.ok(day.time >= w.start && day.time < w.end, `bucket ${day.time} outside the window`);
+    }
+    assert.equal(agg.perDay[0].time, api.daysAgo(now, 4));
+    assert.equal(agg.perDay[agg.perDay.length - 1].time, api.startOfToday(now));
+
+    // "Today" is the bucket at the local midnight, which is what the row sums.
+    const today = api.bucketForDay(agg.perDay, api.startOfToday(now));
+    assert.ok(Math.abs(today.cost - 1.0602) < 1e-9, `today ${today.cost}`);
+
+    // The two endpoints have to agree per day, or the In/Out split would mix
+    // one day's tokens with another day's cost.
+    assert.equal(agg.totals.cacheHit + agg.totals.cacheMiss + agg.totals.response,
+        api.totalTokens(agg.totals));
 });
