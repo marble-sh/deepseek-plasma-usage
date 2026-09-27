@@ -40,6 +40,12 @@ What the numbers mean here:
   business-status handling landed both were reported as "Missing payload".
   `Api.MAX_USAGE_DAYS` is now the single ceiling, read by the spinner, the KConfigXT
   bound and the request, and a stored value above it is clamped rather than sent.
+- **The session token is peeled no matter how it was copied.** `normalizeSessionToken`
+  already handled the storage wrapper, a quoted copy and a whole `Bearer …` header, but
+  not the wrapper whose quotes came out escaped (what `JSON.stringify(userToken)` in
+  the console, or a log line, gives) or a hand-typed single-quoted object. Both still
+  carry the wrapper's own `value` key, so both are peeled now; anything that does not
+  begin with `{` is still returned untouched.
 
 ## [0.2.0] - 2026-09-27
 
