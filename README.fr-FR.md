@@ -58,6 +58,15 @@ interchangeables.
 | Vous donne   | le solde uniquement                      | le solde, les dépenses cumulées et l'historique d'utilisation                        |
 | Stocké sous  | `deepseek-api-key` dans KWallet          | `deepseek-session-token` dans KWallet                                                |
 
+### Comment obtenir le jeton de session
+
+1. Connectez-vous à <https://platform.deepseek.com> dans votre navigateur.
+2. Ouvrez les outils de développement (F12, ou ⌥⌘I sur macOS).
+3. Ouvrez l'onglet **Application** (**Storage** dans Firefox) → **Local Storage** → `https://platform.deepseek.com`.
+4. Trouvez la clé nommée `userToken` et copiez sa valeur. C'est votre jeton de session.
+
+> **Astuce :** La valeur est longue. Copiez-la exactement telle qu'elle apparaît ; n'ajoutez ni espaces ni sauts de ligne.
+
 Les deux sont écrits dans KWallet (portefeuille `kdewallet`, dossier `Plasma`)
 et relus avec `kwallet-query`. La clé d'API suffit à elle seule pour le solde ;
 ajouter le jeton de session active les sections d'utilisation. Si le jeton de

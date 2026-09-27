@@ -54,6 +54,15 @@ Ada dua kredensial yang berbeda, dan keduanya tidak dapat dipertukarkan.
 | Yang Anda dapatkan | hanya saldo                              | saldo, pengeluaran seumur hidup, dan riwayat penggunaan        |
 | Disimpan sebagai   | `deepseek-api-key` di KWallet            | `deepseek-session-token` di KWallet                            |
 
+### Cara mendapatkan token sesi
+
+1. Masuk ke <https://platform.deepseek.com> di browser Anda.
+2. Buka Alat Pengembang (F12, atau ⌥⌘I di macOS).
+3. Buka tab **Application** (**Storage** di Firefox) → **Local Storage** → `https://platform.deepseek.com`.
+4. Temukan kunci bernama `userToken` dan salin nilainya. Itulah token sesi Anda.
+
+> **Tips:** Nilainya panjang. Salin persis seperti yang ditampilkan; jangan tambahkan spasi atau jeda baris.
+
 Keduanya ditulis ke KWallet (wallet `kdewallet`, folder `Plasma`) dan dibaca
 kembali dengan `kwallet-query`. Kunci API saja sudah cukup untuk saldo;
 menambahkan token sesi mengaktifkan bagian penggunaan. Jika token sesi berhenti

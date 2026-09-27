@@ -51,6 +51,15 @@ _配置…_ 以添加你的凭据。
 | 提供内容 | 仅余额                                   | 余额、累计支出和用量历史                        |
 | 存储为   | KWallet 中的 `deepseek-api-key`          | KWallet 中的 `deepseek-session-token`           |
 
+### 如何获取会话令牌
+
+1. 在浏览器中登录 <https://platform.deepseek.com>。
+2. 打开开发者工具（F12，macOS 上为 ⌥⌘I）。
+3. 打开 **Application** 标签页（Firefox 中为 **Storage**）→ **Local Storage** → `https://platform.deepseek.com`。
+4. 找到名为 `userToken` 的键，复制其值。这就是你的会话令牌。
+
+> **提示：** 该值较长。请完全按照显示的内容复制，不要添加空格或换行。
+
 两者都会写入 KWallet（钱包 `kdewallet`，文件夹 `Plasma`），并通过
 `kwallet-query` 读回。仅凭 API 密钥就足以获取余额；添加
 会话令牌后会启用用量相关区块。如果会话令牌失效，
