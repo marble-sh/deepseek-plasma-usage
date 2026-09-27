@@ -137,12 +137,23 @@ steps are in [`translate/README.md`](translate/README.md).
 ## Versioning
 
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html), with the policy spelled
-out in [`CHANGELOG.md`](CHANGELOG.md). The version lives in `package.json` and in
-`metadata.json` as `KPlugin.Version`; `tests/version.test.mjs` fails if they disagree
-with the newest `CHANGELOG.md` heading.
+out in [`CHANGELOG.md`](CHANGELOG.md). The version is written in **three** places —
+`package.json` (what npm and `gh release` read), `metadata.json` as
+`KPlugin.Version` (what Plasma shows in the widget's About), and the newest dated
+`CHANGELOG.md` heading — and `tests/version.test.mjs` fails if any two of them
+disagree. It names the field that drifted. That test runs in the `Unit tests (node)`
+job and in the pre-commit hook, so a drift is caught before it is pushed rather than
+by a user reading a stale version in the widget.
 
-Releasing is: move the `[Unreleased]` entries in `CHANGELOG.md` under a new dated
-heading, bump the two version fields, commit, then tag and push the tag.
+`scripts/bump-version.sh` moves all three at once:
+
+```sh
+scripts/bump-version.sh 0.1.2
+```
+
+It refuses a version that is not SemVer, one that is not greater than the current one,
+and one with nothing under `[Unreleased]` — an empty release section is a release
+nobody can read. Then it runs the version test, and prints the tag command.
 
 Commits **must be signed**, and `-s` signs the tag itself as well. The rulesets
 enforce the former: `main` requires signed commits, and so does `v*` — though what
@@ -156,8 +167,8 @@ Set signing up first (`git config user.signingkey`, `git config commit.gpgsign t
 and register the key with your GitHub account.
 
 ```sh
-git tag -s v0.1.1 -m "v0.1.1"
-git push origin v0.1.1
+git tag -s v0.1.2 -m "v0.1.2"
+git push origin v0.1.2
 ```
 
 Pushing the tag is the release: `release.yml` checks the tag against `package.json`,

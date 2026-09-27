@@ -497,6 +497,38 @@ Round 14 — 2026-09-27 (hooks, and two guards for gaps the docs exposed)
 - `npm test` now also covers `metadata.json` (5 cases) and the DST window (2), so the
   suite is 66 rather than 55.
 
+---
+
+Round 15 — 2026-09-27 (a description in every language, and one place to bump the version)
+
+| #   | Decision                                                                                                       | Detail                                                                                                                                                                                                                                                                                                              | Reasoning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Lifespan  |
+| --- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| D67 | The widget is described **in every locale it ships**, not only in every README                                 | `Description[<locale>]` for the six translated READMEs, plus `[es]`, `[fr]`, `[hi]`, `[id]` and `[ru]`. `tests/metadata.test.mjs` requires an exact entry per README and a reachable one — exact, or by the language Qt falls back to — per locale in `translate/LINGUAS`, with `en_IN` exempt as the English base. | Qt resolves a locale by shortening it, so `es_CL` finds `Description[es]` and `ru_BY` finds `Description[ru]`: one entry per language covers the region-tagged aliases we ship. Without them an `es_CL` user has a Spanish interface and an English line in the widget list, which is the wrong half to leave untranslated. This is the same territory as D9's bare-`es` caution, which is about catalogue _text_ with real regional differences; one sentence describing balance and usage has none, and the alternative is English. | permanent |
+| D68 | The version is written in **three** places, and `scripts/bump-version.sh` moves all three at once              | `package.json`, `metadata.json`'s `KPlugin.Version` and the newest `CHANGELOG.md` heading. The script refuses a version that is not SemVer, one that is not greater than the current one, and one with an empty `[Unreleased]`; then it runs the guard and prints the tag command.                                  | `tests/version.test.mjs` already failed on a drift and named the field, so the "at the very least a check" half of the request was met before it was asked. But a check tells you _after_ the same value has been written in three files and one was missed. The failure mode is the forgetting, so make it one command — and refuse the two ways a release goes wrong on the way (`0.1.1` again, or a tag with nothing to read).                                                                                                     | permanent |
+| D69 | `metadata.json`'s formatting belongs to Prettier even when the file is edited outside the repository's tooling | Returned to four-space indentation; `KPlugin.BugReportUrl` now points at the issue chooser, which is the URL that offers the issue forms.                                                                                                                                                                           | An editor that reformats JSON to two spaces changes nothing semantically and fails the `Prettier` job — which now also runs in the pre-commit hook, so this surfaces as a blocked commit instead of a red CI run. `.editorconfig` already asked for four, so the remaining fix is in the editor's own settings.                                                                                                                                                                                                                       | permanent |
+
+### Verified during round 15 (level 1)
+
+- **Every shipped locale is covered by name.** Of the 17 catalogues in `translate/LINGUAS`,
+  11 resolve to an exact entry and 5 by their language (`es_419`, `es_AR`, `es_CL`,
+  `es_CU`, `es_MX` via `[es]`; `ru_BY` via `[ru]`); `en_IN` is the English base by
+  design. Nothing falls back to English that should not.
+- **`bump-version.sh` was exercised, not just written.** It moved all three files to
+  `0.2.0` together and the guard passed; the working tree was then restored, so no
+  release was cut. It refused `banana` (exit 1), the current `0.1.1` (exit 1), a lower
+  `0.0.9` (exit 1), no argument (usage, exit 2), and an emptied `[Unreleased]` (exit 1,
+  with the reason quoted).
+- **The drift check was demonstrated.** With `metadata.json` set to `9.9.9` against
+  `package.json`'s `0.1.1`, `tests/version.test.mjs` failed with
+  `AssertionError: metadata.json KPlugin.Version — actual '9.9.9', expected '0.1.1'`.
+  The check runs in the `Unit tests (node)` job and in the pre-commit hook.
+- The README-per-language rule and the catalogue-per-locale rule were both made to
+  fail first: the first run reported `Description[en_IN] or Description[en], for
+catalogue en_IN`, which is what exposed the `\b`-does-not-break-at-underscore
+  mistake in the exemption.
+- `metadata.json` passes the `Prettier` check again, so the two-space reformat that
+  arrived with the edit is gone.
+
 ### Verified during round 2 (live, level 1)
 
 - The in-package catalogue path works: a 3-string probe `.mo` at
