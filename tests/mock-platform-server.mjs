@@ -11,10 +11,11 @@
     Point `PLATFORM_BASE` in contents/ui/js/api.js at it (translate/build.sh's
     sibling, tests/capture-screenshots.sh, does this and restores it).
 
-    `--echo-auth` prints the authorization header of every request. The mock accepts
-    any token, so nothing else can show whether a credential was normalized on the way
-    out — which is the difference between a working session token and
-    "Authorization Failed (invalid token)".
+    `--echo-auth` reports the shape of the authorization header of every request. The
+    mock accepts any token, so nothing else can show whether a credential was
+    normalised on the way out -- which is the difference between a working session
+    token and "Authorization Failed (invalid token)". It describes the header rather
+    than printing it, so a token never lands in a log.
 
     The numbers are **invented, on purpose**. An earlier revision of this file was a
     snapshot of a real account's usage page, which meant the committed screenshots
@@ -306,20 +307,48 @@ const routes = {
     "/api/v0/usage/by_api_key/amount": amountPayload
 };
 
-// Everything echoed below comes from the request, and CodeQL's log-injection query is
-// right that a newline in a URL could forge a log line. This is a localhost dev mock,
-// so the practical risk is nil, but the sanitising is one line and it keeps the alert
-// list at zero -- the whole point of which is that a real finding stands out. The
-// base64 characters in a token are all printable, so nothing worth reading is lost.
-function logSafe(text) {
-    return String(text === undefined ? "" : text).replace(/[^\x20-\x7e]/g, "?");
+// Everything below is described rather than echoed, for two reasons. CodeQL's
+// log-injection query is right that the request line and the authorization header are
+// attacker-controlled and that echoing them into a log is an injection sink; and a
+// session token does not belong in a log file that people paste into bug reports
+// anyway. The question this feature exists to answer is whether the credential was
+// normalised on the way out, and that is a question about its *shape*.
+//
+// Every string returned here is a constant, so nothing request-derived reaches the
+// log. A route is reported only if it is one of the known ones.
+function routeLabel(rawUrl) {
+    const path = new URL(rawUrl, "http://localhost").pathname;
+    for (const known of Object.keys(routes)) {
+        if (known === path) {
+            return known;
+        }
+    }
+    return "(unknown route)";
+}
+
+function describeAuthorization(header) {
+    const value = header === undefined || header === null ? "" : String(header).trim();
+    if (!value) {
+        return "(absent)";
+    }
+    if (!/^Bearer[ \t]+/i.test(value)) {
+        return "present, but not a Bearer header";
+    }
+    const token = value.replace(/^Bearer[ \t]+/i, "");
+    if (token.startsWith("{")) {
+        return "Bearer <a JSON wrapper, not a token -- unwrapping is broken>";
+    }
+    if (token.length < 16) {
+        return "Bearer <suspiciously short>";
+    }
+    return "Bearer <a bare token>";
 }
 
 const server = http.createServer((req, res) => {
     const path = new URL(req.url, "http://localhost").pathname;
     if (echoAuth) {
-        console.log(logSafe(`${req.method} ${path}`));
-        console.log(`  authorization: ${logSafe(req.headers.authorization || "(absent)")}`);
+        console.log(routeLabel(req.url));
+        console.log(`  authorization: ${describeAuthorization(req.headers.authorization)}`);
     }
     const handler = routes[path];
     if (!handler) {
