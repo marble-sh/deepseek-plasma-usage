@@ -14,6 +14,7 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import "js/wallet.js" as WalletJs
 import "js/format.js" as Fmt
+import "js/api.js" as Api
 
 KCM.SimpleKCM {
     id: page
@@ -200,7 +201,9 @@ KCM.SimpleKCM {
                 text: i18nc("store the entered credential in KWallet", "Save")
                 icon.name: "document-save"
                 enabled: sessionField.text.length > 0
-                onClicked: page.writeSecret(WalletJs.SESSION_TOKEN_ENTRY, sessionField.text)
+                // Peeled on the way in as well as on the way out, so the wallet holds
+                // the token rather than whatever wrapper it was copied inside.
+                onClicked: page.writeSecret(WalletJs.SESSION_TOKEN_ENTRY, Api.normalizeSessionToken(sessionField.text))
             }
 
             QQC2.Button {

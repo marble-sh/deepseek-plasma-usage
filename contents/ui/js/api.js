@@ -77,23 +77,30 @@ function daysAgo(now, days) {
     return Math.floor(d.getTime() / 1000);
 }
 
-// Query window for the two usage endpoints: `periodDays` local days ending with
-// today. `start` is inclusive, `end` is exclusive (tomorrow's local midnight),
-// so the two are exactly periodDays * 86400 apart and the bucket at `start` is
-// the oldest day included.
+// Query window for the two usage endpoints: `periodDays` days ending with today.
+// `end` is exclusive (tomorrow's local midnight); `start` is derived from it by pure
+// subtraction, and deliberately NOT by asking for "local midnight N days ago".
 //
-// The recorded live probe (docs/state/api-contract.md) asked for
-// [2026-08-28T00:00-03:00, 2026-09-27T00:00-03:00) on 2026-09-26, which is
-// daysAgo(29) to tomorrow -- the window the platform's own page labels
-// "Last 30 days". Subtracting the whole period instead would ask for 31 days and
-// silently inflate every period total by one day's spend.
+// That distinction is the whole point. A local day is not always 86400 seconds long:
+// across a daylight-saving transition one is 23 or 25 hours, so "midnight 29 days ago"
+// can land an hour away from the day boundary the `tz` parameter implies -- and the
+// request carries only one offset, so the two ends then disagree about it. The
+// platform refuses such a window with biz_code 1, INVALID_PARAM, without saying which
+// end it disliked. Subtracting from `end` keeps both ends on boundaries of the same
+// offset.
+//
+// It is also what the platform's own page asks for. The recorded live probe
+// (docs/state/api-contract.md) was [2026-08-28T00:00-03:00, 2026-09-27T00:00-03:00)
+// on 2026-09-26, labelled "Last 30 days" -- end minus exactly 30 * 86400, and that
+// start is a boundary at -03:00 even though the local clock in August was -04:00.
 function usageWindow(now, periodDays) {
     var days = toNumber(periodDays);
     if (!isFinite(days) || days < 1) {
         days = 1;
     }
     days = Math.floor(days);
-    return { start: daysAgo(now, days - 1), end: startOfToday(now) + 86400 };
+    var end = startOfToday(now) + 86400;
+    return { start: end - days * 86400, end: end };
 }
 
 /* ---------------------------------------------------------- parse helpers */
@@ -122,7 +129,16 @@ function parseEnvelope(text) {
     if (code !== 0) {
         return { ok: false, code: code, msg: obj.msg || "Request failed", biz: null };
     }
-    var biz = obj.data && obj.data.biz_data ? obj.data.biz_data : null;
+    // There is a second, business-level status inside `data`, and it is the one that
+    // explains a refusal the outer `code` calls a success. Ignoring it turned the
+    // platform's `biz_code: 1, biz_msg: "INVALID_PARAM"` into a generic
+    // "Missing payload", which named neither the fault nor the field at fault.
+    var data = obj.data;
+    var bizCode = data && typeof data.biz_code === "number" ? data.biz_code : 0;
+    if (bizCode !== 0) {
+        return { ok: false, code: code, bizCode: bizCode, msg: data.biz_msg || obj.msg || "Request failed", biz: null };
+    }
+    var biz = data && data.biz_data ? data.biz_data : null;
     if (!biz) {
         return { ok: false, code: -4, msg: "Missing payload", biz: null };
     }
@@ -161,6 +177,76 @@ function parseOfficialBalance(text) {
         toppedUp: toNumber(b.topped_up_balance),
         available: obj.is_available !== false
     };
+}
+
+/* ------------------------------------------------------------ credentials */
+
+/*
+    A pasted session token is very often one layer more than the token itself, and
+    every extra layer fails the same way: the platform answers HTTP 200 with
+    `code:40003`, "Authorization Failed (invalid token)".
+
+    The layer that catches everybody is the storage format. In the platform's
+    DevTools the `userToken` entry does not hold the token, it holds a *JSON object*:
+
+        {"value":"<token>","__version":"0"}
+
+    so following "copy its value" literally copies the wrapper, and the request goes
+    out as `authorization: Bearer {"value":"...","__version":"0"}`. A quoted copy,
+    or a whole `Bearer <token>` header pasted from the network tab, fails the same
+    way.
+
+    Peel those off here rather than in the UI, so the wallet may hold any of them and
+    every caller still gets a bare token. Deliberately conservative: anything that is
+    not one of those wrappers is returned unchanged, because mangling a real token
+    would be worse than rejecting it.
+*/
+function normalizeSessionToken(raw) {
+    var value = raw === undefined || raw === null ? "" : String(raw);
+    // Repeats because more than one layer can be wrapped at once, e.g. a quoted
+    // JSON object. It stops as soon as a pass changes nothing.
+    for (var pass = 0; pass < 4; pass++) {
+        var before = value;
+        value = value.trim();
+
+        // A whole `Bearer <token>` header pasted from the network tab.
+        var bearer = /^Bearer[ \t]+/i.exec(value);
+        if (bearer) {
+            value = value.slice(bearer[0].length).trim();
+        }
+
+        // JSON turns up as the storage wrapper (an object with `value`), as a
+        // quoted string, and as an escaped quoted string, depending on where the
+        // copy was taken from. One parse handles all three, and a parse that throws
+        // or lands on anything that is not a string is left alone — mangling a real
+        // token would be worse than rejecting it.
+        var parsed = parseJson(value);
+        if (typeof parsed === "string") {
+            value = parsed.trim();
+        } else if (parsed && typeof parsed.value === "string") {
+            value = parsed.value.trim();
+        }
+
+        if (value === before) {
+            break;
+        }
+    }
+    return value;
+}
+
+// JSON.parse without the throw, so "not JSON" can be told apart from a value.
+function parseJson(text) {
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        return null;
+    }
+}
+
+// The one place the platform's auth header is built, so whatever a caller calls a
+// session token, what goes on the wire is a bare one.
+function authHeaders(sessionToken) {
+    return { authorization: "Bearer " + normalizeSessionToken(sessionToken) };
 }
 
 /* --------------------------------------------------------- token algebra */

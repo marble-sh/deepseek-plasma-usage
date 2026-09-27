@@ -63,9 +63,10 @@ interchangeables.
 1. Connectez-vous à <https://platform.deepseek.com> dans votre navigateur.
 2. Ouvrez les outils de développement (F12, ou ⌥⌘I sur macOS).
 3. Ouvrez l'onglet **Application** (**Storage** dans Firefox) → **Local Storage** → `https://platform.deepseek.com`.
-4. Trouvez la clé nommée `userToken` et copiez sa valeur. C'est votre jeton de session.
+4. Trouvez la clé nommée `userToken` et ne copiez **que le jeton qu'elle contient**. L'entrée est un objet JSON — `{"value":"…","__version":"0"}` — et le jeton de session est seulement la chaîne qui suit `value:`.
 
-> **Astuce :** La valeur est longue. Copiez-la exactement telle qu'elle apparaît ; n'ajoutez ni espaces ni sauts de ligne.
+> [!TIP]
+> Copier l'entrée entière est l'erreur habituelle : elle échoue avec `Authorization Failed (invalid token)`, la requête portant `{"value":…}` là où un jeton est attendu. Le widget la déballe de toute façon, donc une copie entre guillemets ou un en-tête `Bearer …` complet fonctionnent aussi.
 
 Les deux sont écrits dans KWallet (portefeuille `kdewallet`, dossier `Plasma`)
 et relus avec `kwallet-query`. La clé d'API suffit à elle seule pour le solde ;
