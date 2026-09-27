@@ -3,10 +3,10 @@
 The widget is translated with gettext/KI18n, the same way every Plasma applet
 is. A plasmoid's own catalogue is looked up under the domain
 `plasma_applet_<plugin id>`, which for this widget is
-`plasma_applet_org.deepseek.plasma.usage`, in the package directory
+`plasma_applet_sh.marble.deepseek.usage`, in the package directory
 
 ```
-contents/locale/<locale>/LC_MESSAGES/plasma_applet_org.deepseek.plasma.usage.mo
+contents/locale/<locale>/LC_MESSAGES/plasma_applet_sh.marble.deepseek.usage.mo
 ```
 
 so no system-wide installation is involved.
@@ -117,7 +117,7 @@ then, nothing here blocks you: the catalogues in this directory keep shipping.
   It is written to the convention used by KDE's own packages and was smoke-
   tested with a simulated `$XGETTEXT`/`$podir` environment: it extracts the same
   70 msgids as `translate/merge.sh`, and names the pot
-  `plasma_applet_org.deepseek.plasma.usage.pot` — the basename **is** the message
+  `plasma_applet_sh.marble.deepseek.usage.pot` — the basename **is** the message
   domain the applet loads, so it must not be renamed.
 - The strings are already marked up correctly (`i18n()`, `i18nc()` with a
   context where the string is ambiguous, and plural forms), which is what makes

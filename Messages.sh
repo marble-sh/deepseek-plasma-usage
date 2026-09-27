@@ -14,7 +14,7 @@
 # QML and the js/ modules need different gettext parsers, exactly as in
 # translate/merge.sh, so this runs twice and joins the results.
 
-domain=plasma_applet_org.deepseek.plasma.usage
+domain=plasma_applet_sh.marble.deepseek.usage
 pot="$podir/$domain.pot"
 
 $XGETTEXT $(find contents -name '*.qml' | sort) -C -o "$pot"

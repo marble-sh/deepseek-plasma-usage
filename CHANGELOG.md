@@ -29,6 +29,11 @@ What the numbers mean here:
   every request, browser-like or not, with an AWS WAF challenge that only a browser
   can pass, so no widget-side login window can work; the evidence and the A/B control
   are recorded in `docs/decisions-log.md` (D70). No password is stored.
+- **The plugin id is now `sh.marble.deepseek.usage`** (was
+  `org.deepseek.plasma.usage`). _Breaking for an existing install:_ the widget no
+  longer resolves under the old id, so remove it from the panel and add it again — its
+  settings return to their defaults. Wallet entries and account data are unaffected.
+  The new namespace is the publisher's own rather than DeepSeek's; see D73.
 
 ### Fixed
 

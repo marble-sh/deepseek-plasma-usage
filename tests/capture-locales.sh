@@ -18,11 +18,11 @@ ROOT=$(cd -- "$(dirname -- "$0")/.." && pwd)
 
 capture() {
     locale=$1
-    pkill -f 'plasmawindowed org.deepseek.plasma.usage' 2>/dev/null || true
+    pkill -f 'plasmawindowed sh.marble.deepseek.usage' 2>/dev/null || true
     sleep 1
 
     QT_QPA_PLATFORM=xcb LANG="$locale.utf8" LANGUAGE="$locale" \
-        plasmawindowed org.deepseek.plasma.usage >"$OUT/$locale.log" 2>&1 &
+        plasmawindowed sh.marble.deepseek.usage >"$OUT/$locale.log" 2>&1 &
     pid=$!
     sleep 9
 
@@ -50,5 +50,5 @@ for locale in "$@"; do
     capture "$locale"
 done
 
-pkill -f 'plasmawindowed org.deepseek.plasma.usage' 2>/dev/null || true
+pkill -f 'plasmawindowed sh.marble.deepseek.usage' 2>/dev/null || true
 echo "captured into $OUT"
