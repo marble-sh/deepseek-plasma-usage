@@ -24,10 +24,21 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const DIR = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(DIR, "..");
 const MESSAGES = join(DIR, "messages");
-const DOMAIN = "plasma_applet_org.deepseek.plasma.usage";
 const checkOnly = process.argv.includes("--check");
+
+// Read a file that may not exist. Checking with `existsSync` and then reading -- or
+// worse, checking and then writing later -- is a time-of-check/time-of-use race, and
+// CodeQL flags it as one. Treating ENOENT as "absent" is the same behaviour with no
+// window between the two.
+function readIfExists(file) {
+    try {
+        return readFileSync(file, "utf8");
+    } catch (error) {
+        if (error.code === "ENOENT") return null;
+        throw error;
+    }
+}
 
 // Locales we ship, and how each is produced. `base` inherits another catalogue
 // and applies its own `overrides`; `identity` uses the msgid as the msgstr
@@ -329,7 +340,7 @@ for (const locale of Object.keys(LOCALES)) {
     const { text, translated } = buildPo(locale, pot);
     totalStrings += translated;
     const target = join(DIR, `${locale}.po`);
-    const previous = existsSync(target) ? readFileSync(target, "utf8") : null;
+    const previous = readIfExists(target);
 
     if (previous === text) {
         console.log(`  ${locale}: unchanged (${translated}/${pot.messages.length})`);
@@ -347,7 +358,7 @@ for (const locale of Object.keys(LOCALES)) {
 // Keep LINGUAS in step with the catalogue list rather than hand-maintaining it.
 const linguasPath = join(DIR, "LINGUAS");
 const linguas = `${Object.keys(LOCALES).sort().join("\n")}\n`;
-const currentLinguas = existsSync(linguasPath) ? readFileSync(linguasPath, "utf8") : null;
+const currentLinguas = readIfExists(linguasPath);
 if (currentLinguas !== linguas) {
     if (checkOnly) {
         console.error("  LINGUAS: OUT OF DATE");

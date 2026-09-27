@@ -112,8 +112,6 @@ function localMidnight(daysBack) {
     return Math.floor(d.getTime() / 1000);
 }
 
-const dayIndex = back => DAYS - 1 - back;
-
 // tokens/requests per (key, model): per-key split of the model total, then that
 // key's own split across the days it was active, weighted by its cost.
 function seriesFor(key, model) {
