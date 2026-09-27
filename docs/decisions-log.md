@@ -345,10 +345,16 @@ are expected`. `git reset --hard origin/main` restored the tree (untracked work
 - `scripts/release-notes.sh` was exercised against the real changelog: it prints the
   `[0.1.0]` section, exits 1 for a version with no section, and exits 2 with no
   argument at all.
-- The release workflow itself has **not run**, because `release.yml` reached `main`
-  only in this round. Its tag guard is therefore unproven end to end and is flagged
-  as such; the parts it depends on (`release-notes.sh`, `./install.sh --pack`, the
-  suite) are each covered.
+- The release workflow's **tag guard was proved by negative test**, which matters
+  because it is the one gate whose failure mode is publishing a release that should
+  not exist. `release.yml` arrived in a pull request, so a throwaway
+  `v0.0.0-probe` tag was pushed at that pull request's head: the run failed at
+  `Check the tag against the version` with
+  `tag v0.0.0-probe does not match package.json version 0.1.0`, every later step —
+  `Publish` included — was skipped, and `gh release list` stayed empty. The probe tag
+  was then removed. A `push` of a tag runs the workflow from the tagged commit, which
+  is what made this testable before the merge; `schedule` and `release` events would
+  each have needed the workflow on the default branch first.
 
 ### Verified during round 2 (live, level 1)
 
