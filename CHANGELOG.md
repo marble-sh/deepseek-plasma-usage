@@ -34,6 +34,12 @@ What the numbers mean here:
   longer resolves under the old id, so remove it from the panel and add it again — its
   settings return to their defaults. Wallet entries and account data are unaffected.
   The new namespace is the publisher's own rather than DeepSeek's; see D73.
+- **The platform's refusals are readable.** "INVALID_PARAM", "Missing Token" and
+  "Authorization Failed (invalid token)" are terse English codes that tell a new user
+  nothing; they now render as a sentence saying what to do — add a token in the
+  settings, paste a fresh one from platform.deepseek.com, or shorten the cost period.
+  `Api.failureKind` names the three, and any refusal it does not recognise is still
+  shown in the platform's own words so a bug report carries them.
 
 ### Fixed
 

@@ -72,6 +72,23 @@ QtObject {
     readonly property string estimatedDaysLeftLabel: Fmt.daysLeftText(displayBalance, averageDaily, numberLocale)
 
     // ----------------------------------------------------------- fetching
+    // The platform answers a refusal with a terse English code. Say what a user can
+    // do about it instead, and keep the platform's own words for anything we do not
+    // recognise, so a bug report still carries them.
+    function platformFailure(result) {
+        var kind = Api.failureKind(result)
+        if (kind === "token-missing") {
+            return i18n("No session token is stored. Add one in the widget settings.")
+        }
+        if (kind === "token-rejected") {
+            return i18n("The session token was rejected. Open platform.deepseek.com, log in and paste a fresh token in the widget settings.")
+        }
+        if (kind === "invalid-request") {
+            return i18n("The platform rejected the request. Try a shorter cost period in the widget settings.")
+        }
+        return result.msg
+    }
+
     function refresh() {
         if (loading) {
             return
@@ -172,7 +189,7 @@ QtObject {
                 if (r.ok) {
                     acc.summary = r.biz
                 } else {
-                    failure = failure || r.msg
+                    failure = failure || platformFailure(r)
                 }
             }
             step()
@@ -186,7 +203,7 @@ QtObject {
                 if (r.ok) {
                     acc.cost = r.biz
                 } else {
-                    failure = failure || r.msg
+                    failure = failure || platformFailure(r)
                 }
             }
             step()
@@ -200,7 +217,7 @@ QtObject {
                 if (r.ok) {
                     acc.amount = r.biz
                 } else {
-                    failure = failure || r.msg
+                    failure = failure || platformFailure(r)
                 }
             }
             step()

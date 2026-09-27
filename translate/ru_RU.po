@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-27 16:41-0300\n"
-"PO-Revision-Date: 2026-09-27 16:41-0300\n"
+"POT-Creation-Date: 2026-09-27 17:56-0300\n"
+"PO-Revision-Date: 2026-09-27 17:56-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: ru_RU\n"
@@ -21,6 +21,22 @@ msgstr ""
 #: contents/config/config.qml contents/ui/ConfigGeneral.qml
 msgid "General"
 msgstr "Общие"
+
+#: contents/ui/ApiClient.qml
+msgid "No session token is stored. Add one in the widget settings."
+msgstr "Токен сеанса не сохранён. Добавьте его в настройках виджета."
+
+#: contents/ui/ApiClient.qml
+msgid ""
+"The session token was rejected. Open platform.deepseek.com, log in and paste a fresh token in the widget settings."
+msgstr ""
+"Токен сеанса отклонён. Откройте platform.deepseek.com, войдите и вставьте новый токен в настройках виджета."
+
+#: contents/ui/ApiClient.qml
+msgid ""
+"The platform rejected the request. Try a shorter cost period in the widget settings."
+msgstr ""
+"Платформа отклонила запрос. Попробуйте более короткий период расходов в настройках виджета."
 
 #: contents/ui/ApiClient.qml
 msgid "Add a DeepSeek API key or session token in the widget settings."
