@@ -16,6 +16,16 @@ What the numbers mean here:
 
 ### Added
 
+- **Descriptions in every language the READMEs ship.** `metadata.json`
+  `Description` is what the widget list and the default tooltip show, so a language
+  with a README but no description is a language whose users see English in Plasma.
+  `tests/metadata.test.mjs` now fails if a `README.<lang>.md` has no
+  `Description[<locale>]`, or if that entry is still the English text.
+- **`scripts/bump-version.sh`**, which moves the version in all three places it is
+  written down — `package.json`, `metadata.json`'s `KPlugin.Version` and the newest
+  `CHANGELOG.md` heading — and refuses the three ways that goes wrong: a version that
+  is not SemVer, one that is not greater than the current one, and one with nothing
+  under `[Unreleased]`.
 - **Local git hooks** that run the CI jobs before a commit and a push, so a broken push
   is found in seconds rather than after a GitHub Actions round trip:
   `scripts/install-hooks.sh` points git at the tracked `scripts/hooks/`, and

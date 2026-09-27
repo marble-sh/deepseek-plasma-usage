@@ -97,6 +97,50 @@ test("the plugin id agrees with every path that depends on it", () => {
     }
 });
 
+test("every locale the widget ships has a description, not just every README", () => {
+    // Two sets, because they are two different promises.
+    //
+    // The READMEs are the languages the project writes in, so each one gets the exact
+    // locale: README.es-ES.md is Description[es_ES].
+    const tags = readdirSync(new URL("..", import.meta.url))
+        .map(name => /^README\.([A-Za-z]{2}(?:-[A-Za-z]{2})?)\.md$/.exec(name))
+        .filter(Boolean)
+        .map(match => match[1]);
+    assert.ok(tags.length > 0, "there are translated READMEs to check against");
+    for (const tag of tags) {
+        const locale = tag.replace("-", "_");
+        const value = plugin[`Description[${locale}]`];
+        assert.ok(typeof value === "string" && value.trim().length > 0, `Description[${locale}], for README.${tag}.md`);
+        // The English string under a translated key is not a translation, it is a
+        // placeholder that hides the gap the same way an empty one does.
+        assert.notEqual(value, plugin.Description, `Description[${locale}] still says the English text`);
+    }
+
+    // The catalogues are the locales the interface is translated into, and there are
+    // more of those than there are READMEs: es_419, es_CL, ru_BY and the bare `fr`,
+    // `id`, `hi` and `ru` among them. Qt resolves a locale by shortening it, so the
+    // region-tagged ones are covered by their language -- es_CL by Description[es],
+    // ru_BY by Description[ru] -- and one entry per language covers them all.
+    // English is the base string rather than a translation, so en_IN is excluded.
+    const catalogues = read("translate/LINGUAS")
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean);
+    assert.ok(catalogues.length > 1, "there are catalogues to check against");
+    for (const locale of catalogues) {
+        if (locale === "en" || locale.startsWith("en_")) {
+            continue;
+        }
+        const language = locale.split("_")[0];
+        const value = plugin[`Description[${locale}]`] || plugin[`Description[${language}]`];
+        assert.ok(
+            typeof value === "string" && value.trim().length > 0,
+            `Description[${locale}] or Description[${language}], for catalogue ${locale}`
+        );
+        assert.notEqual(value, plugin.Description, `the description for ${locale} is still the English text`);
+    }
+});
+
 test("the deprecated metadata.desktop form is not used beside metadata.json", () => {
     // "This key is however deprecated and desktop files will no longer be supported in
     // KF6." A second manifest in the older format is one Plasma may prefer.
