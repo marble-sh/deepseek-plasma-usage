@@ -306,8 +306,8 @@ configuration; D43 is the configuration.
 
 A second, smaller correction: D39's table row also claimed the five CI checks were
 required, which was true, but `Dependency audit` and CodeQL's `Analyze JavaScript`
-were added as required checks in the same round as the jobs themselves (see below),
-so the count moved from five to seven.
+were added as required checks in the same round as the jobs themselves, so the count
+moved from five to seven (both are verified below).
 
 ### Verified during round 11 (level 1)
 
@@ -355,6 +355,25 @@ are expected`. `git reset --hard origin/main` restored the tree (untracked work
   was then removed. A `push` of a tag runs the workflow from the tagged commit, which
   is what made this testable before the merge; `schedule` and `release` events would
   each have needed the workflow on the default branch first.
+- The **final ruleset state was read back** from the API after the pull request
+  merged, and it is what D43 claims: seven required contexts — `Unit tests (node)`,
+  `Prettier`, `Translations up to date`, `QML syntax`, `Pack the plasmoid`,
+  `Dependency audit`, `Analyze JavaScript` — `allowed_merge_methods` narrowed to
+  `squash` and `rebase` so the rule cannot offer a merge-commit button that the
+  linear-history rule would reject, `bypass_actors: []`, and
+  `current_user_can_bypass: "never"`. Requiring the two new gates only became possible
+  after they had reported on a pull request, since a required context that no run has
+  produced leaves a pull request permanently unmergeable.
+- `require_extra_approval_for_unattributed_changes` is left at `true`, which is what
+  GitHub defaults it to when the field is omitted. It is inert here — PR #2 merged
+  with that rule active and zero approvals — so it was not worth disabling a safety
+  default to work around. Revisit if a second maintainer or a fork pull request ever
+  makes it bite.
+- Open item, not yet exercised: **CodeQL on a pull request from a fork.** The
+  `Analyze JavaScript` job needs `security-events: write`, which a fork pull request
+  is granted for code scanning but which nothing here has tested. If a fork pull
+  request is ever wedged on that check, the fix is a `pull_request` path filter or
+  removing the context from the required list.
 
 ### Verified during round 2 (live, level 1)
 
