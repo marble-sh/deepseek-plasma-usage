@@ -173,6 +173,20 @@ The required checks are `Unit tests (node)`, `Prettier`, `Translations up to dat
 (CodeQL). Every one of them is the gauntlet above run on a stock Ubuntu runner;
 none of them needs Plasma installed.
 
+Because the code-owner rule wants a review the author cannot give themselves,
+`gh pr merge` refuses on the maintainer's own pull requests — it reads the blocked
+state client-side. Merge them through the API instead:
+
+```sh
+gh api -X PUT repos/marble-sh/deepseek-plasma-usage/pulls/<number>/merge -f merge_method=squash
+```
+
+Do **not** reach for `gh pr merge --admin`. It is documented as "merge a pull request
+that does not meet requirements" and bypasses the required checks along with the
+review. The command above bypasses only the review, which is checkable: with a
+deliberately failing `Prettier` check the same call answers
+`405 ... Required status check "Prettier" is failing`.
+
 Write commit messages that say _why_. The existing history is the model: each commit
 explains the problem and the reasoning, not just the diff. Keep unrelated changes in
 separate commits.
