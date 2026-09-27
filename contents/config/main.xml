@@ -17,7 +17,10 @@
     <entry name="costPeriodDays" type="Int">
       <default>30</default>
       <min>1</min>
-      <max>90</max>
+      <!-- The platform answers at most a 31-day usage window; see
+           MAX_USAGE_DAYS in contents/ui/js/api.js, which the settings page and the
+           request both read. 32 days is refused with INVALID_PARAM. -->
+      <max>31</max>
     </entry>
     <entry name="hideAmounts" type="Bool">
       <default>false</default>

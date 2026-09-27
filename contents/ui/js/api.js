@@ -11,6 +11,18 @@
 var PLATFORM_BASE = "https://platform.deepseek.com/api/v0";
 var OFFICIAL_BALANCE_URL = "https://api.deepseek.com/user/balance";
 
+/*
+    The platform's usage endpoints answer at most a 31-day window. Aligned windows of
+    31 days are accepted and 32 are refused with `code:0, data.biz_code:1,
+    data.biz_msg:"INVALID_PARAM", data.biz_data:null` -- verified live on 2026-09-27
+    (31 accepted, 32 refused; the limit is the window's length, not its age, since a
+    31-day window ending ten days back is answered too). That refusal carries no
+    `biz_data`, so before the `biz_code` handling landed it was reported as a generic
+    "Missing payload" for every token, which is exactly how it was mistaken for a bad
+    credential. Keep the settings' ceiling and the request's ceiling on this one value.
+*/
+var MAX_USAGE_DAYS = 31;
+
 /* ------------------------------------------------------------------ urls */
 
 function encodeQuery(params) {
@@ -99,6 +111,12 @@ function usageWindow(now, periodDays) {
         days = 1;
     }
     days = Math.floor(days);
+    // Longer than the platform answers: clamp rather than send a request that is
+    // guaranteed to be refused (see MAX_USAGE_DAYS). A stored configuration that is
+    // already out of range must not be able to break the widget.
+    if (days > MAX_USAGE_DAYS) {
+        days = MAX_USAGE_DAYS;
+    }
     var end = startOfToday(now) + 86400;
     return { start: end - days * 86400, end: end };
 }

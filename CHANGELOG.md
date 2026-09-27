@@ -30,6 +30,17 @@ What the numbers mean here:
   can pass, so no widget-side login window can work; the evidence and the A/B control
   are recorded in `docs/decisions-log.md` (D70). No password is stored.
 
+### Fixed
+
+- **The cost period can no longer be set past what the platform answers.** The
+  settings offered 1–90 days, but the platform refuses any usage window longer than
+  **31 days** with `code:0` and a business status of `INVALID_PARAM` — a refusal that
+  arrives the same way for every token, so it reads as a broken credential. It is the
+  second window bug of this kind: the replies carry no payload, and before the
+  business-status handling landed both were reported as "Missing payload".
+  `Api.MAX_USAGE_DAYS` is now the single ceiling, read by the spinner, the KConfigXT
+  bound and the request, and a stored value above it is clamped rather than sent.
+
 ## [0.2.0] - 2026-09-27
 
 ### Added
