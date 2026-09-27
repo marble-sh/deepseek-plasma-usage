@@ -11,21 +11,20 @@
     Point `PLATFORM_BASE` in contents/ui/js/api.js at it (translate/build.sh's
     sibling, tests/capture-screenshots.sh, does this and restores it).
 
-    The numbers are a *snapshot of a real account's usage page*, deliberately
-    rather than invented ones, so the widget's output can be checked line by
-    line against what the platform displayed:
+    The numbers are **invented, on purpose**. An earlier revision of this file was a
+    snapshot of a real account's usage page, which meant the committed screenshots
+    published that account's balance, its spend and the names of its API keys. Nothing
+    here belongs to anyone:
 
-      balance (topped up)        $6.74        no bonus credit
-      lifetime / last-30-day     $3.25
-      last-30-day requests       1,325        1,241 flash + 84 v4-pro
-      last-30-day tokens         297,270,684  292,100,158 flash + 5,170,526 v4-pro
-      daily cost                 0.2949 + 1.1449 + 0.7500 + 1.0602 = 3.2500
-      (the platform's page rounds each of those to $0.29 / $1.14 / $0.75 / $1.06
-       and shows a $3.25 card, so its own bars appear to sum to $3.23; the mock
-       keeps the full precision so its totals reconcile exactly)
+      balance (topped up)        $12.48       no bonus credit
+      lifetime / last-30-day     $4.62
+      last-30-day requests       910          863 flash + 47 v4-pro
+      last-30-day tokens         159,098,619  152,884,031 flash + 6,214,588 v4-pro
+      daily cost                 0.42 + (0.69 + 1.25) + 0.95 + 1.31 = 4.62
 
-    Only four of the thirty days have activity, which is what makes the
-    sparkline sparse and the "Today" row meaningful.
+    Four of the thirty days have activity, which is what makes the sparkline sparse
+    and the "Today" row meaningful. The key names are placeholders for the same
+    reason the figures are.
 
     `--check` recomputes every total from the same tables and prints them, so the
     arithmetic above is verified rather than asserted in a comment.
@@ -46,43 +45,47 @@ const DAYS = 30;
 
 // One entry per day with activity: `back` days before today, split by model.
 const ACTIVE_DAYS = [
-    { back: 4, flash: 0.2949, pro: 0 },
-    { back: 2, flash: 0.4249, pro: 0.72 },
-    { back: 1, flash: 0.75, pro: 0 },
-    { back: 0, flash: 1.0602, pro: 0 }
+    { back: 4, flash: 0.42, pro: 0 },
+    { back: 2, flash: 0.69, pro: 1.25 },
+    { back: 1, flash: 0.95, pro: 0 },
+    { back: 0, flash: 1.31, pro: 0 }
 ];
 
 // 30-day totals, split across the keys the account has. The shares are applied
 // with distribute() below, so the per-key figures always sum to these exactly.
+// `pro` marks the one key that has used the larger model; it is a flag rather
+// than a name comparison so that renaming a placeholder key cannot silently
+// change which model's usage it is given.
 const KEYS = [
     {
-        tracking_id: "4ec071d2-bed7-404d-86b0-0c88900afd17",
-        name: "home",
-        sensitive_id: "sk-436d4***********************b3be",
+        tracking_id: "00000000-0000-4000-8000-000000000001",
+        name: "laptop",
+        sensitive_id: "sk-11111***********************1111",
         flashShare: 0.35
     },
     {
-        tracking_id: "0f649568-18d5-4470-ac2c-fdec74be771f",
-        name: "zed-vapor",
-        sensitive_id: "sk-68cc7***********************fa4f",
-        flashShare: 0.5
+        tracking_id: "00000000-0000-4000-8000-000000000002",
+        name: "ci-runner",
+        sensitive_id: "sk-22222***********************2222",
+        flashShare: 0.5,
+        pro: true
     },
     {
-        tracking_id: "a6ee9503-ac2c-49b2-8fee-b0b41b298e63",
-        name: "zed-air",
-        sensitive_id: "sk-f18a0***********************e6e7",
+        tracking_id: "00000000-0000-4000-8000-000000000003",
+        name: "sandbox",
+        sensitive_id: "sk-33333***********************3333",
         flashShare: 0.15
     }
 ];
 
 const MODELS = {
-    "deepseek-flash": { tokens: 292100158, requests: 1241 },
-    "deepseek-v4-pro": { tokens: 5170526, requests: 84 }
+    "deepseek-flash": { tokens: 152884031, requests: 863 },
+    "deepseek-v4-pro": { tokens: 6214588, requests: 47 }
 };
 
-const BALANCE = "6.7400000000000000";
+const BALANCE = "12.4800000000000000";
 const BONUS = "0";
-const LIFETIME_COST = "3.2500000000000000";
+const LIFETIME_COST = "4.6200000000000000";
 
 // Fractions of a bucket's tokens: completions, then cached vs missed prompt.
 const RESPONSE_SHARE = 0.005;
@@ -167,7 +170,7 @@ function costBucketsFor(key, model) {
     for (let back = DAYS - 1; back >= 0; back--) {
         const day = ACTIVE_DAYS.find(d => d.back === back);
         const dayCost = day ? (isFlash ? day.flash : day.pro) : 0;
-        const share = isFlash ? key.flashShare : key.name === "zed-vapor" ? 1 : 0;
+        const share = isFlash ? key.flashShare : key.pro ? 1 : 0;
         buckets.push({ time: localMidnight(back), cost: (dayCost * share).toFixed(16) });
     }
     return buckets;
@@ -184,7 +187,7 @@ function apiKey(key) {
 }
 
 function modelsFor(key) {
-    return Object.keys(MODELS).filter(m => m === "deepseek-flash" || key.name === "zed-vapor");
+    return Object.keys(MODELS).filter(m => m === "deepseek-flash" || key.pro);
 }
 
 function costPayload() {
@@ -283,10 +286,10 @@ function reconcile() {
 
 if (isMain() && process.argv.includes("--check")) {
     const { cost, requests, tokens } = reconcile();
-    const ok = Math.abs(cost - 3.25) < 1e-9 && requests === 1325 && tokens === 297270684;
-    console.log(`cost     ${cost.toFixed(4)}  (want 3.2500)`);
-    console.log(`requests ${requests}     (want 1325)`);
-    console.log(`tokens   ${tokens}  (want 297270684)`);
+    const ok = Math.abs(cost - 4.62) < 1e-9 && requests === 910 && tokens === 159098619;
+    console.log(`cost     ${cost.toFixed(4)}  (want 4.6200)`);
+    console.log(`requests ${requests}     (want 910)`);
+    console.log(`tokens   ${tokens}  (want 159098619)`);
     console.log(ok ? "mock-platform-server: consistent" : "mock-platform-server: NOT consistent");
     process.exit(ok ? 0 : 1);
 }
