@@ -14,6 +14,19 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+### Added
+
+- **Local git hooks** that run the CI jobs before a commit and a push, so a broken push
+  is found in seconds rather than after a GitHub Actions round trip:
+  `scripts/install-hooks.sh` points git at the tracked `scripts/hooks/`, and
+  `scripts/gauntlet.sh` is the one implementation both hooks call.
+- **Two guards for mistakes nothing was catching.** `translate/merge.sh --check` fails
+  when an `i18n()` call has been added, changed or removed without re-extracting, which
+  would otherwise leave a string out of the template and so out of all 17 catalogues.
+  `tests/metadata.test.mjs` checks `metadata.json` against the keys KDE documents and
+  against the plugin id's other four homes: the widget's namespace, the install
+  script's `PLUGIN_ID`, the catalogue domain and the compiled `.mo` filenames.
+
 ### Fixed
 
 - **A session token copied from the browser now works.** The platform's `userToken`
