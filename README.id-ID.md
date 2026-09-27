@@ -59,9 +59,10 @@ Ada dua kredensial yang berbeda, dan keduanya tidak dapat dipertukarkan.
 1. Masuk ke <https://platform.deepseek.com> di browser Anda.
 2. Buka Alat Pengembang (F12, atau ⌥⌘I di macOS).
 3. Buka tab **Application** (**Storage** di Firefox) → **Local Storage** → `https://platform.deepseek.com`.
-4. Temukan kunci bernama `userToken` dan salin nilainya. Itulah token sesi Anda.
+4. Temukan kunci bernama `userToken` dan salin **hanya token di dalamnya**. Entri itu adalah objek JSON — `{"value":"…","__version":"0"}` — dan token sesi hanyalah string setelah `value:`.
 
-> **Tips:** Nilainya panjang. Salin persis seperti yang ditampilkan; jangan tambahkan spasi atau jeda baris.
+> [!TIP]
+> Menyalin seluruh entri adalah kesalahan yang paling umum, dan gagal dengan `Authorization Failed (invalid token)`, karena permintaan membawa `{"value":…}` di tempat token seharusnya. Widget tetap membukanya, jadi salinan dalam tanda kutip atau header `Bearer …` utuh juga berfungsi.
 
 Keduanya ditulis ke KWallet (wallet `kdewallet`, folder `Plasma`) dan dibaca
 kembali dengan `kwallet-query`. Kunci API saja sudah cukup untuk saldo;

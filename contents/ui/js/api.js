@@ -163,6 +163,76 @@ function parseOfficialBalance(text) {
     };
 }
 
+/* ------------------------------------------------------------ credentials */
+
+/*
+    A pasted session token is very often one layer more than the token itself, and
+    every extra layer fails the same way: the platform answers HTTP 200 with
+    `code:40003`, "Authorization Failed (invalid token)".
+
+    The layer that catches everybody is the storage format. In the platform's
+    DevTools the `userToken` entry does not hold the token, it holds a *JSON object*:
+
+        {"value":"<token>","__version":"0"}
+
+    so following "copy its value" literally copies the wrapper, and the request goes
+    out as `authorization: Bearer {"value":"...","__version":"0"}`. A quoted copy,
+    or a whole `Bearer <token>` header pasted from the network tab, fails the same
+    way.
+
+    Peel those off here rather than in the UI, so the wallet may hold any of them and
+    every caller still gets a bare token. Deliberately conservative: anything that is
+    not one of those wrappers is returned unchanged, because mangling a real token
+    would be worse than rejecting it.
+*/
+function normalizeSessionToken(raw) {
+    var value = raw === undefined || raw === null ? "" : String(raw);
+    // Repeats because more than one layer can be wrapped at once, e.g. a quoted
+    // JSON object. It stops as soon as a pass changes nothing.
+    for (var pass = 0; pass < 4; pass++) {
+        var before = value;
+        value = value.trim();
+
+        // A whole `Bearer <token>` header pasted from the network tab.
+        var bearer = /^Bearer[ \t]+/i.exec(value);
+        if (bearer) {
+            value = value.slice(bearer[0].length).trim();
+        }
+
+        // JSON turns up as the storage wrapper (an object with `value`), as a
+        // quoted string, and as an escaped quoted string, depending on where the
+        // copy was taken from. One parse handles all three, and a parse that throws
+        // or lands on anything that is not a string is left alone — mangling a real
+        // token would be worse than rejecting it.
+        var parsed = parseJson(value);
+        if (typeof parsed === "string") {
+            value = parsed.trim();
+        } else if (parsed && typeof parsed.value === "string") {
+            value = parsed.value.trim();
+        }
+
+        if (value === before) {
+            break;
+        }
+    }
+    return value;
+}
+
+// JSON.parse without the throw, so "not JSON" can be told apart from a value.
+function parseJson(text) {
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        return null;
+    }
+}
+
+// The one place the platform's auth header is built, so whatever a caller calls a
+// session token, what goes on the wire is a bare one.
+function authHeaders(sessionToken) {
+    return { authorization: "Bearer " + normalizeSessionToken(sessionToken) };
+}
+
 /* --------------------------------------------------------- token algebra */
 
 function inputTokens(bucket) {

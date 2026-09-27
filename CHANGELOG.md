@@ -14,6 +14,15 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+### Fixed
+
+- **A session token copied from the browser now works.** The platform's `userToken`
+  entry stores a JSON object, `{"value":"…","__version":"0"}`, not the token, so
+  copying it literally sent `Bearer {"value":…,"__version":"0"}` and the platform
+  answered `Authorization Failed (invalid token)`. The widget unwraps the entry before
+  use — as it does a quoted copy or a whole `Bearer …` header pasted from the network
+  tab — and the READMEs now say which part of the entry is the token.
+
 ## [0.1.1] - 2026-09-27
 
 Nothing inside the widget changed. This release is the documentation and the

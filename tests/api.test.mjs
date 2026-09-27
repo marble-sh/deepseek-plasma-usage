@@ -17,6 +17,10 @@ process.env.TZ = "Etc/GMT+3";
 
 const api = load("contents/ui/js/api.js");
 
+// A made-up token with the real shape (base64 of a fixture string). No test here
+// carries anybody's credential, not even the one that found this bug.
+const FIXTURE_TOKEN = "Zml4dHVyZS10b2tlbi1ub3QtYS1yZWFsLWNyZWRlbnRpYWwtMDAwMA==";
+
 test("usageUrl builds the verified query", () => {
     assert.equal(
         api.usageUrl("cost", 1787886000, 1790478000, -10800),
@@ -27,6 +31,51 @@ test("usageUrl builds the verified query", () => {
         "https://platform.deepseek.com/api/v0/usage/by_api_key/amount?start=1&end=2&tz=0"
     );
     assert.equal(api.summaryUrl(), "https://platform.deepseek.com/api/v0/users/get_user_summary");
+});
+
+/*
+    The platform's `userToken` entry holds a JSON object, not the token, so following
+    "copy its value" literally puts the wrapper on the wire and the platform answers
+    HTTP 200 with `code:40003`, "Authorization Failed (invalid token)". These cases are
+    the layers a user actually copies.
+*/
+test("authHeaders never puts the storage wrapper on the wire", () => {
+    const stored = JSON.stringify({ value: FIXTURE_TOKEN, __version: "0" });
+
+    assert.equal(api.normalizeSessionToken(stored), FIXTURE_TOKEN);
+
+    const header = api.authHeaders(stored).authorization;
+    assert.equal(header, "Bearer " + FIXTURE_TOKEN);
+    assert.ok(!header.includes("{"), "the JSON wrapper must not reach the header");
+    assert.ok(!header.includes("__version"), "the storage metadata must not reach the header");
+});
+
+test("normalizeSessionToken peels the other wrappers and leaves a bare token alone", () => {
+    const wrapped = {
+        "a bare token": FIXTURE_TOKEN,
+        "surrounding whitespace": "  " + FIXTURE_TOKEN + "\n",
+        "a quoted copy": '"' + FIXTURE_TOKEN + '"',
+        "a header pasted from the network tab": "Bearer " + FIXTURE_TOKEN,
+        "a lower-case header": "bearer  " + FIXTURE_TOKEN,
+        "a quoted JSON object": JSON.stringify(JSON.stringify({ value: FIXTURE_TOKEN }))
+    };
+    for (const label of Object.keys(wrapped)) {
+        assert.equal(api.normalizeSessionToken(wrapped[label]), FIXTURE_TOKEN, label);
+    }
+});
+
+test("normalizeSessionToken refuses to mangle anything that is not a wrapper", () => {
+    // Mangling a real token would be worse than rejecting it, so anything that is not
+    // one of the known wrappers is returned untouched.
+    for (const input of ["{not json", '{"value":42}', '{"other":"x"}', '["a"]', "1234", "true"]) {
+        assert.equal(api.normalizeSessionToken(input), input, input);
+    }
+    // Empty and whitespace-only collapse to empty, which is what "not configured" is.
+    for (const input of ["", "   ", "\n"]) {
+        assert.equal(api.normalizeSessionToken(input), "", JSON.stringify(input));
+    }
+    assert.equal(api.normalizeSessionToken(undefined), "");
+    assert.equal(api.normalizeSessionToken(null), "");
 });
 
 test("parseEnvelope: success unwraps biz_data", () => {

@@ -6,10 +6,15 @@
     recorded in docs/state/api-contract.md so the widget's rich mode can be
     exercised, and its README screenshots taken, without live credentials.
 
-        node tests/mock-platform-server.mjs [port]
+        node tests/mock-platform-server.mjs [port] [--echo-auth]
 
     Point `PLATFORM_BASE` in contents/ui/js/api.js at it (translate/build.sh's
     sibling, tests/capture-screenshots.sh, does this and restores it).
+
+    `--echo-auth` prints the authorization header of every request. The mock accepts
+    any token, so nothing else can show whether a credential was normalized on the way
+    out — which is the difference between a working session token and
+    "Authorization Failed (invalid token)".
 
     The numbers are **invented, on purpose**. An earlier revision of this file was a
     snapshot of a real account's usage page, which meant the committed screenshots
@@ -40,6 +45,7 @@ function isMain() {
 }
 
 const port = Number(process.argv[2] || 8731);
+const echoAuth = process.argv.includes("--echo-auth");
 
 const DAYS = 30;
 
@@ -302,6 +308,10 @@ const routes = {
 
 const server = http.createServer((req, res) => {
     const path = new URL(req.url, "http://localhost").pathname;
+    if (echoAuth) {
+        console.log(`${req.method} ${path}`);
+        console.log(`  authorization: ${req.headers.authorization || "(absent)"}`);
+    }
     const handler = routes[path];
     if (!handler) {
         res.writeHead(404, { "content-type": "application/json" });

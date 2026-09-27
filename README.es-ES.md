@@ -61,9 +61,10 @@ Existen dos credenciales distintas y no son intercambiables.
 1. Inicia sesión en <https://platform.deepseek.com> en tu navegador.
 2. Abre las Herramientas de Desarrollador (F12, o ⌥⌘I en macOS).
 3. Abre la pestaña **Application** (**Storage** en Firefox) → **Local Storage** → `https://platform.deepseek.com`.
-4. Busca la clave llamada `userToken` y copia su valor. Ese es tu token de sesión.
+4. Busca la clave llamada `userToken` y copia **solo el token que hay dentro**. La entrada es un objeto JSON — `{"value":"…","__version":"0"}` — y el token de sesión es únicamente la cadena que sigue a `value:`.
 
-> **Consejo:** El valor es largo. Cópialo exactamente como se muestra; no añadas espacios ni saltos de línea.
+> [!TIP]
+> Copiar la entrada completa es el error habitual: falla con `Authorization Failed (invalid token)`, porque la petición lleva `{"value":…}` donde debería ir un token. En cualquier caso el widget la desenvuelve, así que también funcionan una copia entre comillas o una cabecera `Bearer …` completa.
 
 Ambas se escriben en KWallet (cartera `kdewallet`, carpeta `Plasma`) y se leen
 de vuelta con `kwallet-query`. La clave de API por sí sola basta para el saldo;

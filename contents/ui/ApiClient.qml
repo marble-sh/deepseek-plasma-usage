@@ -121,7 +121,7 @@ QtObject {
         var span = Api.usageWindow(now, periodDays)
         windowStart = span.start
         windowEnd = span.end
-        var headers = { "authorization": "Bearer " + sessionToken }
+        var headers = Api.authHeaders(sessionToken)
         var acc = { summary: null, cost: null, amount: null }
         var failure = ""
         var pending = 3
