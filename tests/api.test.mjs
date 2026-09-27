@@ -58,7 +58,16 @@ test("normalizeSessionToken peels the other wrappers and leaves a bare token alo
         "a quoted copy": '"' + FIXTURE_TOKEN + '"',
         "a header pasted from the network tab": "Bearer " + FIXTURE_TOKEN,
         "a lower-case header": "bearer  " + FIXTURE_TOKEN,
-        "a quoted JSON object": JSON.stringify(JSON.stringify({ value: FIXTURE_TOKEN }))
+        "a quoted JSON object": JSON.stringify(JSON.stringify({ value: FIXTURE_TOKEN })),
+        // The two forms that are not JSON at all, and used to be left untouched: the
+        // wrapper whose quotes were escaped when it was serialised again (what
+        // `JSON.stringify(userToken)` or a log line gives), and a hand-typed object
+        // literal. Both carry the wrapper's own `value` key.
+        "the wrapper with escaped quotes": JSON.stringify({ value: FIXTURE_TOKEN, __version: "0" }).replace(
+            /"/g,
+            '\\"'
+        ),
+        "a single-quoted object literal": "{'value':'" + FIXTURE_TOKEN + "','__version':'0'}"
     };
     for (const label of Object.keys(wrapped)) {
         assert.equal(api.normalizeSessionToken(wrapped[label]), FIXTURE_TOKEN, label);
@@ -69,6 +78,11 @@ test("normalizeSessionToken refuses to mangle anything that is not a wrapper", (
     // Mangling a real token would be worse than rejecting it, so anything that is not
     // one of the known wrappers is returned untouched.
     for (const input of ["{not json", '{"value":42}', '{"other":"x"}', '["a"]', "1234", "true"]) {
+        assert.equal(api.normalizeSessionToken(input), input, input);
+    }
+    // An object that only claims to be one is still left alone: no `value` key, or an
+    // unterminated paste, must not be mined for a token.
+    for (const input of ["{'other':'x'}", '{"value":"unterminated']) {
         assert.equal(api.normalizeSessionToken(input), input, input);
     }
     // Empty and whitespace-only collapse to empty, which is what "not configured" is.

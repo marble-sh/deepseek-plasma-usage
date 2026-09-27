@@ -243,6 +243,14 @@ function normalizeSessionToken(raw) {
             value = parsed.trim();
         } else if (parsed && typeof parsed.value === "string") {
             value = parsed.value.trim();
+        } else {
+            // The wrapper also arrives with its quotes escaped, or as a hand-typed
+            // single-quoted literal, and neither is JSON. Both keep the same `value`
+            // anchor, so they are peeled here rather than left for the user to fix.
+            var lenient = parseWrapperLeniently(value);
+            if (typeof lenient === "string") {
+                value = lenient.trim();
+            }
         }
 
         if (value === before) {
@@ -259,6 +267,26 @@ function parseJson(text) {
     } catch (error) {
         return null;
     }
+}
+
+/*
+    Two forms of the storage wrapper survive the strict parse above because they are
+    not JSON: the one whose quotes were escaped when it was serialised again (a
+    `JSON.stringify` in the console, a log line), and the one a user types with single
+    quotes. Both are only peeled when the text actually begins with `{` and carries the
+    wrapper's own `value` key, so a bare token — which never begins with `{` — cannot
+    be touched, and the same "a parse that fails is left alone" rule holds.
+*/
+function parseWrapperLeniently(text) {
+    if (text.charAt(0) !== "{") {
+        return null;
+    }
+    var unescaped = parseJson(text.replace(/\\"/g, '"'));
+    if (unescaped && typeof unescaped.value === "string") {
+        return unescaped.value;
+    }
+    var literal = /^\{\s*'value'\s*:\s*'([^']+)'/.exec(text);
+    return literal ? literal[1] : null;
 }
 
 // The one place the platform's auth header is built, so whatever a caller calls a
