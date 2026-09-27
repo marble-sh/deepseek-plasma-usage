@@ -238,13 +238,12 @@ test("usageWindow stays one day wide for a one-day period or bad input", () => {
 });
 
 /*
-    End to end, on the payload shapes the platform really returns: the mock's
-    data is a snapshot of a real account's usage page (see its header comment),
-    so this asserts that the widget's own parsing and aggregation reproduce the
-    figures the platform displayed. If the two ever disagree, one of them is
-    wrong and it is checkable by hand.
+    End to end, on the payload shapes the platform really returns: the mock's data
+    is invented (see its header comment), and the widget's own parsing and
+    aggregation have to reproduce the totals the mock declares. That is what keeps
+    the two halves of the fixture from drifting apart.
 */
-test("the pipeline reproduces the platform page's own totals", () => {
+test("the pipeline reproduces the mock's own totals", () => {
     const envelope = text => api.parseEnvelope(text);
 
     const cost = envelope(JSON.stringify(costPayload()));
@@ -253,16 +252,16 @@ test("the pipeline reproduces the platform page's own totals", () => {
     assert.equal(cost.ok, true);
     assert.equal(amount.ok, true);
 
-    // The cards at the top of the platform page.
-    assert.equal(summary.balance, 6.74);
+    // The summary cards.
+    assert.equal(summary.balance, 12.48);
     assert.equal(summary.bonus, 0);
-    assert.equal(summary.totalCost, 3.25);
+    assert.equal(summary.totalCost, 4.62);
 
     // The "Last 30 days" row: cost, requests and tokens.
     const agg = api.aggregateUsage(cost.biz, amount.biz);
-    assert.ok(Math.abs(agg.totals.cost - 3.25) < 1e-9, `cost ${agg.totals.cost}`);
-    assert.equal(agg.totals.requests, 1325);
-    assert.equal(api.totalTokens(agg.totals), 297270684);
+    assert.ok(Math.abs(agg.totals.cost - 4.62) < 1e-9, `cost ${agg.totals.cost}`);
+    assert.equal(agg.totals.requests, 910);
+    assert.equal(api.totalTokens(agg.totals), 159098619);
 
     // Only four of the thirty days have activity, and every one of them falls
     // inside the window the widget asks for -- that is Api.usageWindow's job.
@@ -280,7 +279,7 @@ test("the pipeline reproduces the platform page's own totals", () => {
 
     // "Today" is the bucket at the local midnight, which is what the row sums.
     const today = api.bucketForDay(agg.perDay, api.startOfToday(now));
-    assert.ok(Math.abs(today.cost - 1.0602) < 1e-9, `today ${today.cost}`);
+    assert.ok(Math.abs(today.cost - 1.31) < 1e-9, `today ${today.cost}`);
 
     // The two endpoints have to agree per day, or the In/Out split would mix
     // one day's tokens with another day's cost.
