@@ -56,6 +56,15 @@ Existen dos credenciales distintas y no son intercambiables.
 | Te proporciona    | solo el saldo                            | saldo, gasto acumulado e historial de uso                                            |
 | Se guarda como    | `deepseek-api-key` en KWallet            | `deepseek-session-token` en KWallet                                                  |
 
+### Cómo obtener el token de sesión
+
+1. Inicia sesión en <https://platform.deepseek.com> en tu navegador.
+2. Abre las Herramientas de Desarrollador (F12, o ⌥⌘I en macOS).
+3. Abre la pestaña **Application** (**Storage** en Firefox) → **Local Storage** → `https://platform.deepseek.com`.
+4. Busca la clave llamada `userToken` y copia su valor. Ese es tu token de sesión.
+
+> **Consejo:** El valor es largo. Cópialo exactamente como se muestra; no añadas espacios ni saltos de línea.
+
 Ambas se escriben en KWallet (cartera `kdewallet`, carpeta `Plasma`) y se leen
 de vuelta con `kwallet-query`. La clave de API por sí sola basta para el saldo;
 añadir el token de sesión habilita las secciones de uso. Si el token de sesión

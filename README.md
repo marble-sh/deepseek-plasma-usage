@@ -48,6 +48,15 @@ Two different credentials exist, and they are not interchangeable.
 | Gives you       | balance only                             | balance, lifetime spend and usage history                         |
 | Stored as       | `deepseek-api-key` in KWallet            | `deepseek-session-token` in KWallet                               |
 
+### How to get the session token
+
+1. Log in to <https://platform.deepseek.com> in your browser.
+2. Open Developer Tools (F12, or ⌥⌘I on macOS).
+3. Open the **Application** tab (**Storage** in Firefox) → **Local Storage** → `https://platform.deepseek.com`.
+4. Find the key named `userToken` and copy its value. That is your session token.
+
+> **Tip:** The value is long. Copy it exactly as shown; do not add spaces or line breaks.
+
 Both are written to KWallet (wallet `kdewallet`, folder `Plasma`) and read back
 with `kwallet-query`. The API key alone is enough for the balance; adding the
 session token enables the usage sections. If the session token stops working

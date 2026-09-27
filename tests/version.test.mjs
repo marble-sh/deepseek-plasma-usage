@@ -53,16 +53,21 @@ test("the release tag scheme is v<version> everywhere it is written down", () =>
 
     assert.match(
         read("CONTRIBUTING.md"),
-        /git tag -a v\d+\.\d+\.\d+/,
-        "CONTRIBUTING.md must document `git tag -a v<version>`"
+        /git tag -s v\d+\.\d+\.\d+/,
+        "CONTRIBUTING.md must document `git tag -s v<version>`"
     );
 
     // The rulesets live in docs/state/, which is deliberately untracked (it may
     // quote private probes), so this half only runs on a development machine. It
-    // is the same pattern the workflow triggers on.
+    // is the same pattern the workflow triggers on, and the signature requirement
+    // here is why CONTRIBUTING.md spells the command with `-s`.
     try {
         const tags = JSON.parse(read("docs/state/ruleset-tags.json"));
         assert.deepEqual(tags.conditions.ref_name.include, ["refs/tags/v*"], "tag ruleset pattern");
+        assert.ok(
+            tags.rules.some(rule => rule.type === "required_signatures"),
+            "the tag ruleset must require signed tags"
+        );
     } catch (error) {
         if (error.code !== "ENOENT") throw error;
     }
