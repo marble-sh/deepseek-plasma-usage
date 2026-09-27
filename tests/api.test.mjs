@@ -130,6 +130,31 @@ test("parseEnvelope surfaces the business-level status inside data", () => {
     assert.equal(ok.biz.x, 1);
 });
 
+/*
+    The platform's refusals arrive as terse English codes. Naming the ones a user can
+    act on lets the UI translate them; everything else must keep its own words, because
+    a guess would hide the one detail a bug report needs.
+*/
+test("failureKind names the refusals a user can act on, and nothing else", () => {
+    const env = text => api.parseEnvelope(text);
+
+    assert.equal(api.failureKind(env('{"code":40002,"msg":"Missing Token","data":null}')), "token-missing");
+    assert.equal(
+        api.failureKind(env('{"code":40003,"msg":"Authorization Failed (invalid token)","data":null}')),
+        "token-rejected"
+    );
+    assert.equal(
+        api.failureKind(env('{"code":0,"msg":"","data":{"biz_code":1,"biz_msg":"INVALID_PARAM","biz_data":null}}')),
+        "invalid-request"
+    );
+
+    // Not a refusal we have a sentence for: the UI shows `msg` unchanged.
+    assert.equal(api.failureKind(env('{"code":12345,"msg":"something new"}')), "");
+    assert.equal(api.failureKind(env("not json")), "");
+    assert.equal(api.failureKind(env('{"code":0,"data":{"biz_code":0,"biz_data":{}}}')), "");
+    assert.equal(api.failureKind(null), "");
+});
+
 test("parseSummary reads wallets and lifetime cost", () => {
     const biz = {
         normal_wallets: [{ currency: "USD", balance: "7.78", token_estimation: "0" }],

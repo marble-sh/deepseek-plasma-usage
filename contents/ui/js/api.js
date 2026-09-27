@@ -163,6 +163,29 @@ function parseEnvelope(text) {
     return { ok: true, code: 0, msg: "", biz: biz };
 }
 
+/*
+    A refused request, named so the UI can say something a user can act on. The
+    platform's own strings are terse and in English -- "INVALID_PARAM",
+    "Authorization Failed (invalid token)", "Missing Token" -- which tells a first-time
+    user nothing about what to do next. Returns "" for anything unrecognised, so an
+    unknown refusal is still shown in the platform's own words rather than a guess.
+*/
+function failureKind(result) {
+    if (!result) {
+        return "";
+    }
+    if (result.code === 40002) {
+        return "token-missing";
+    }
+    if (result.code === 40003) {
+        return "token-rejected";
+    }
+    if (result.bizCode === 1) {
+        return "invalid-request";
+    }
+    return "";
+}
+
 function parseSummary(biz) {
     var normal = (biz.normal_wallets || [])[0] || {};
     var bonus = (biz.bonus_wallets || [])[0] || {};

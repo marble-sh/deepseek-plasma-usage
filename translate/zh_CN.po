@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-27 16:41-0300\n"
-"PO-Revision-Date: 2026-09-27 16:41-0300\n"
+"POT-Creation-Date: 2026-09-27 17:56-0300\n"
+"PO-Revision-Date: 2026-09-27 17:56-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: zh_CN\n"
@@ -21,6 +21,20 @@ msgstr ""
 #: contents/config/config.qml contents/ui/ConfigGeneral.qml
 msgid "General"
 msgstr "常规"
+
+#: contents/ui/ApiClient.qml
+msgid "No session token is stored. Add one in the widget settings."
+msgstr "未存储会话令牌。请在小组件设置中添加。"
+
+#: contents/ui/ApiClient.qml
+msgid ""
+"The session token was rejected. Open platform.deepseek.com, log in and paste a fresh token in the widget settings."
+msgstr "会话令牌被拒绝。请打开 platform.deepseek.com，登录后在小组件设置中粘贴新的令牌。"
+
+#: contents/ui/ApiClient.qml
+msgid ""
+"The platform rejected the request. Try a shorter cost period in the widget settings."
+msgstr "平台拒绝了该请求。请在小组件设置中尝试更短的统计周期。"
 
 #: contents/ui/ApiClient.qml
 msgid "Add a DeepSeek API key or session token in the widget settings."
