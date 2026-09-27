@@ -14,6 +14,22 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+### Added
+
+- **The settings page says where the session token is, and opens the site that holds
+  it.** A “How to get it” hint names the `userToken` entry and its DevTools path
+  (Application/Storage → Local Storage) beside a button that opens
+  `platform.deepseek.com` in the browser, so the token can be copied without hunting
+  through the README first.
+
+### Changed
+
+- **Rich mode still needs a pasted session token: a username/password login is not
+  possible and was not built.** The platform's login routes (`/auth-api/v0/*`) answer
+  every request, browser-like or not, with an AWS WAF challenge that only a browser
+  can pass, so no widget-side login window can work; the evidence and the A/B control
+  are recorded in `docs/decisions-log.md` (D70). No password is stored.
+
 ## [0.2.0] - 2026-09-27
 
 ### Added
