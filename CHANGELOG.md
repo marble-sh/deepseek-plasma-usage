@@ -14,6 +14,8 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-27
+
 ### Added
 
 - **Descriptions in every language the READMEs ship.** `metadata.json`

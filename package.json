@@ -1,6 +1,6 @@
 {
     "name": "deepseek-plasma-usage",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "private": true,
     "description": "A dependency-free KDE Plasma 6 widget showing DeepSeek API balance and usage across all your API keys",
     "license": "GPL-2.0-or-later",
