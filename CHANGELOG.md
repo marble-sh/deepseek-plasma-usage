@@ -14,6 +14,8 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-27
+
 ### Added
 
 - **The settings page says where the session token is, and opens the site that holds
