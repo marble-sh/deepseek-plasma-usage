@@ -22,7 +22,9 @@ Round 1 — 2026-09-26 (kickoff answers, LOCKED)
 
 ## SUPERSEDED
 
-- (none)
+- **D39** — classic branch protection on `main`. Replaced by the repository rulesets
+  in D43, which also cover tags and admit no bypass. `docs/state/protection.json`
+  is kept as history, not as configuration.
 
 ---
 
@@ -275,6 +277,84 @@ wrong, not merely incomplete, and D41 is what replaces it.
   force pushes and deletions false, admins not enforced.
 - Locally: `npm test` 54/54, `translate/build.sh --check` 0, `prettier --check`
   clean, `tests/lint-qml.sh` exits 0 on this Plasma 6 machine.
+
+---
+
+Round 11 — 2026-09-26 (rulesets, dependency audit, release automation, community files)
+
+| #   | Decision                                                                                    | Detail                                                                                                                                                                                                                                                                                                                                                                                                      | Reasoning                                                                                                                                                                                                                                                                                                                                                                                                              | Lifespan                                                  |
+| --- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| D43 | Branch and tag protection are **repository rulesets**, not classic protection               | `main` = ruleset 24055635 (`target: branch`, `~DEFAULT_BRANCH`); `release tags` = 24055636 (`target: tag`, `refs/tags/v*`). Bodies are `docs/state/ruleset-main.json` and `docs/state/ruleset-tags.json`, applied with `gh api -X PUT .../rulesets`. D39's classic protection was deleted, so there is one source of truth. `bypass_actors` is empty, and the API reports `current_user_can_bypass: never`. | Classic protection covers branches only, so protecting a tag pattern needs a ruleset anyway; keeping both would be two sources of truth for one rule. Classic also lets an admin bypass, which makes the branch only as protected as the maintainer's own discipline. The cost of removing the bypass is that a wedged check is fixed by editing the ruleset rather than by an admin override.                         | permanent                                                 |
+| D44 | Tags matching `v*` can be **created, but not moved or deleted**                             | `release tags` ruleset, rules `deletion` + `update`. Creation is deliberately left open.                                                                                                                                                                                                                                                                                                                    | A release tag is what `gh release create`, the attached `.plasmoid` and every download URL point at; moving `v0.1.0` after publication silently changes what that version means. Creating one is how a release is made, so that stays allowed.                                                                                                                                                                         | permanent                                                 |
+| D45 | The dependency gate is `npm audit --audit-level=high` over the **whole** lockfile           | CI job `Dependency audit`; no `--omit=dev`.                                                                                                                                                                                                                                                                                                                                                                 | With zero runtime dependencies, `--omit=dev` audits an empty tree and can never fail — theatre rather than a gate. The dev tree still runs on contributors' machines and in CI, so it is worth auditing. It fails on `high` and above only: a `moderate` advisory in a dev-only tool has no path to anyone using the widget, and there is nothing in the runtime tree to upgrade in response.                          | permanent                                                 |
+| D46 | **CodeQL** scans the JavaScript                                                             | `codeql.yml`, `javascript-typescript`, `queries: security-and-quality`, on push to `main`, on pull requests, and weekly.                                                                                                                                                                                                                                                                                    | The surface is small but hand-written and real: shell command construction in `js/wallet.js`, and parsing in `js/api.js`. Free for public repositories.                                                                                                                                                                                                                                                                | permanent                                                 |
+| D47 | Dependabot opens **one grouped PR a week per ecosystem**                                    | `dependabot.yml`, `github-actions` and `npm`, `groups: { patterns: ["*"] }`, `versioning-strategy: increase`.                                                                                                                                                                                                                                                                                               | One PR per action would be four notifications for one maintenance chore. Prettier's formatting is asserted by the `Prettier` check, so a formatting-changing major arrives as a red check rather than as a silent reformat of the repository.                                                                                                                                                                          | permanent                                                 |
+| D48 | A **tag publishes the release**                                                             | `release.yml` on `push: tags: ["v*"]`: refuses a tag that is not `v<package.json version>`, re-runs the test suite, packs the `.plasmoid`, takes the notes from `CHANGELOG.md` through `scripts/release-notes.sh`, and attaches the archive with `gh release create --verify-tag`.                                                                                                                          | The tag and the manifest are the same fact and must not be able to disagree. Notes written for humans belong in the changelog; reconstructing them from commit titles produces a worse changelog and rewards bad commit messages.                                                                                                                                                                                      | permanent                                                 |
+| D49 | Community-health files are **purpose-written and short**, and there is **no `FUNDING.yml`** | `SECURITY.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`, three issue-form files, a pull-request template and `CODEOWNERS`.                                                                                                                                                                                                                                                                                        | The Contributor Covenant would be four times the length of the code most visitors arrive to read. `CODEOWNERS` requests a review but is not a gate: `main` requires zero approvals (a solo maintainer cannot approve their own PR), so `require_code_owner_review` would deadlock every merge. Funding is omitted because nothing is set up to receive money, and a button that leads nowhere is worse than no button. | permanent (CODEOWNERS until there is a second maintainer) |
+| D50 | The social preview card is **generated by a script**, then uploaded by hand                 | `scripts/social-preview.sh` composes `docs/images/social-preview.png` (1280x640, ~239 kB) from the same screenshots the READMEs use, with ImageMagick.                                                                                                                                                                                                                                                      | GitHub exposes no API for the social preview image — it is a one-off upload in the web UI — so the file is the only reproducible part. Committing the generator means the card can be rebuilt after a UI change instead of remade by hand.                                                                                                                                                                             | until GitHub adds an API                                  |
+
+### Correction (recorded, not hidden)
+
+D39 described `main` as protected by **classic branch protection**, applied from
+`docs/state/protection.json` with `PUT /repos/.../branches/main/protection`, and
+recorded that "admins are exempt". That was accurate when it was written and is no
+longer true of the repository: the classic protection has been deleted in favour of
+the two rulesets in D43, and `GET .../branches/main/protection` now answers
+`404 Branch not protected`. The admin exemption went with it — both rulesets report
+`current_user_can_bypass: never`. `docs/state/protection.json` is history, not
+configuration; D43 is the configuration.
+
+A second, smaller correction: D39's table row also claimed the five CI checks were
+required, which was true, but `Dependency audit` and CodeQL's `Analyze JavaScript`
+were added as required checks in the same round as the jobs themselves (see below),
+so the count moved from five to seven.
+
+### Verified during round 11 (level 1)
+
+- The `main` ruleset **refuses a direct push**, re-proved first-hand in this round
+  rather than carried over: an empty commit pushed to `main` returned
+  `GH013 ... push declined due to repository rule violations`, naming both
+  `Changes must be made through a pull request` and `5 of 5 required status checks
+are expected`. `git reset --hard origin/main` restored the tree (untracked work
+  survived; the three files that had been edited in place did not, and were
+  rewritten).
+- The **tag ruleset was proved with a real `v0.0.0-probe` tag**, not asserted:
+  creating it pushed cleanly (exit 0), deleting it was refused with
+  `GH013 ... Cannot delete this tag` (exit 1), and force-moving it was refused with
+  `Cannot update this protected ref` (exit 1). Deleting the _same_ tag while the
+  ruleset was set to `disabled` succeeded — so the refusal was the ruleset, not a
+  permission or a typo. The tag and the temporary disable were both removed
+  afterwards; `git ls-remote --tags origin` is empty again.
+- The ruleset **test body matches the live API**: `docs/state/ruleset-tags.json`'s
+  `refs/tags/v*` is what `GET .../rulesets/24055636` returns, and the same pattern is
+  what `release.yml` triggers on, which is now asserted by `tests/version.test.mjs`.
+- `npm audit` reports **0 advisories at every level**, so the new `Dependency audit`
+  job passes on the current tree. `npm audit --omit=dev` was checked and also reports
+  zero — which is precisely why it would have been a useless gate.
+- `scripts/social-preview.sh` is idempotent and writes 1280x640 at 239,347 bytes,
+  well under GitHub's 1 MB limit. `gh repo view` still reports
+  `usesCustomOpenGraphImage: false`: uploading the PNG is the one step no API
+  performs.
+- Repository settings read back from the API: `visibility: PUBLIC`,
+  `has_wiki: false`, `has_projects: false`, `has_discussions: true`,
+  `has_issues: true`, `allow_auto_merge: true`, `delete_branch_on_merge: true`,
+  `allow_merge_commit: false` with squash and rebase enabled, squash title/message
+  `PR_TITLE`/`PR_BODY`, topics `deepseek kde plasma plasmoid qt i18n`, and secret
+  scanning with push protection enabled (GitHub's default for a new public
+  repository, confirmed rather than assumed).
+- `scripts/release-notes.sh` was exercised against the real changelog: it prints the
+  `[0.1.0]` section, exits 1 for a version with no section, and exits 2 with no
+  argument at all.
+- The release workflow's **tag guard was proved by negative test**, which matters
+  because it is the one gate whose failure mode is publishing a release that should
+  not exist. `release.yml` arrived in a pull request, so a throwaway
+  `v0.0.0-probe` tag was pushed at that pull request's head: the run failed at
+  `Check the tag against the version` with
+  `tag v0.0.0-probe does not match package.json version 0.1.0`, every later step —
+  `Publish` included — was skipped, and `gh release list` stayed empty. The probe tag
+  was then removed. A `push` of a tag runs the workflow from the tagged commit, which
+  is what made this testable before the merge; `schedule` and `release` events would
+  each have needed the workflow on the default branch first.
 
 ### Verified during round 2 (live, level 1)
 

@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability
+    url: https://github.com/marble-sh/deepseek-plasma-usage/security/advisories/new
+    about: Privately, and especially for anything involving a credential. See SECURITY.md.
+  - name: Get help installing or configuring it
+    url: https://github.com/marble-sh/deepseek-plasma-usage/blob/main/SUPPORT.md
+    about: Where to look first, and what to include if you still need to ask.
+  - name: Translating or reviewing a translation
+    url: https://github.com/marble-sh/deepseek-plasma-usage/blob/main/translate/README.md
+    about: The shipped catalogues are unreviewed machine translations; this explains the workflow.

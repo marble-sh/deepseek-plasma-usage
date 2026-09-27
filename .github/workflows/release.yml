@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# A tag is a release. `v0.2.0` must match the version in package.json, the notes
+# come from CHANGELOG.md rather than from commit titles, and the .plasmoid that
+# `./install.sh --pack` builds is attached to the release.
+#
+# This is the only workflow whose failure would not be noticed until release time,
+# so it re-checks the version and the archive rather than trusting them.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Publish the tagged release
+    runs-on: ubuntu-latest
+    permissions:
+      # Only this job may write, and only to create the release.
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install gettext and zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext zip
+
+      # The tag and the manifest are the same fact, so make them agree or fail.
+      - name: Check the tag against the version
+        run: |
+          set -eu
+          version=$(node -p "require('./package.json').version")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+
+      - name: Run the test suite
+        run: npm ci && npm test
+
+      - name: Build the plasmoid
+        run: |
+          ./install.sh --pack
+          test -s deepseek-usage.plasmoid
+
+      - name: Notes from the changelog
+        run: scripts/release-notes.sh "${GITHUB_REF_NAME#v}" > "$RUNNER_TEMP/notes.md"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            deepseek-usage.plasmoid \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --verify-tag

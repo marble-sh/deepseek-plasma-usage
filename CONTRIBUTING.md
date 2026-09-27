@@ -51,6 +51,7 @@ npm test                        # node --test tests/*.test.mjs
 npm run format:check            # prettier
 npm run lint:qml                # qmllint contents/ui/*.qml contents/config/config.qml
 npm run check:po                # translate/build.sh --check
+npm audit --audit-level=high    # nothing high or critical in the dev tree
 ./install.sh                    # and then load the widget once
 ```
 
@@ -117,11 +118,35 @@ git tag -a v0.2.0 -m "v0.2.0"
 git push origin v0.2.0
 ```
 
+## Dependencies
+
+There are **no runtime dependencies**, and adding one is a design change rather
+than a detail: the widget is QML, Qt and the shell. Prettier is the only
+dependency of any kind, it is a `devDependency`, and it never reaches an installed
+copy of the widget. No check can enforce that, so a pull request that adds a
+runtime dependency has to argue for it.
+
+`npm audit --audit-level=high` covers the dev tree and fails on `high` and
+`critical` only. Auditing production dependencies here would audit an empty tree
+and always pass; failing on `moderate` would block on advisories that have no path
+to a user of the widget and nothing to upgrade in response.
+
+Dependabot opens **one grouped pull request a week**, one for the workflow actions
+and one for npm, rather than one per dependency. Those pull requests go through
+exactly the same checks as any other.
+
 ## Commits and pull requests
 
-`main` is protected: changes arrive through a pull request, the CI checks have to
-pass, and history is linear (squash or rebase, no merge commits). There is no
-required reviewer, so a single maintainer can merge their own work.
+`main` is protected by a repository **ruleset**: changes arrive through a pull
+request, the required checks have to pass, and history is linear (squash or rebase,
+no merge commits). Force pushes and deletions are refused, and once a `v*` tag is
+pushed it can be neither moved nor deleted. There is no required reviewer, so a
+single maintainer can merge their own work.
+
+The required checks are `Unit tests (node)`, `Prettier`, `Translations up to date`,
+`QML syntax`, `Pack the plasmoid`, `Dependency audit` and `Analyze JavaScript`
+(CodeQL). Every one of them is the gauntlet above run on a stock Ubuntu runner;
+none of them needs Plasma installed.
 
 Write commit messages that say _why_. The existing history is the model: each commit
 explains the problem and the reasoning, not just the diff. Keep unrelated changes in

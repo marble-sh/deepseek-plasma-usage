@@ -32,8 +32,38 @@ test("package.json, metadata.json and CHANGELOG.md agree on the version", () => 
     assert.equal(released[0][1], pkg.version, "newest CHANGELOG.md heading");
 });
 
-test("the changelog links to the repository's own tag scheme", () => {
-    // A release is a git tag named v<version>; the release workflow and the
-    // changelog have to agree on that or the links rot.
+test("the changelog states the versioning policy it is written against", () => {
     assert.match(changelog, /Semantic Versioning/);
+});
+
+test("the release tag scheme is v<version> everywhere it is written down", () => {
+    // A release is an annotated git tag named v<version>. Four separate things
+    // depend on that one convention: the workflow that publishes the release
+    // triggers on the pattern, the tag ruleset protects the same pattern, this file
+    // joins the prefix to package.json's version, and CONTRIBUTING.md tells a
+    // maintainer what to type. Any one of them drifting means a tag that publishes
+    // nothing, or publishes unprotected.
+    const release = read(".github/workflows/release.yml");
+    assert.match(release, /tags: \["v\*"\]/, 'release.yml must trigger on tags: ["v*"]');
+    assert.match(
+        release,
+        /"v\$version" != "\$GITHUB_REF_NAME"/,
+        "release.yml must compare the tag to v<package.json version>"
+    );
+
+    assert.match(
+        read("CONTRIBUTING.md"),
+        /git tag -a v\d+\.\d+\.\d+/,
+        "CONTRIBUTING.md must document `git tag -a v<version>`"
+    );
+
+    // The rulesets live in docs/state/, which is deliberately untracked (it may
+    // quote private probes), so this half only runs on a development machine. It
+    // is the same pattern the workflow triggers on.
+    try {
+        const tags = JSON.parse(read("docs/state/ruleset-tags.json"));
+        assert.deepEqual(tags.conditions.ref_name.include, ["refs/tags/v*"], "tag ruleset pattern");
+    } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+    }
 });

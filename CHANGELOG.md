@@ -14,6 +14,10 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+Nothing user-visible yet. Internal work since 0.1.0: a dependency audit and a CodeQL
+scan in CI, protection for `v*` release tags, a release workflow that publishes from
+a tag, and the repository's community-health files.
+
 ## [0.1.0] - 2026-09-26
 
 First public release.

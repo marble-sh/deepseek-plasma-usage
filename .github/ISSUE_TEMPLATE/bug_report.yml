@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+name: Bug report
+description: A figure, a label or the layout is wrong
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Two things first:
+
+        - **Never paste a credential.** An API key or a session token is a
+          password; see [SECURITY.md](https://github.com/marble-sh/deepseek-plasma-usage/blob/main/SECURITY.md)
+          for how to report something that involves one.
+        - The usage figures come from an **undocumented** API. A number that
+          disagrees with <https://platform.deepseek.com/usage> is worth reporting,
+          but which one is wrong is not always the widget.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What it showed, and what you expected
+      description: A screenshot helps more than a description; blur anything you would not post publicly.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which credential is configured
+      options:
+        - API key only (balance only)
+        - API key and platform session token (rich mode)
+        - Neither, or not sure
+    validations:
+      required: true
+
+  - type: input
+    id: plasma
+    attributes:
+      label: Plasma version
+      description: "`plasmashell --version`"
+      placeholder: plasmashell 6.7.5
+    validations:
+      required: true
+
+  - type: input
+    id: qt
+    attributes:
+      label: Qt version
+      description: "`qmake6 -query QT_VERSION`, or the Qt row in Plasma's About"
+      placeholder: 6.11.2
+    validations:
+      required: true
+
+  - type: input
+    id: locale
+    attributes:
+      label: Locale
+      description: "`locale | head -1`. Number, money and date formatting follow this."
+      placeholder: en_US.UTF-8
+    validations:
+      required: false
+
+  - type: textarea
+    id: errors
+    attributes:
+      label: Error text
+      description: The message in the popup's red box, if there is one, and anything printed by `plasmawindowed org.deepseek.plasma.usage`
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: There is no credential of any kind in this report
+          required: true
+        - label: I am on the newest release, or the issue is in `main`
+          required: false
