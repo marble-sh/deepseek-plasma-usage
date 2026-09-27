@@ -5,7 +5,7 @@
 # Regenerates translate/*.po from the tables in translate/messages/ and compiles
 # every catalogue into the package at
 #
-#     contents/locale/<locale>/LC_MESSAGES/plasma_applet_org.deepseek.plasma.usage.mo
+#     contents/locale/<locale>/LC_MESSAGES/plasma_applet_sh.marble.deepseek.usage.mo
 #
 # which is where Plasma looks for a plasmoid's own translations. The .mo files
 # are committed, so ./install.sh works without gettext installed; this script
@@ -18,7 +18,7 @@ set -eu
 
 DIR=$(cd -- "$(dirname -- "$0")" && pwd)
 ROOT=$(cd -- "$DIR/.." && pwd)
-DOMAIN=plasma_applet_org.deepseek.plasma.usage
+DOMAIN=plasma_applet_sh.marble.deepseek.usage
 
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT

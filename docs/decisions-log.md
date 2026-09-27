@@ -25,6 +25,11 @@ Round 1 — 2026-09-26 (kickoff answers, LOCKED)
 - **D39** — classic branch protection on `main`. Replaced by the repository rulesets
   in D43, which also cover tags and admit no bypass. `docs/state/protection.json`
   is kept as history, not as configuration.
+- **D4 (the id) and D7 (the catalogue domain)** — `org.deepseek.plasma.usage` and
+  `plasma_applet_org.deepseek.plasma.usage` are replaced by `sh.marble.deepseek.usage`
+  in D73, which carries the domain with it. The old namespace read as DeepSeek's own
+  organisation; the new one is the publisher's. The two `docs/plan-*.md` files still
+  show the old id and are left as they were written.
 
 ---
 
@@ -605,3 +610,11 @@ biz_data:null`, and both decoded as “Missing payload” before the `biz_code`
   single-quoted literal) used to pass through untouched and now reduce to the bare
   token. The guards still leave `{"value":42}`, `{"other":"x"}`, `{'other':'x'}`
   and an unterminated paste alone.
+
+---
+
+Round 17 — 2026-09-27 (identity, and the text a first-time user reads)
+
+| #   | Decision                                                                                            | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                               | Reasoning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Lifespan  |
+| --- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| D73 | The plugin id is **`sh.marble.deepseek.usage`**, was `org.deepseek.plasma.usage` (supersedes D4/D7) | `metadata.json` `KPlugin.Id`, `install.sh` `PLUGIN_ID`, `translate/build.sh` `DOMAIN`, `Messages.sh`’s `domain`, the four scripts/docs that name the applet on a command line, and the 17 catalogue filenames under `contents/locale/<locale>/LC_MESSAGES/`. `tests/metadata.test.mjs` already cross-checks the id against `metadata.json`, `install.sh`, `translate/build.sh` and the catalogue filenames, so a miss fails CI rather than shipping. | The namespace should be the publisher’s own reverse-DNS (`marble.sh`, `cassidy@marble.sh`); `org.deepseek.*` reads as DeepSeek’s own organisation, which this widget is not. It is **breaking for an existing install** — the panel widget does not resolve under the old id and must be removed and re-added, losing its per-instance settings, while KWallet entries and account data are untouched — so it ships as 0.3.0, a minor bump because the project is still pre-1.0, with the break stated in the release notes. | permanent |

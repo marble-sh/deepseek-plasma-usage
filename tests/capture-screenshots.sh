@@ -60,7 +60,7 @@ done
 
 cleanup() {
     [ -n "$MOCK_PID" ] && kill "$MOCK_PID" 2>/dev/null || true
-    pkill -f 'plasmawindowed org.deepseek.plasma.usage' 2>/dev/null || true
+    pkill -f 'plasmawindowed sh.marble.deepseek.usage' 2>/dev/null || true
     cp "$WORK/api.js" contents/ui/js/api.js 2>/dev/null || true
     cp "$WORK/main.qml" contents/ui/main.qml 2>/dev/null || true
     kwallet-query -w deepseek-session-token -f Plasma kdewallet < "$WORK/token" 2>/dev/null || true
@@ -95,11 +95,11 @@ shoot() {
     locale=$1
     out=$2
 
-    pkill -f 'plasmawindowed org.deepseek.plasma.usage' 2>/dev/null || true
+    pkill -f 'plasmawindowed sh.marble.deepseek.usage' 2>/dev/null || true
     sleep 1
 
     QT_QPA_PLATFORM=xcb LANG="$locale.utf8" LANGUAGE="$locale" \
-        plasmawindowed org.deepseek.plasma.usage > "$WORK/$locale.log" 2>&1 &
+        plasmawindowed sh.marble.deepseek.usage > "$WORK/$locale.log" 2>&1 &
     pid=$!
     sleep 9
 

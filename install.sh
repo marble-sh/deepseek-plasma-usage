@@ -12,7 +12,7 @@
 
 set -eu
 
-PLUGIN_ID=org.deepseek.plasma.usage
+PLUGIN_ID=sh.marble.deepseek.usage
 HERE=$(cd -- "$(dirname -- "$0")" && pwd)
 STAGE="$HERE/build/package"
 

@@ -24,7 +24,7 @@
         "Description[zh_CN]": "显示所有 API 密钥的 DeepSeek API 余额和用量",
         "EnabledByDefault": true,
         "Icon": "office-chart-bar",
-        "Id": "org.deepseek.plasma.usage",
+        "Id": "sh.marble.deepseek.usage",
         "License": "GPL-2.0+",
         "Name": "DeepSeek Usage",
         "Name[en_GB]": "DeepSeek Usage",
