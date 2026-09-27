@@ -280,7 +280,9 @@ KCM.SimpleKCM {
         QQC2.SpinBox {
             Kirigami.FormData.label: i18n("Cost period (days):")
             from: 1
-            to: 90
+            // The platform refuses a window longer than this (Api.MAX_USAGE_DAYS),
+            // so offering a bigger number would offer a broken widget.
+            to: Api.MAX_USAGE_DAYS
             value: page.cfg_costPeriodDays
             onValueModified: page.cfg_costPeriodDays = value
         }

@@ -3,6 +3,7 @@
 */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { load } from "./load.mjs";
 import { costPayload, amountPayload, summaryPayload } from "./mock-platform-server.mjs";
 
@@ -306,6 +307,43 @@ test("usageWindow stays one day wide for a one-day period or bad input", () => {
 
     // A fractional period is floored rather than allowed to skew the window.
     assert.equal(api.usageWindow(now, 30.9).end - api.usageWindow(now, 30.9).start, 30 * 86400);
+});
+
+/*
+    A window the platform will not answer is not a data problem: it fails for every
+    token, which is how an over-long period came to be mistaken for a bad credential.
+    31 days is answered and 32 refused, both ends aligned (live, 2026-09-27).
+*/
+test("usageWindow never asks for a window the platform refuses", () => {
+    const now = new Date("2026-09-26T18:12:43-03:00");
+
+    assert.equal(api.MAX_USAGE_DAYS, 31);
+
+    const max = api.usageWindow(now, api.MAX_USAGE_DAYS);
+    assert.equal(max.end - max.start, 31 * 86400);
+    assert.equal(max.end, api.startOfToday(now) + 86400);
+
+    // Anything past the limit is clamped rather than sent, and the clamp keeps both
+    // ends on the same offset's day boundaries (subtract from `end`, never take a
+    // longer `start`). A stored 90 from an older settings page cannot break the widget.
+    for (const over of [32, 60, 90, 9999, 1e9]) {
+        const w = api.usageWindow(now, over);
+        assert.equal(w.end - w.start, api.MAX_USAGE_DAYS * 86400, `periodDays=${over}`);
+    }
+});
+
+test("the period the settings offer is the period the request may send", () => {
+    // One value, three homes: the request clamp in api.js, the KConfigXT bound the
+    // setting is stored under, and the spinner. Raising one alone re-opens the bug.
+    const xml = readFileSync(new URL("../contents/config/main.xml", import.meta.url), "utf8");
+    const entry = /<entry name="costPeriodDays"[^>]*>([\s\S]*?)<\/entry>/.exec(xml);
+    assert.ok(entry, "contents/config/main.xml has a costPeriodDays entry");
+    const max = /<max>(\d+)<\/max>/.exec(entry[1]);
+    assert.ok(max, "costPeriodDays has a max");
+    assert.equal(Number(max[1]), api.MAX_USAGE_DAYS, "KConfigXT costPeriodDays max");
+
+    const page = readFileSync(new URL("../contents/ui/ConfigGeneral.qml", import.meta.url), "utf8");
+    assert.match(page, /to: Api\.MAX_USAGE_DAYS/, "the period spinner must read the constant");
 });
 
 /*
