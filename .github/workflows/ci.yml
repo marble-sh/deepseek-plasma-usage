@@ -94,6 +94,13 @@ jobs:
       # else is generated.
       - name: Check catalogues
         run: ./translate/build.sh --check
+      # And fails if template.pot no longer matches the i18n() calls in the sources,
+      # which is the other half of the same guarantee: build.sh --check proves the
+      # catalogues match the tables, this proves the tables cover the sources. An
+      # i18n() call added without re-extracting is a string missing from every
+      # shipped translation, and nothing else notices.
+      - name: Check the extracted template
+        run: ./translate/merge.sh --check
 
   qmllint:
     name: QML syntax

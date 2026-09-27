@@ -1,0 +1,10 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 cassidy
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Pre-push: every CI job that can run locally, including the packaging step that
+# otherwise only fails once GitHub has it. Installed by scripts/install-hooks.sh.
+#
+# `git push --no-verify` skips it, and CI is the authority either way.
+set -u
+exec "$(git rev-parse --show-toplevel)/scripts/gauntlet.sh"

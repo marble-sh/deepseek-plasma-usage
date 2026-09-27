@@ -3,9 +3,11 @@
     "KPlugin": {
         "Authors": [
             {
-                "Name": "cassidy"
+                "Name": "Cassidy Marble",
+                "Email": "cassidy@marble.sh"
             }
         ],
+        "BugReportUrl": "https://github.com/marble-sh/deepseek-plasma-usage/issues",
         "Category": "System Information",
         "Description": "Shows DeepSeek API balance and usage across all API keys",
         "Description[en_GB]": "Shows DeepSeek API balance and usage across all API keys",

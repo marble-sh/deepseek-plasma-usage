@@ -47,13 +47,44 @@ mock set-up, including the widget install, for you.
 Run the gauntlet. Every item must pass; they are the same things CI runs.
 
 ```sh
+scripts/gauntlet.sh             # all of it, in one go — this is also the pre-push hook
+```
+
+Or one at a time:
+
+```sh
 npm test                        # node --test tests/*.test.mjs
 npm run format:check            # prettier
 npm run lint:qml                # qmllint contents/ui/*.qml contents/config/config.qml
 npm run check:po                # translate/build.sh --check
-npm audit --audit-level=high    # nothing high or critical in the dev tree
+npm run check:pot               # translate/merge.sh --check
+npm run audit                   # npm audit --audit-level=high
+node tests/mock-platform-server.mjs --check
+./install.sh --pack             # what the "Pack the plasmoid" job builds
 ./install.sh                    # and then load the widget once
 ```
+
+## Git hooks
+
+`scripts/install-hooks.sh` points `core.hooksPath` at the tracked `scripts/hooks/`, so
+git runs the same checks CI does, before the push rather than after it:
+
+- **`pre-commit`** — `scripts/gauntlet.sh --fast`: the tests, formatting, QML, both
+  catalogue checks and the audit.
+- **`pre-push`** — `scripts/gauntlet.sh`: all of that plus the fixture self-check and
+  the package build a release depends on.
+
+They check the _working tree_ rather than the index, so an unstaged edit can fail your
+commit — the failure is real, it just may not be in what you staged. `--no-verify`
+skips either, and CI remains the authority; the hooks only save the round trip.
+
+`Analyze JavaScript` (CodeQL) is the one check with no local equivalent: it needs the
+CodeQL bundle, which is a large download of its own. `gh run watch` after pushing is
+the honest answer for that one.
+
+Installation is per clone and the stored path is absolute, so re-run the installer
+after cloning and after moving the checkout. `scripts/install-hooks.sh --status` says
+what is set up, and `--uninstall` puts git back on `.git/hooks`.
 
 `npm run format` writes the formatting. `tests/capture-screenshots.sh` regenerates
 the README images in every language, and `tests/capture-locales.sh` renders one

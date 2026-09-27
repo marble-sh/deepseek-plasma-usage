@@ -12,8 +12,12 @@
         "test": "node --test tests/*.test.mjs",
         "lint:qml": "tests/lint-qml.sh",
         "check:po": "./translate/build.sh --check",
+        "check:pot": "./translate/merge.sh --check",
+        "audit": "npm audit --audit-level=high",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "gauntlet": "scripts/gauntlet.sh",
+        "hooks": "scripts/install-hooks.sh"
     },
     "devDependencies": {
         "prettier": "3.9.9"
