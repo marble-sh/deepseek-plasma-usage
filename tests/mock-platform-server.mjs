@@ -306,11 +306,20 @@ const routes = {
     "/api/v0/usage/by_api_key/amount": amountPayload
 };
 
+// Everything echoed below comes from the request, and CodeQL's log-injection query is
+// right that a newline in a URL could forge a log line. This is a localhost dev mock,
+// so the practical risk is nil, but the sanitising is one line and it keeps the alert
+// list at zero -- the whole point of which is that a real finding stands out. The
+// base64 characters in a token are all printable, so nothing worth reading is lost.
+function logSafe(text) {
+    return String(text === undefined ? "" : text).replace(/[^\x20-\x7e]/g, "?");
+}
+
 const server = http.createServer((req, res) => {
     const path = new URL(req.url, "http://localhost").pathname;
     if (echoAuth) {
-        console.log(`${req.method} ${path}`);
-        console.log(`  authorization: ${req.headers.authorization || "(absent)"}`);
+        console.log(logSafe(`${req.method} ${path}`));
+        console.log(`  authorization: ${logSafe(req.headers.authorization || "(absent)")}`);
     }
     const handler = routes[path];
     if (!handler) {
