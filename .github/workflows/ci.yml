@@ -13,6 +13,11 @@ on:
   push:
     branches: [main]
   pull_request:
+  # The merge queue merges onto a temporary `gh-readonly-queue/...` ref and runs the
+  # required checks against it. A required check whose workflow does not trigger on
+  # `merge_group` never reports, which leaves the queued pull request stuck until the
+  # queue times out -- so this trigger is not optional once the queue is on.
+  merge_group:
   workflow_dispatch:
 
 permissions:

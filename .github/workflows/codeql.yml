@@ -12,6 +12,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # `Analyze JavaScript` is a required check, and the merge queue evaluates required
+  # checks on the `merge_group` ref. Without this trigger the check never reports for
+  # a queued pull request and the queue stalls.
+  merge_group:
   schedule:
     # Weekly, so a newly published query still gets a look at code that has not
     # changed since. Off the hour to avoid the queue.

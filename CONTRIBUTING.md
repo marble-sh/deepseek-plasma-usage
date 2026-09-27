@@ -113,10 +113,26 @@ with the newest `CHANGELOG.md` heading.
 Releasing is: move the `[Unreleased]` entries in `CHANGELOG.md` under a new dated
 heading, bump the two version fields, commit, then tag and push the tag.
 
+Commits **must be signed**, and `-s` signs the tag itself as well. The rulesets
+enforce the former: `main` requires signed commits, and so does `v*` — though what
+the tag ruleset checks is the signature on the **commits a tag points at**, not the
+signature on the tag object. Measured, not assumed: an unsigned annotated tag pointing
+at a signed commit is accepted, while the same tag pointing at an unsigned commit is
+refused with `Commits must have verified signatures`. Sign the tag anyway — it is what
+makes GitHub show it as Verified, and it costs nothing.
+
+Set signing up first (`git config user.signingkey`, `git config commit.gpgsign true`)
+and register the key with your GitHub account.
+
 ```sh
-git tag -a v0.2.0 -m "v0.2.0"
-git push origin v0.2.0
+git tag -s v0.1.1 -m "v0.1.1"
+git push origin v0.1.1
 ```
+
+Pushing the tag is the release: `release.yml` checks the tag against `package.json`,
+runs the suite, packs the `.plasmoid`, takes the notes from the changelog section and
+publishes the GitHub release. Watch it, because a tag that disagrees with the manifest
+fails the run rather than publishing nothing quietly.
 
 ## Dependencies
 
@@ -137,11 +153,20 @@ exactly the same checks as any other.
 
 ## Commits and pull requests
 
-`main` is protected by a repository **ruleset**: changes arrive through a pull
-request, the required checks have to pass, and history is linear (squash or rebase,
-no merge commits). Force pushes and deletions are refused, and once a `v*` tag is
-pushed it can be neither moved nor deleted. There is no required reviewer, so a
-single maintainer can merge their own work.
+`main` is protected by repository **rulesets**, in three parts:
+
+- **`main`** — changes arrive through a pull request, the required checks have to
+  pass, history is linear (squash only, no merge commits), force pushes and deletions
+  are refused, and commits must be **signed**. Nothing bypasses this ruleset, not even
+  an administrator.
+- **`release tags`** — a `v*` tag can be created but never moved or deleted, and the
+  commits it points at must have verified signatures.
+- **`code owner review`** — `CODEOWNERS` assigns every path to the maintainer, so a
+  contribution from anyone else needs the maintainer's review. GitHub will not accept
+  a self-approval, so this one ruleset is bypassable by the admin role when merging a
+  pull request; the other two are not. The bypass is scoped to that ruleset, so the
+  required checks and the signature requirement still apply to the maintainer's own
+  work.
 
 The required checks are `Unit tests (node)`, `Prettier`, `Translations up to date`,
 `QML syntax`, `Pack the plasmoid`, `Dependency audit` and `Analyze JavaScript`
