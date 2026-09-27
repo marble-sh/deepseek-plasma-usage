@@ -182,6 +182,30 @@ KCM.SimpleKCM {
             text: i18n("The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance.")
         }
 
+        // The token only exists inside the browser, so the settings page can do two
+        // things and no more: say where it is, and open the site that holds it. It
+        // cannot read the token for the user -- that would need the browser's own
+        // storage or the login endpoint, and the login endpoint is behind a bot
+        // check no non-browser client can pass.
+        RowLayout {
+            Kirigami.FormData.label: i18n("How to get it:")
+            Layout.fillWidth: true
+            spacing: Kirigami.Units.smallSpacing
+
+            QQC2.Label {
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                text: i18n("Log in at platform.deepseek.com, open Developer Tools (F12), then copy the value of the “userToken” entry under Application → Local Storage (in Firefox, Storage → Local Storage).")
+            }
+
+            QQC2.Button {
+                Layout.alignment: Qt.AlignTop
+                text: i18nc("opens the DeepSeek platform site in the browser so a token can be copied", "Open platform.deepseek.com")
+                icon.name: "internet-services"
+                onClicked: Qt.openUrlExternally("https://platform.deepseek.com/")
+            }
+        }
+
         RowLayout {
             Kirigami.FormData.label: i18n("Session token:")
             Layout.fillWidth: true

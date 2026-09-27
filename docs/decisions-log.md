@@ -542,3 +542,38 @@ catalogue en_IN`, which is what exposed the `\b`-does-not-break-at-underscore
   n=30 (`за 30 дней`, form 2), and the Hindi/French plural forms resolve too.
 - `translate/build.sh --check` was negative-tested: it fails on a hand-edited
   `.po` and on a hand-edited `.mo`, and passes when clean.
+
+---
+
+Round 16 — 2026-09-27 (a login window was asked for, investigated, and refused)
+
+| #   | Decision                                                                                                                                                              | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Reasoning                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Lifespan                              |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| D70 | **No username/password login window.** The pasted session token stays, and the settings page gains an “Open platform.deepseek.com” button and a “How to get it” hint. | The user asked for a DeepSeek login window storing `deepseek-username`/`deepseek-password` in KWallet “if possible”. It is not possible: the login routes live under `/auth-api/v0/*` and every one of them answers `HTTP 202` with `x-amzn-waf-action: challenge` — an AWS WAF bot check that only executes in a real browser. Passing it needs JavaScript, WebCrypto and an `aws-waf-token` cookie, and the challenge script’s own path is challenged too, so the loop cannot even be started. | Not a guess and not a shortcut: an A/B control (`POST /auth-api/v0/zzz` reaches the origin and 404s while `POST /auth-api/v0/users/login` is challenged in the same instant) proves the check is scoped to the real auth routes and unconditional. A password in KWallet with no endpoint that accepts it is pure liability, so none is stored. Opening the site and naming the `userToken` entry is the maximum the platform permits a non-browser client to do. | permanent, while the bot check stands |
+
+### Verified during round 16 (level 1)
+
+- **The login endpoint is not where a first guess looked.** `POST` to
+  `…/api/v0/users/login`, `users/login_by_email`, `auth/login` etc. all return
+  `404` (`server: elb`, the origin). The real routes are under `/auth-api/v0/`.
+- **The bot check is scoped and unconditional, shown with an A/B control.** In the
+  same instant, `POST /auth-api/v0/zzz` reached the origin (`404 {"detail":"Not Found"}`)
+  while `POST /auth-api/v0/users/login` returned `202`, empty body,
+  `x-amzn-waf-action: challenge`. `users/register`, `users/logout` and
+  `users/create_pow_challenge` are challenged the same way; a full Firefox
+  fingerprint (UA, origin, referer, `sec-fetch-*`) changed nothing, and no
+  `aws-waf-token` cookie is ever set.
+- **The browser is what passes it, on the user’s own machine.** Firefox’s
+  localStorage for `platform.deepseek.com` contains `awswaf_session_storage` and
+  `awswaf_token_refresh_timestamp`, and the `userToken` entry itself is present,
+  uncompressed (`compression_type 0`, 92 bytes = the `{"value":…,"__version":"0"}`
+  wrapper `normalizeSessionToken` already peels). A “Detect from browser” importer
+  is therefore feasible later if pasting proves unfriendly; it was not built now.
+- **The read path is unaffected and was re-verified live.** With the token in
+  KWallet, `build/probe-live.sh` reports `summary ok`, `cost ok`, `amount ok` and
+  `RICH MODE WOULD RENDER`.
+- **The WAF also guards the read endpoints, but only under a burst.** A rapid probe
+  run turned `GET /api/v0/*` into `202 challenge`; it cleared after a ~75 s pause.
+  The widget’s 300 s default (30 s floor) does not approach that.
+- **The new UI was checked by the full gauntlet**, and the three new strings were
+  added to all six authored tables so all 17 catalogues stay complete (77 strings).

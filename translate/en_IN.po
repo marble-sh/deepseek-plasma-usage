@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 19:34-0300\n"
-"PO-Revision-Date: 2026-09-26 19:34-0300\n"
+"POT-Creation-Date: 2026-09-27 16:41-0300\n"
+"PO-Revision-Date: 2026-09-27 16:41-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_IN\n"
@@ -164,6 +164,21 @@ msgid ""
 "The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance."
 msgstr ""
 "The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance."
+
+#: contents/ui/ConfigGeneral.qml
+msgid "How to get it:"
+msgstr "How to get it:"
+
+#: contents/ui/ConfigGeneral.qml
+msgid ""
+"Log in at platform.deepseek.com, open Developer Tools (F12), then copy the value of the “userToken” entry under Application → Local Storage (in Firefox, Storage → Local Storage)."
+msgstr ""
+"Log in at platform.deepseek.com, open Developer Tools (F12), then copy the value of the “userToken” entry under Application → Local Storage (in Firefox, Storage → Local Storage)."
+
+#: contents/ui/ConfigGeneral.qml
+msgctxt "opens the DeepSeek platform site in the browser so a token can be copied"
+msgid "Open platform.deepseek.com"
+msgstr "Open platform.deepseek.com"
 
 #: contents/ui/ConfigGeneral.qml
 msgid "Session token:"
