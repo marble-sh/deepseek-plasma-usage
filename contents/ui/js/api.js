@@ -77,23 +77,30 @@ function daysAgo(now, days) {
     return Math.floor(d.getTime() / 1000);
 }
 
-// Query window for the two usage endpoints: `periodDays` local days ending with
-// today. `start` is inclusive, `end` is exclusive (tomorrow's local midnight),
-// so the two are exactly periodDays * 86400 apart and the bucket at `start` is
-// the oldest day included.
+// Query window for the two usage endpoints: `periodDays` days ending with today.
+// `end` is exclusive (tomorrow's local midnight); `start` is derived from it by pure
+// subtraction, and deliberately NOT by asking for "local midnight N days ago".
 //
-// The recorded live probe (docs/state/api-contract.md) asked for
-// [2026-08-28T00:00-03:00, 2026-09-27T00:00-03:00) on 2026-09-26, which is
-// daysAgo(29) to tomorrow -- the window the platform's own page labels
-// "Last 30 days". Subtracting the whole period instead would ask for 31 days and
-// silently inflate every period total by one day's spend.
+// That distinction is the whole point. A local day is not always 86400 seconds long:
+// across a daylight-saving transition one is 23 or 25 hours, so "midnight 29 days ago"
+// can land an hour away from the day boundary the `tz` parameter implies -- and the
+// request carries only one offset, so the two ends then disagree about it. The
+// platform refuses such a window with biz_code 1, INVALID_PARAM, without saying which
+// end it disliked. Subtracting from `end` keeps both ends on boundaries of the same
+// offset.
+//
+// It is also what the platform's own page asks for. The recorded live probe
+// (docs/state/api-contract.md) was [2026-08-28T00:00-03:00, 2026-09-27T00:00-03:00)
+// on 2026-09-26, labelled "Last 30 days" -- end minus exactly 30 * 86400, and that
+// start is a boundary at -03:00 even though the local clock in August was -04:00.
 function usageWindow(now, periodDays) {
     var days = toNumber(periodDays);
     if (!isFinite(days) || days < 1) {
         days = 1;
     }
     days = Math.floor(days);
-    return { start: daysAgo(now, days - 1), end: startOfToday(now) + 86400 };
+    var end = startOfToday(now) + 86400;
+    return { start: end - days * 86400, end: end };
 }
 
 /* ---------------------------------------------------------- parse helpers */
@@ -122,7 +129,16 @@ function parseEnvelope(text) {
     if (code !== 0) {
         return { ok: false, code: code, msg: obj.msg || "Request failed", biz: null };
     }
-    var biz = obj.data && obj.data.biz_data ? obj.data.biz_data : null;
+    // There is a second, business-level status inside `data`, and it is the one that
+    // explains a refusal the outer `code` calls a success. Ignoring it turned the
+    // platform's `biz_code: 1, biz_msg: "INVALID_PARAM"` into a generic
+    // "Missing payload", which named neither the fault nor the field at fault.
+    var data = obj.data;
+    var bizCode = data && typeof data.biz_code === "number" ? data.biz_code : 0;
+    if (bizCode !== 0) {
+        return { ok: false, code: code, bizCode: bizCode, msg: data.biz_msg || obj.msg || "Request failed", biz: null };
+    }
+    var biz = data && data.biz_data ? data.biz_data : null;
     if (!biz) {
         return { ok: false, code: -4, msg: "Missing payload", biz: null };
     }

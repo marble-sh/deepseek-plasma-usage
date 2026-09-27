@@ -22,6 +22,16 @@ What the numbers mean here:
   answered `Authorization Failed (invalid token)`. The widget unwraps the entry before
   use — as it does a quoted copy or a whole `Bearer …` header pasted from the network
   tab — and the READMEs now say which part of the entry is the token.
+- **The usage window survives a daylight-saving change.** `start` was "local midnight
+  N days ago" and `end` was tomorrow's, so a window spanning a transition was not
+  exactly N days long and its two ends implied different offsets — while the request
+  carries only one. The platform refused the whole window with `biz_code 1`,
+  `INVALID_PARAM`. `start` is now derived from `end` by subtraction, which is also
+  what the platform's own page asks for.
+- **The platform's own reason is surfaced.** `parseEnvelope` honours the
+  business-level `biz_code`/`biz_msg` inside `data`; reading only the outer `code`
+  reported `INVALID_PARAM` as a generic "Missing payload", which named neither the
+  fault nor the field at fault.
 
 ## [0.1.1] - 2026-09-27
 
