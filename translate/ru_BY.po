@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-27 17:56-0300\n"
-"PO-Revision-Date: 2026-09-27 17:56-0300\n"
+"POT-Creation-Date: 2026-10-05 14:29-0300\n"
+"PO-Revision-Date: 2026-10-05 14:29-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: ru_BY\n"
@@ -121,6 +121,11 @@ msgstr[2] "Расход за %1 дней"
 #: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
 msgid "Lifetime spend"
 msgstr "Всего израсходовано"
+
+#: contents/ui/ConfigGeneral.qml
+msgid "KWallet did not answer. Unlock the wallet or restart it, then try again."
+msgstr ""
+"KWallet не ответил. Разблокируйте кошелёк или перезапустите его и повторите попытку."
 
 #: contents/ui/ConfigGeneral.qml
 msgid "Could not write to KWallet."

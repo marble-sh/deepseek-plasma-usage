@@ -28,7 +28,7 @@
         "License": "GPL-2.0+",
         "Name": "DeepSeek Usage",
         "Name[en_GB]": "DeepSeek Usage",
-        "Version": "0.3.0",
+        "Version": "0.3.1",
         "Website": "https://github.com/marble-sh/deepseek-plasma-usage"
     },
     "X-Plasma-API-Minimum-Version": "6.0"

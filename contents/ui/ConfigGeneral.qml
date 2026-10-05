@@ -3,8 +3,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 
     Settings page. The credentials are written to KWallet, never to the applet
-    config; the rest is staged in `cfg_*` properties and applied in saveConfig()
-    by the Plasma configuration framework.
+    config; the rest is staged in `cfg_*` properties, which the Plasma
+    configuration framework copies back when the dialog is applied.
 */
 import QtQuick
 import QtQuick.Controls as QQC2
@@ -21,10 +21,10 @@ KCM.SimpleKCM {
 
     title: i18n("General")
 
-    signal configurationChanged
-
-    // Staged configuration; the framework fills these in from the applet config
-    // and reads them back when the user applies the dialog.
+    // Staged configuration; the framework fills these in from the applet config and
+    // reads them back when the user applies the dialog. There is deliberately no
+    // saveConfig(): the dialog copies every cfg_* property itself, and writing to
+    // Plasmoid.configuration from here applies out of band.
     property int cfg_refreshInterval: 300
     property int cfg_panelMetric: 0
     property int cfg_costPeriodDays: 30
@@ -34,6 +34,7 @@ KCM.SimpleKCM {
     property bool apiKeySet: false
     property bool sessionTokenSet: false
     property string statusText: ""
+    property bool statusIsError: false
 
     Wallet {
         id: wallet
@@ -46,30 +47,23 @@ KCM.SimpleKCM {
         onTriggered: page.statusText = ""
     }
 
-    function saveConfig() {
-        Plasmoid.configuration.refreshInterval = cfg_refreshInterval
-        Plasmoid.configuration.panelMetric = cfg_panelMetric
-        Plasmoid.configuration.costPeriodDays = cfg_costPeriodDays
-        Plasmoid.configuration.hideAmounts = cfg_hideAmounts
-    }
-
-    // Bumping the revision makes the running applet re-read the wallet. The
-    // staged value is bumped too so the configuration framework cannot echo a
-    // stale revision back over it.
+    // Bumping the staged revision is what makes the running applet re-read the
+    // wallet once the dialog is applied. It is *staged*, not written straight to
+    // Plasmoid.configuration: an out-of-band write while the dialog is open makes it
+    // recreate the current page, which drops whatever else was being edited.
     function bumpSecretsRevision() {
-        const next = cfg_secretsRevision + 1
-        cfg_secretsRevision = next
-        Plasmoid.configuration.secretsRevision = next
+        cfg_secretsRevision += 1
     }
 
-    function setStatus(text) {
+    function setStatus(text, isError) {
         statusText = text
+        statusIsError = isError === true
         statusTimer.restart()
     }
 
     function writeSecret(entry, value) {
         if (value.length === 0) {
-            setStatus(i18n("Enter a value first."))
+            setStatus(i18n("Enter a value first."), true)
             return
         }
         wallet.write(entry, value)
@@ -94,17 +88,25 @@ KCM.SimpleKCM {
     Connections {
         target: wallet
 
-        function onReadFinished(entry, secret) {
+        function onReadFinished(entry, secret, error) {
+            var present = secret.length > 0
             if (entry === WalletJs.API_KEY_ENTRY) {
-                page.apiKeySet = secret.length > 0
+                page.apiKeySet = present
             } else if (entry === WalletJs.SESSION_TOKEN_ENTRY) {
-                page.sessionTokenSet = secret.length > 0
+                page.sessionTokenSet = present
+            }
+            // A missing entry is normal; silence, not failure, is what the widget
+            // would otherwise report when the wallet daemon is wedged.
+            if (error === "timeout") {
+                page.setStatus(i18n("KWallet did not answer. Unlock the wallet or restart it, then try again."), true)
             }
         }
 
-        function onWriteFinished(entry, ok) {
+        function onWriteFinished(entry, ok, error) {
             if (!ok) {
-                page.setStatus(i18n("Could not write to KWallet."))
+                page.setStatus(error === "timeout"
+                    ? i18n("KWallet did not answer. Unlock the wallet or restart it, then try again.")
+                    : i18n("Could not write to KWallet."), true)
                 return
             }
             if (entry === WalletJs.API_KEY_ENTRY) {
@@ -115,11 +117,17 @@ KCM.SimpleKCM {
                 sessionField.text = ""
             }
             page.bumpSecretsRevision()
-            page.setStatus(i18n("Saved to KWallet."))
+            page.setStatus(i18n("Saved to KWallet."), false)
         }
     }
 
     Kirigami.FormLayout {
+        // Keep labels above their fields at every width. Above a threshold the form
+        // switches into its two-column "wide mode", and those rows are what looked
+        // misaligned once the dialog was stretched; the About and Shortcuts tabs are
+        // single-column too.
+        wideMode: false
+
         // ------------------------------------------------------- credentials
         QQC2.Label {
             Kirigami.FormData.isSection: true
@@ -128,6 +136,10 @@ KCM.SimpleKCM {
 
         QQC2.Label {
             Layout.fillWidth: true
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 30
+            // A wrapped label's minimum width is its unwrapped length, which would force
+            // the form (and the dialog) wider than the window. Let it shrink and wrap.
+            Layout.minimumWidth: 0
             wrapMode: Text.Wrap
             text: i18n("Both values are stored in KWallet and never in the widget's configuration file.")
         }
@@ -135,6 +147,7 @@ KCM.SimpleKCM {
         RowLayout {
             Kirigami.FormData.label: i18n("API key:")
             Layout.fillWidth: true
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 30
             spacing: Kirigami.Units.smallSpacing
 
             QQC2.TextField {
@@ -178,6 +191,8 @@ KCM.SimpleKCM {
 
         QQC2.Label {
             Layout.fillWidth: true
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 30
+            Layout.minimumWidth: 0
             wrapMode: Text.Wrap
             text: i18n("The session token is the value the DeepSeek platform site keeps after you log in. It grants full access to your account — including creating and deleting API keys — so treat it like a password. Only token usage, cost history and the per-key breakdown need it; the API key alone is enough for the balance.")
         }
@@ -187,28 +202,27 @@ KCM.SimpleKCM {
         // cannot read the token for the user -- that would need the browser's own
         // storage or the login endpoint, and the login endpoint is behind a bot
         // check no non-browser client can pass.
-        RowLayout {
+        QQC2.Label {
             Kirigami.FormData.label: i18n("How to get it:")
             Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 30
+            Layout.minimumWidth: 0
+            wrapMode: Text.Wrap
+            text: i18n("Log in at platform.deepseek.com, open Developer Tools (F12), then copy the value of the “userToken” entry under Application → Local Storage (in Firefox, Storage → Local Storage).")
+        }
 
-            QQC2.Label {
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-                text: i18n("Log in at platform.deepseek.com, open Developer Tools (F12), then copy the value of the “userToken” entry under Application → Local Storage (in Firefox, Storage → Local Storage).")
-            }
-
-            QQC2.Button {
-                Layout.alignment: Qt.AlignTop
-                text: i18nc("opens the DeepSeek platform site in the browser so a token can be copied", "Open platform.deepseek.com")
-                icon.name: "internet-services"
-                onClicked: Qt.openUrlExternally("https://platform.deepseek.com/")
-            }
+        // On its own row: side by side with the wrapping hint, this button's
+        // text-derived width forced the whole form wider than the window.
+        QQC2.Button {
+            text: i18nc("opens the DeepSeek platform site in the browser so a token can be copied", "Open platform.deepseek.com")
+            icon.name: "internet-services"
+            onClicked: Qt.openUrlExternally("https://platform.deepseek.com/")
         }
 
         RowLayout {
             Kirigami.FormData.label: i18n("Session token:")
             Layout.fillWidth: true
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 30
             spacing: Kirigami.Units.smallSpacing
 
             QQC2.TextField {
@@ -249,9 +263,11 @@ KCM.SimpleKCM {
 
         QQC2.Label {
             Layout.fillWidth: true
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 30
+            Layout.minimumWidth: 0
             visible: page.statusText.length > 0
             wrapMode: Text.Wrap
-            color: Kirigami.Theme.positiveTextColor
+            color: page.statusIsError ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.positiveTextColor
             text: page.statusText
         }
 

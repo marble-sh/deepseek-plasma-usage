@@ -44,3 +44,10 @@ test("parseWriteOk only accepts exit code 0", () => {
     assert.equal(w.parseWriteOk("", "", "1"), false);
     assert.equal(w.parseWriteOk("", "", undefined), false);
 });
+
+test("the wallet timeout is bounded so a wedged daemon cannot hold the queue", () => {
+    assert.ok(Number.isInteger(w.TIMEOUT_MS), "TIMEOUT_MS must be an integer");
+    // Long enough to leave room for an unlock prompt, short enough that one stuck
+    // `kwallet-query` cannot silence the settings page for a whole session.
+    assert.ok(w.TIMEOUT_MS >= 5000 && w.TIMEOUT_MS <= 60000, String(w.TIMEOUT_MS));
+});

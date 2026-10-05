@@ -14,6 +14,34 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-05
+
+### Fixed
+
+- **The Configure dialog no longer balloons or misaligns on the General tab.** The
+  tab's long explanatory paragraphs are wrapped labels, and a wrapped label reports its
+  _unwrapped_ length as its preferred and minimum width, so the page measured ~1700px and
+  the dialog — which is sized from its content — grew to match; past a threshold
+  `Kirigami.FormLayout` also switched into its two-column “wide mode”, and those rows read
+  as misaligned. The form now stays single-column (`wideMode: false`) with its fields
+  width-capped, so the page is bounded and the rows line up at any dialog size.
+- **Saving an API key or session token can no longer wedge the settings page.**
+  `kwallet-query` blocks forever against an unresponsive wallet daemon, and
+  `Wallet.qml` had no timeout, so one stuck call held its queue and every later read
+  and write was a silent no-op — clicking Save simply did nothing. Each command is now
+  bounded (`WalletJs.TIMEOUT_MS`); on expiry the stuck command is dropped, the queue
+  moves on, and the page says KWallet did not answer rather than failing silently.
+- **The settings page colours its status by outcome.** A failure was rendered in the
+  same positive colour as a success, so a wallet that refused every write looked like
+  it had accepted them.
+- **Saving a credential no longer reloads the settings page.** The page wrote
+  `Plasmoid.configuration.secretsRevision` directly while it was open, which made the
+  configuration dialog recreate the page and discard whatever else had been edited.
+  The revision is now staged and applied with the dialog, like every other setting.
+- **The “How to get it” row no longer pushes the settings page wider than its
+  window.** The long “Open platform.deepseek.com” button sits on its own form row
+  instead of beside the wrapping hint text, whose combined width overflowed.
+
 ## [0.3.0] - 2026-09-27
 
 ### Added
