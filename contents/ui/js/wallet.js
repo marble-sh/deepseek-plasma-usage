@@ -13,6 +13,17 @@ var DEFAULT_FOLDER = "Plasma";
 var API_KEY_ENTRY = "deepseek-api-key";
 var SESSION_TOKEN_ENTRY = "deepseek-session-token";
 
+/*
+    How long a `kwallet-query` call may run before it is treated as failed.
+
+    A wallet unlock prompt blocks the command for as long as it is on screen, so this
+    is deliberately generous. It exists because the command blocks *forever* against a
+    wedged wallet daemon while the data engine reports nothing at all: without a bound,
+    one stuck call holds Wallet.qml's queue for the rest of the session and every later
+    read and write silently does nothing. Wallet.qml enforces it.
+*/
+var TIMEOUT_MS = 20000;
+
 // POSIX single-quote a value for safe use inside `sh -c`.
 function shellQuote(value) {
     return "'" + String(value === undefined || value === null ? "" : value).replace(/'/g, "'\\''") + "'";

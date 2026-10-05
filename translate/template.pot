@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-27 17:56-0300\n"
+"POT-Creation-Date: 2026-10-05 14:29-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,6 +113,10 @@ msgstr[1] ""
 
 #: contents/ui/ConfigGeneral.qml contents/ui/FullRepresentation.qml
 msgid "Lifetime spend"
+msgstr ""
+
+#: contents/ui/ConfigGeneral.qml
+msgid "KWallet did not answer. Unlock the wallet or restart it, then try again."
 msgstr ""
 
 #: contents/ui/ConfigGeneral.qml

@@ -28,6 +28,7 @@
     "Lifetime spend": "Gasto total",
     "Could not write to KWallet.": "No se pudo escribir en KWallet.",
     "Saved to KWallet.": "Guardado en KWallet.",
+    "KWallet did not answer. Unlock the wallet or restart it, then try again.": "KWallet no respondió. Desbloquea la cartera o reiníciala e inténtalo de nuevo.",
     "Credentials": "Credenciales",
     "Both values are stored in KWallet and never in the widget's configuration file.": "Ambos valores se guardan en KWallet y nunca en el archivo de configuración del widget.",
     "API key:": "Clave de API:",
