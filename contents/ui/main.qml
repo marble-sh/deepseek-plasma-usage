@@ -65,6 +65,11 @@ PlasmoidItem {
     property bool secretsLoaded: false
     property bool secretsInFlight: false
     property int loadedRevision: -1
+    // True when KWallet itself could not be read: it is locked (the unlock
+    // request is still waiting on the user) or the daemon is not answering.
+    // That is not a verdict on the stored credential, so it must not be
+    // mistaken for "nothing is configured" -- the read is retried instead.
+    property bool walletUnavailable: false
 
     Wallet {
         id: wallet
@@ -86,6 +91,8 @@ PlasmoidItem {
         peakRates: root.peakRates
         peakKnown: root.peakKnown
         numberLocale: root.numberLocale
+        secretsLoaded: root.secretsLoaded
+        walletUnavailable: root.walletUnavailable
 
         onToggleRequested: root.expanded = !root.expanded
     }
@@ -100,6 +107,7 @@ PlasmoidItem {
         peakStateText: root.peakStateText
         peakRemainingText: root.peakRemainingText
         numberLocale: root.numberLocale
+        walletNotice: (!apiClient.configured && root.walletUnavailable) ? root.walletLockedText : ""
 
         onRefreshRequested: apiClient.refresh()
     }
@@ -113,7 +121,12 @@ PlasmoidItem {
     toolTipMainText: i18n("DeepSeek Usage")
     toolTipSubText: root.toolTipText
 
+    readonly property string walletLockedText: i18n("KWallet is locked. Unlock your wallet to load the DeepSeek credential.")
+
     readonly property string toolTipText: {
+        if (!apiClient.configured && root.walletUnavailable) {
+            return root.walletLockedText;
+        }
         if (!apiClient.configured) {
             return i18n("Add a DeepSeek API key in the widget settings.");
         }
@@ -158,16 +171,30 @@ PlasmoidItem {
         onTriggered: apiClient.refresh()
     }
 
+    // A wallet that is still locked right after login is expected, not an
+    // error: the read keeps failing until the user signs in to it. Retry while
+    // it is unavailable and stop the moment it answers -- `running` follows the
+    // state, so a locked wallet is retried and an unlocked one is left alone.
+    Timer {
+        interval: 30000
+        repeat: true
+        running: root.walletUnavailable
+        onTriggered: root.reloadSecrets()
+    }
+
     Connections {
         target: wallet
 
-        function onReadFinished(entry, secret) {
-            root.handleSecret(entry, secret);
+        function onReadFinished(entry, secret, error) {
+            root.handleSecret(entry, secret, error);
         }
     }
 
     onSecretsRevisionChanged: root.reloadSecrets()
     onPeriodDaysChanged: if (apiClient.configured) { apiClient.refresh() }
+    // Opening the popup is a good moment to re-check: the user is looking, and
+    // may have just unlocked the wallet.
+    onExpandedChanged: if (root.walletUnavailable) { root.reloadSecrets() }
 
     Component.onCompleted: root.reloadSecrets()
 
@@ -192,7 +219,17 @@ PlasmoidItem {
         wallet.read(WalletJs.API_KEY_ENTRY);
     }
 
-    function handleSecret(entry, secret) {
+    function handleSecret(entry, secret, error) {
+        if (error === "timeout") {
+            // KWallet did not answer -- it is locked (the unlock request is
+            // still waiting on the user) or the daemon is wedged. Either way
+            // this is not a verdict on the stored credential: hold off on the
+            // "Set up" state, say so, and try again shortly.
+            secretsInFlight = false;
+            walletUnavailable = true;
+            return;
+        }
+        walletUnavailable = false;
         if (entry === WalletJs.API_KEY_ENTRY) {
             apiClient.apiKey = secret;
             wallet.read(WalletJs.SESSION_TOKEN_ENTRY);

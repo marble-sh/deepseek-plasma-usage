@@ -29,6 +29,8 @@
     "Could not write to KWallet.": "KWallet में लिखा नहीं जा सका।",
     "Saved to KWallet.": "KWallet में सहेजा गया।",
     "KWallet did not answer. Unlock the wallet or restart it, then try again.": "KWallet ने जवाब नहीं दिया। वॉलेट अनलॉक करें या उसे पुनः आरंभ करें, फिर कोशिश करें।",
+    "KWallet is locked. Unlock your wallet to load the DeepSeek credential.": "KWallet लॉक है। DeepSeek क्रेडेंशियल लोड करने के लिए अपना वॉलेट अनलॉक करें।",
+    "KWallet is locked, so the credential cannot be read\u0004Locked": "लॉक",
     "Credentials": "क्रेडेंशियल",
     "Both values are stored in KWallet and never in the widget's configuration file.": "दोनों मान KWallet में संग्रहीत होते हैं और कभी विजेट की कॉन्फ़िगरेशन फ़ाइल में नहीं।",
     "API key:": "API कुंजी:",

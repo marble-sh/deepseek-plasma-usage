@@ -26,6 +26,8 @@
     "Could not write to KWallet.": "Tidak dapat menulis ke KWallet.",
     "Saved to KWallet.": "Tersimpan di KWallet.",
     "KWallet did not answer. Unlock the wallet or restart it, then try again.": "KWallet tidak merespons. Buka kunci dompet atau mulai ulang, lalu coba lagi.",
+    "KWallet is locked. Unlock your wallet to load the DeepSeek credential.": "KWallet terkunci. Buka kunci dompet Anda untuk memuat kredensial DeepSeek.",
+    "KWallet is locked, so the credential cannot be read\u0004Locked": "Terkunci",
     "Credentials": "Kredensial",
     "Both values are stored in KWallet and never in the widget's configuration file.": "Kedua nilai disimpan di KWallet dan tidak pernah di berkas konfigurasi widget.",
     "API key:": "Kunci API:",

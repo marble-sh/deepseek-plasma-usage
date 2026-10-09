@@ -14,6 +14,17 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+### Fixed
+
+- **A locked KWallet no longer looks like “Set up”.** Right after login the wallet is
+  often still locked, and a read against it does not answer at all — `kwallet-query`
+  waits on the unlock request. The widget took that silence as “nothing is stored”, so
+  the panel chip said “Set up” and stayed there even after the wallet was unlocked,
+  because nothing ever re-read it. A silent wallet is now told apart from an empty one:
+  the chip reads “Locked”, the tooltip says to unlock the wallet, and the read is
+  retried (every 30 s, and when the popup is opened) until the wallet answers and the
+  real state appears.
+
 ## [0.3.1] - 2026-10-05
 
 ### Fixed

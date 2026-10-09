@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deepseek-usage\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 14:29-0300\n"
-"PO-Revision-Date: 2026-10-05 14:29-0300\n"
+"POT-Creation-Date: 2026-10-09 11:05-0300\n"
+"PO-Revision-Date: 2026-10-09 11:05-0300\n"
 "Last-Translator: Unreviewed machine translation\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_IN\n"
@@ -83,6 +83,11 @@ msgid "%1 hour ago"
 msgid_plural "%1 hours ago"
 msgstr[0] "%1 hour ago"
 msgstr[1] "%1 hours ago"
+
+#: contents/ui/CompactRepresentation.qml
+msgctxt "KWallet is locked, so the credential cannot be read"
+msgid "Locked"
+msgstr "Locked"
 
 #: contents/ui/CompactRepresentation.qml
 msgid "Set up"
@@ -346,6 +351,10 @@ msgstr "Off-peak"
 msgctxt "DeepSeek's peak or off-peak rate cannot be determined"
 msgid "Unknown"
 msgstr "Unknown"
+
+#: contents/ui/main.qml
+msgid "KWallet is locked. Unlock your wallet to load the DeepSeek credential."
+msgstr "KWallet is locked. Unlock your wallet to load the DeepSeek credential."
 
 #: contents/ui/main.qml
 msgid "Add a DeepSeek API key in the widget settings."
