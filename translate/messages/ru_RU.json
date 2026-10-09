@@ -30,6 +30,8 @@
     "Could not write to KWallet.": "Не удалось записать в KWallet.",
     "Saved to KWallet.": "Сохранено в KWallet.",
     "KWallet did not answer. Unlock the wallet or restart it, then try again.": "KWallet не ответил. Разблокируйте кошелёк или перезапустите его и повторите попытку.",
+    "KWallet is locked. Unlock your wallet to load the DeepSeek credential.": "KWallet заблокирован. Разблокируйте кошелёк, чтобы загрузить учётные данные DeepSeek.",
+    "KWallet is locked, so the credential cannot be read\u0004Locked": "Заблокировано",
     "Credentials": "Учётные данные",
     "Both values are stored in KWallet and never in the widget's configuration file.": "Оба значения хранятся в KWallet и никогда — в файле настроек виджета.",
     "API key:": "Ключ API:",

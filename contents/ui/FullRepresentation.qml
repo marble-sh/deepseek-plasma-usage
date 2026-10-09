@@ -25,6 +25,10 @@ Item {
     property string periodLabel: ""
     // Set by main.qml (Qt.locale().name).
     property string numberLocale: "en_US"
+    // Set by main.qml when the wallet could not be read (locked or not
+    // answering); empty otherwise, when the message box falls back to the API
+    // client's own error text.
+    property string walletNotice: ""
 
     // Peak / off-peak pricing state, computed centrally in main.qml so both
     // representations and the tooltip agree.
@@ -39,6 +43,9 @@ Item {
     readonly property bool hasUsage: api ? api.hasUsage : false
     readonly property bool isPlatform: api ? api.platformOk : false
     readonly property string noData: "\u2014"
+    readonly property string messageText: root.walletNotice.length > 0
+        ? root.walletNotice
+        : (root.api ? root.api.errorText : "")
 
     readonly property real peakCost: {
         var list = api ? api.perDay : [];
@@ -206,7 +213,7 @@ Item {
             // ------------------------------------------------------- errors
             Rectangle {
                 Layout.fillWidth: true
-                visible: root.api ? root.api.errorText.length > 0 : false
+                visible: root.messageText.length > 0
                 implicitHeight: errorLabel.implicitHeight + Kirigami.Units.smallSpacing * 2
                 radius: Kirigami.Units.cornerRadius
                 color: Qt.rgba(Kirigami.Theme.negativeTextColor.r,
@@ -219,7 +226,7 @@ Item {
 
                     anchors.fill: parent
                     anchors.margins: Kirigami.Units.smallSpacing
-                    text: root.api ? root.api.errorText : ""
+                    text: root.messageText
                     color: Kirigami.Theme.negativeTextColor
                     wrapMode: Text.Wrap
                 }

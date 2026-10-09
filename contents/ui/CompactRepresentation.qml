@@ -24,16 +24,27 @@ Item {
     property bool peakKnown: true
     // Set by main.qml (Qt.locale().name).
     property string numberLocale: "en_US"
+    // Set by main.qml: false while the KWallet read is still in flight, and true
+    // when KWallet could not be read at all (locked or not answering).
+    property bool secretsLoaded: false
+    property bool walletUnavailable: false
 
     signal toggleRequested()
 
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool failed: api ? (api.errorText.length > 0 && !api.hasData) : false
-    readonly property string iconSource: failed ? "dialog-warning" : "office-chart-bar"
+    readonly property string iconSource: failed
+        ? "dialog-warning"
+        : root.walletUnavailable ? "object-locked" : "office-chart-bar"
 
     readonly property string valueText: {
         if (!api || !api.configured) {
-            return i18n("Set up");
+            if (root.walletUnavailable) {
+                return i18nc("KWallet is locked, so the credential cannot be read", "Locked");
+            }
+            // An empty wallet is only "Set up" once we know it was read; until
+            // then the chip is still checking (better than a premature claim).
+            return root.secretsLoaded ? i18n("Set up") : "\u2026";
         }
         if (!api.hasData) {
             return failed ? i18n("Error") : "\u2026";
