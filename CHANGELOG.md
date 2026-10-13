@@ -14,6 +14,8 @@ What the numbers mean here:
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-13
+
 ### Fixed
 
 - **A locked KWallet no longer looks like “Set up”.** Right after login the wallet is
